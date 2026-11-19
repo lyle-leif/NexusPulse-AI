@@ -6,6 +6,7 @@ Run: uv run uvicorn main:app --app-dir services/api --port 8000
 """
 from __future__ import annotations
 
+import os
 import pathlib
 import sys
 from functools import lru_cache
@@ -20,11 +21,14 @@ from fastapi.middleware.cors import CORSMiddleware  # noqa: E402
 from nexuspulse_analytics import daily_kpis, run_reconciliation, unattributed_share_flags  # noqa: E402
 from nexuspulse_analytics.db import read_tables  # noqa: E402
 from nexuspulse_analytics.investigate import investigate  # noqa: E402
+from nexuspulse_analytics.narrate import OllamaProvider, narrate  # noqa: E402
+from nexuspulse_analytics.report import build_report  # noqa: E402
 from nexuspulse_analytics.monitor import known_event_days  # noqa: E402
 from nexuspulse_analytics.pipeline import analyze  # noqa: E402
 
 EVAL_RESULTS = ROOT / "eval_results" / "detection.json"
 INV_RESULTS = ROOT / "eval_results" / "investigation.json"
+NAR_RESULTS = ROOT / "eval_results" / "narration.json"
 
 # Workspace configuration (a workspace table comes with multi-tenancy later).
 WORKSPACES = {
@@ -156,6 +160,8 @@ def evaluation() -> dict:
     out = json.loads(EVAL_RESULTS.read_text(encoding="utf-8"))
     if INV_RESULTS.exists():
         out["investigation"] = json.loads(INV_RESULTS.read_text(encoding="utf-8"))
+    if NAR_RESULTS.exists():
+        out["narration"] = json.loads(NAR_RESULTS.read_text(encoding="utf-8"))
     return out
 
 
@@ -193,3 +199,30 @@ def investigation(incident_id: str, workspace: str = "demo") -> dict:
     if workspace not in WORKSPACES:
         raise HTTPException(404, f"unknown workspace {workspace!r}")
     return _investigation(workspace, incident_id)
+
+
+# Narration model: a local Ollama model if one is installed, otherwise template-only.
+LLM_MODEL = os.environ.get("NEXUSPULSE_LLM", "qwen2.5:3b")
+
+
+@lru_cache(maxsize=64)
+def _report(workspace: str, incident_id: str, mode: str) -> dict:
+    inv = _investigation(workspace, incident_id)
+    provider = None
+    note = None
+    if mode != "template":
+        p = OllamaProvider(LLM_MODEL)
+        if p.available():
+            provider = p
+        else:
+            note = f"No local model available ({LLM_MODEL}); showing the template report."
+    rep = build_report(inv, WORKSPACES[workspace]["currency"], narration=narrate(inv, provider))
+    rep["narration"]["note"] = note
+    return _clean(rep)
+
+
+@app.get("/api/incidents/{incident_id}/report")
+def report(incident_id: str, workspace: str = "demo", narration: str = "auto") -> dict:
+    if workspace not in WORKSPACES:
+        raise HTTPException(404, f"unknown workspace {workspace!r}")
+    return _report(workspace, incident_id, "template" if narration == "template" else "auto")

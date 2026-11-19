@@ -1,4 +1,4 @@
-import { getEvaluation, type EvalSummary, type InvestigationSummary, type Rate } from "@/lib/api";
+import { getEvaluation, type EvalSummary, type InvestigationSummary, type NarrationEval, type Rate } from "@/lib/api";
 import { pct, shortDate } from "@/lib/format";
 import Nav from "../components/Nav";
 
@@ -79,6 +79,66 @@ function InvestigationScorecard({ results }: { results: Record<string, { oracle:
           <p className="muted mt-2 text-xs">For None, correct means no cause was named and the scenario had no recorded cause.</p>
         </>
       ) : null}
+    </section>
+  );
+}
+
+function NarrationScorecard({ n }: { n: NarrationEval }) {
+  const cases = Object.entries(n.adversarial.by_case);
+  return (
+    <section aria-labelledby="nar" className="card">
+      <h2 id="nar" className="section-title">Report narration</h2>
+      <p className="muted mb-3">
+        Reports are template-first. A local model may only write the short summary and choose next steps from a fixed list; its output is validated and
+        replaced by the template if it fails twice. {n.n_investigations} held-out investigations.
+      </p>
+      <div className="overflow-x-auto">
+        <table className="data-table">
+          <thead>
+            <tr>
+              <th scope="col">Narration mode</th>
+              <th scope="col" className="num">Passed first try</th>
+              <th scope="col" className="num">Passed after retry</th>
+              <th scope="col" className="num">Fell back to template</th>
+              <th scope="col" className="num">Seconds per report</th>
+            </tr>
+          </thead>
+          <tbody>
+            {Object.entries(n.modes).map(([m, v]) => (
+              <tr key={m}>
+                <td>{m === "template" ? "Template only (no AI)" : m.replace("ollama:", "Local model ")}</td>
+                {v.available ? (
+                  <>
+                    <td className="num">{v.first_pass}/{v.n}</td>
+                    <td className="num">{v.passed_after_retry}/{v.n}</td>
+                    <td className="num">{v.fallback}/{v.n}</td>
+                    <td className="num">{v.seconds_per_report ?? "-"}</td>
+                  </>
+                ) : (
+                  <td colSpan={4} className="muted">Not run: {v.note}</td>
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <h3 className="sub-title">
+        Adversarial catch rate: {Math.round(100 * n.adversarial.catch_rate)}% ({n.adversarial.caught}/{n.adversarial.n})
+      </h3>
+      <p className="muted mb-2 text-xs">
+        Misleading narratives with correct numbers. Cases marked semantic have no forbidden word or wrong number; they show what rule-based checks cannot
+        catch.
+      </p>
+      <ul className="grid gap-x-6 gap-y-1 text-sm sm:grid-cols-2">
+        {cases.map(([k, v]) => (
+          <li key={k} className="flex justify-between">
+            <span>
+              {k.replaceAll("_", " ")} <span className="muted">({v.targets})</span>
+            </span>
+            <span className={v.caught === v.n ? "" : "muted"}>{v.caught}/{v.n} caught</span>
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }
@@ -259,6 +319,8 @@ export default async function EvaluationPage() {
       ) : null}
 
       {ev.investigation ? <InvestigationScorecard results={ev.investigation.results} /> : null}
+
+      {ev.narration ? <NarrationScorecard n={ev.narration} /> : null}
 
       <footer className="muted border-t pt-4 text-xs" style={{ borderColor: "var(--border)" }}>
         Known limits: forecast bands are too narrow (coverage below 95%); store-level detection misses many 10-30% changes, which segment-level analysis

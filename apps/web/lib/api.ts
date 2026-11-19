@@ -87,7 +87,15 @@ export type InvestigationSummary = {
   by_kind: Record<string, { n: number; driver: number; segment: number; cause: number }>;
 };
 
+export type NarrationEval = {
+  suite: string;
+  n_investigations: number;
+  adversarial: { catch_rate: number; caught: number; n: number; by_case: Record<string, { targets: string; caught: number; n: number }> };
+  modes: Record<string, { available: boolean; note?: string; n?: number; first_pass?: number; passed_after_retry?: number; fallback?: number; seconds_per_report?: number }>;
+};
+
 export type Evaluation = {
+  narration?: NarrationEval;
   investigation?: { generated_at: string; results: Record<string, { oracle: InvestigationSummary; end_to_end: InvestigationSummary }> };
   generated_at: string;
   results: Record<string, { config: Record<string, unknown> } & Record<string, EvalSummary | Record<string, unknown>>>;
@@ -152,6 +160,21 @@ export type Investigation = {
 export async function getInvestigation(id: string, workspace = "demo"): Promise<Investigation> {
   await connection();
   const res = await fetch(`${API_URL}/api/incidents/${encodeURIComponent(id)}/investigation?workspace=${encodeURIComponent(workspace)}`);
+  if (!res.ok) throw new Error(`API responded ${res.status}`);
+  return res.json();
+}
+
+export type Report = {
+  incident_id: string;
+  headline: string;
+  summary: { text: string; finding_ids: string[]; status: string; source: "template" | "model" }[];
+  next_steps: { id: string; text: string; source: "template" | "model" }[];
+  narration: { mode: string; model: string | null; fallback: boolean; attempts: number; note?: string | null; prompt_version?: string };
+};
+
+export async function getReport(id: string, workspace = "demo"): Promise<Report> {
+  await connection();
+  const res = await fetch(`${API_URL}/api/incidents/${encodeURIComponent(id)}/report?workspace=${encodeURIComponent(workspace)}`);
   if (!res.ok) throw new Error(`API responded ${res.status}`);
   return res.json();
 }

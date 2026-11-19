@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getInvestigation, type Investigation } from "@/lib/api";
+import { getInvestigation, getReport, type Investigation, type Report } from "@/lib/api";
 import { money, shortDate } from "@/lib/format";
 import Nav from "../../components/Nav";
 
@@ -50,9 +50,54 @@ function Waterfall({ inv, currency }: { inv: Investigation; currency: string }) 
   );
 }
 
+function Summary({ rep }: { rep: Report }) {
+  const ai = rep.summary.some((s) => s.source === "model");
+  const n = rep.narration;
+  return (
+    <section aria-labelledby="summary" className="card">
+      <h2 id="summary" className="section-title">
+        Summary{" "}
+        <span className="badge" title="Who wrote these sentences">
+          {ai ? `AI-written (${n.model}), validated` : "Template, no AI"}
+        </span>
+      </h2>
+      <ol className="space-y-2 text-sm">
+        {rep.summary.map((s, i) => (
+          <li key={i}>
+            {s.text}{" "}
+            <span className="muted text-xs">
+              [{s.status === "attributed" ? "measured breakdown" : s.status} ·{" "}
+              {s.finding_ids.map((f, j) => (
+                <span key={f}>
+                  {j ? ", " : ""}
+                  <a href={`#${f}`} className="underline underline-offset-2">{f}</a>
+                </span>
+              ))}
+              ]
+            </span>
+          </li>
+        ))}
+      </ol>
+      <h3 className="sub-title">Suggested next steps</h3>
+      <ul className="list-disc space-y-1 pl-5 text-sm">
+        {rep.next_steps.map((s) => (
+          <li key={s.id}>{s.text}</li>
+        ))}
+      </ul>
+      <p className="muted mt-3 text-xs">
+        {ai
+          ? `Each AI sentence passed checks on numbers, cited findings, status, direction and wording (attempts: ${n.attempts}). The checks reduce risk; they cannot guarantee meaning.`
+          : n.fallback
+            ? "The AI draft failed validation twice, so the template text is shown."
+            : n.note ?? "Written from the findings by fixed templates."}
+      </p>
+    </section>
+  );
+}
+
 export default async function IncidentPage({ params }: PageProps<"/incidents/[id]">) {
   const { id } = await params;
-  const inv = await getInvestigation(id);
+  const [inv, rep] = await Promise.all([getInvestigation(id), getReport(id)]);
   const cur = inv.workspace.currency;
   const ev = inv.explanation_evidence;
   const byStatus = ["observed", "attributed", "associated", "hypothesis"].map((s) => [s, inv.findings.filter((f) => f.status === s)] as const);
@@ -78,6 +123,8 @@ export default async function IncidentPage({ params }: PageProps<"/incidents/[id
         </div>
         <span className="pill">Data: {inv.data_label}</span>
       </header>
+
+      <Summary rep={rep} />
 
       <section aria-labelledby="evidence" className="card">
         <h2 id="evidence" className="section-title">
@@ -189,7 +236,7 @@ export default async function IncidentPage({ params }: PageProps<"/incidents/[id
               ) : (
                 <ul className="space-y-2 text-sm">
                   {fs.map((f) => (
-                    <li key={f.finding_id}>
+                    <li key={f.finding_id} id={f.finding_id} className="scroll-mt-4">
                       <span className="muted mr-1 font-mono text-xs">{f.finding_id}</span>
                       {f.text}
                     </li>
@@ -240,7 +287,7 @@ export default async function IncidentPage({ params }: PageProps<"/incidents/[id
       </div>
 
       <footer className="muted border-t pt-4 text-xs" style={{ borderColor: "var(--border)" }}>
-        Written summaries arrive in the next roadmap step; this page shows the structured findings they will be built from.
+        The summary is built only from the findings on this page. Numbers, tables and evidence levels never come from a language model.
       </footer>
     </main>
   );
