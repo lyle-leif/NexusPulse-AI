@@ -1,0 +1,101 @@
+# NexusPulse metric contracts, version 1
+# Every KPI is defined once here. Pipeline and UI must use these definitions.
+version: 1
+defaults:
+  timezone: workspace.timezone
+  currency: workspace.currency
+  exclude_orders: [test, cancelled]
+
+metrics:
+  - id: sessions
+    name: Sessions
+    formula: count(sessions)
+    date_basis: session started_at (local date)
+    identity_level: core
+    segmentable_by: [channel, device, region]
+    min_volume_for_alerting: 200
+    requires_tables: [sessions]
+
+  - id: session_conversion_rate
+    name: Session conversion rate
+    formula: count(distinct sessions with >=1 attributed order) / count(sessions)
+    numerator_source: orders JOIN sessions ON orders.session_id
+    denominator_source: sessions
+    attribution: purchase-session
+    date_basis: session started_at (local date)
+    unattributed_orders: excluded
+    identity_level: core
+    segmentable_by: [channel, device, region]
+    min_volume_for_alerting: 200
+    requires_tables: [sessions, orders]
+    notes: ratio of sums, never an average of daily ratios
+
+  - id: orders_per_converting_session
+    name: Orders per converting session
+    formula: count(attributed orders) / count(distinct converting sessions)
+    date_basis: session started_at (local date)
+    identity_level: core
+    segmentable_by: [channel, device, region]
+    requires_tables: [sessions, orders]
+
+  - id: attributed_aov
+    name: Attributed average order value
+    formula: sum(attributed gross_sales) / count(attributed orders)
+    date_basis: session started_at (local date)
+    identity_level: core
+    segmentable_by: [channel, device, region]
+    requires_tables: [sessions, orders]
+
+  - id: attributed_gross_sales
+    name: Attributed gross sales
+    formula: sessions * session_conversion_rate * orders_per_converting_session * attributed_aov
+    date_basis: session started_at (local date)
+    identity_level: core
+    segmentable_by: [channel, device, region]
+    requires_tables: [sessions, orders]
+
+  - id: unattributed_gross_sales
+    name: Unattributed gross sales
+    formula: sum(gross_sales) where session_id is null
+    date_basis: order placed_at (local date)
+    identity_level: bridge
+    segmentable_by: []
+    requires_tables: [orders]
+
+  - id: timing_difference
+    name: Timing difference
+    formula: sum(attributed gross by order date) - sum(attributed gross by session date)
+    identity_level: bridge
+    segmentable_by: []
+    requires_tables: [sessions, orders]
+
+  - id: discounts
+    name: Discounts
+    formula: sum(orders.discount)
+    date_basis: order placed_at (local date)
+    identity_level: bridge
+    requires_tables: [orders]
+
+  - id: refunds
+    name: Refunds
+    formula: sum(refunds.amount)
+    date_basis: order placed_at (local date)
+    refund_handling: refunds are attributed back to the original order date
+    restatement: values for recent days may change as refunds arrive
+    identity_level: bridge
+    requires_tables: [orders, refunds]
+
+  - id: net_revenue
+    name: Net revenue
+    formula: attributed_gross_sales + timing_difference + unattributed_gross_sales - discounts - refunds
+    date_basis: order placed_at (local date)
+    tax_shipping: excluded
+    identity_level: bridge
+    requires_tables: [sessions, orders, refunds]
+
+  - id: unattributed_order_share
+    name: Unattributed order share
+    formula: count(orders where session_id is null) / count(orders)
+    kind: data_quality
+    alert_threshold: 0.10
+    requires_tables: [orders]

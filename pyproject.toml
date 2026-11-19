@@ -1,0 +1,17 @@
+[project]
+name = "nexuspulse"
+version = "0.1.0"
+description = "NexusPulse AI: autonomous business intelligence for small online stores"
+requires-python = ">=3.12,<3.14"
+dependencies = [
+    "numpy>=2.0",
+    "pandas>=2.2",
+    "pyyaml>=6.0",
+]
+
+[dependency-groups]
+dev = ["pytest>=8.0"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["packages/analytics/src", "packages/generator/src"]

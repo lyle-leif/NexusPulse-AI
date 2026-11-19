@@ -2,7 +2,7 @@
 
 An autonomous business intelligence system for small online stores. NexusPulse AI continuously forecasts expected performance, detects unexpected changes, investigates where they occurred and what coincided with them, and produces traceable, evidence-backed reports.
 
-**Project status:** Design phase. The product requirements and architecture are documented; no implementation exists yet.
+**Project status:** Step 1 (reliable business data) is in progress: metric contracts, database schema, synthetic store generator, KPI engine, and reconciliation checks are implemented. Later roadmap steps have not started.
 
 ## Overview
 
