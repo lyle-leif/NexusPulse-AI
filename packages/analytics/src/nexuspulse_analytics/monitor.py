@@ -298,7 +298,7 @@ def _group(anomalies: list[Anomaly], dq_days: pd.DatetimeIndex, last_day: pd.Tim
                 "anchor_metric": anchor.metric,
                 "direction": anchor.direction,
                 "strength": anchor.strength,
-                "impact": round(sum(a.impact for a in sales) if sales else anchor.impact, 2),
+                "impact": round(sum(a.impact for a in sales), 2) if sales else None,  # only when net sales itself moved
                 "members": [
                     {
                         "metric": a.metric, "direction": a.direction, "start": a.start.date().isoformat(),

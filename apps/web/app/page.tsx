@@ -1,5 +1,7 @@
 import { getOverview, type PeriodSummary } from "@/lib/api";
 import { change, int, money, pct, shortDate } from "@/lib/format";
+import IncidentsPanel from "./components/IncidentsPanel";
+import Nav from "./components/Nav";
 import TrendPanel from "./components/TrendPanel";
 
 function Delta({ cur, prev, kind = "relative" }: { cur: number; prev: number; kind?: "relative" | "points" }) {
@@ -49,6 +51,7 @@ export default async function Page() {
 
   return (
     <main className="mx-auto w-full max-w-6xl space-y-8 px-4 py-8 sm:px-6">
+      <Nav active="overview" />
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="eyebrow">NexusPulse AI</p>
@@ -124,13 +127,15 @@ export default async function Page() {
         </section>
       </div>
 
+      <IncidentsPanel incidents={data.incidents} currency={workspace.currency} />
+
       <TrendPanel data={data} />
 
       <footer className="muted space-y-1 border-t pt-4 text-xs" style={{ borderColor: "var(--border)" }}>
         {data.notes.map((n) => (
           <p key={n}>{n}</p>
         ))}
-        <p>Forecasts, anomaly detection and investigations arrive in the next roadmap steps.</p>
+        <p>Incidents use as-of forecasts: each day is judged against a forecast issued before it.</p>
       </footer>
     </main>
   );

@@ -109,3 +109,18 @@ body {
   font-size: 0.8rem; font-variant-numeric: tabular-nums; box-shadow: 0 4px 12px rgba(0,0,0,0.08); min-width: 120px;
 }
 .viz-tooltip span { color: var(--text-secondary); }
+
+/* navigation, tables, evaluation */
+.nav-link { padding: 0.35rem 0.75rem; border-radius: 6px; color: var(--text-secondary); }
+.nav-link:hover { background: var(--grid); }
+.nav-link.active { color: var(--foreground); background: var(--surface); border: 1px solid var(--border); }
+.data-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+.data-table th, .data-table td { text-align: left; padding: 0.5rem 0.75rem 0.5rem 0; border-bottom: 1px solid var(--border); white-space: nowrap; }
+.data-table thead th { color: var(--text-secondary); font-weight: 500; }
+.data-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+.badge { display: inline-block; padding: 0.05rem 0.5rem; border-radius: 999px; font-size: 0.75rem; border: 1px solid var(--border); }
+.badge.strong { font-weight: 600; }
+.badge.weak { color: var(--text-secondary); }
+.stat { font-size: 1.75rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.meter { height: 8px; border-radius: 4px; background: var(--grid); overflow: hidden; }
+.meter > span { display: block; height: 100%; background: var(--series-1); border-radius: 4px; }

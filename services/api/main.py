@@ -19,6 +19,9 @@ from fastapi.middleware.cors import CORSMiddleware  # noqa: E402
 
 from nexuspulse_analytics import daily_kpis, run_reconciliation, unattributed_share_flags  # noqa: E402
 from nexuspulse_analytics.db import read_tables  # noqa: E402
+from nexuspulse_analytics.pipeline import analyze  # noqa: E402
+
+EVAL_RESULTS = ROOT / "eval_results" / "detection.json"
 
 # Workspace configuration (a workspace table comes with multi-tenancy later).
 WORKSPACES = {
@@ -84,6 +87,7 @@ def _compute(workspace: str) -> dict:
     daily = daily_kpis(tables, tz)
     flags = unattributed_share_flags(tables, tz)
     checks = run_reconciliation(tables, tz)
+    _, monitor = analyze(tables, tz)
 
     cur, prev = daily.iloc[-28:], daily.iloc[-56:-28]
     series = pd.DataFrame(
@@ -109,6 +113,8 @@ def _compute(workspace: str) -> dict:
         "data_quality_incidents": [
             {"type": "unattributed_order_share", "threshold": 0.10, **r} for r in _runs(flags["flag"])
         ],
+        "incidents": sorted(monitor.incidents, key=lambda i: i["start"], reverse=True),
+        "monitor_config": monitor.config.as_dict(),
         "notes": [
             "Recent refunds are restated as they arrive, so the latest days may understate refunds.",
             "Net revenue is bucketed by order date in the workspace timezone.",
@@ -126,3 +132,13 @@ def overview(workspace: str = "demo") -> dict:
     if workspace not in WORKSPACES:
         raise HTTPException(404, f"unknown workspace {workspace!r}")
     return _compute(workspace)
+
+
+@app.get("/api/evaluation")
+def evaluation() -> dict:
+    """Published evaluation results (written by the eval runner; contains scores, not raw labels)."""
+    if not EVAL_RESULTS.exists():
+        raise HTTPException(404, "no evaluation results yet; run the eval runner")
+    import json
+
+    return json.loads(EVAL_RESULTS.read_text(encoding="utf-8"))
