@@ -161,6 +161,15 @@ def load_spec(path: str) -> dict:
         return yaml.safe_load(f)
 
 
+def _overlaps_calendar(first: pd.Timestamp, length: int) -> bool:
+    """True if [first, first+length) touches a holiday window (Black Friday through
+    Dec 23, or the Valentine's window Feb 8-14), with a 1-day margin."""
+    for d in pd.date_range(first - pd.Timedelta(days=1), periods=length + 2, freq="D"):
+        if (d.month == 11 and d.day >= 20) or (d.month == 12 and d.day <= 24) or (d.month == 2 and 8 <= d.day <= 14):
+            return True
+    return False
+
+
 def sample_scenarios(spec: dict, seed: int, start: str, days: int) -> tuple[Scenario, ...]:
     """Place sampled scenarios in non-overlapping windows after a warm-up period."""
     rng = np.random.default_rng(seed)
@@ -177,6 +186,10 @@ def sample_scenarios(spec: dict, seed: int, start: str, days: int) -> tuple[Scen
         params.setdefault("event_offset_hours", round(float(rng.uniform(-10, 2)), 1))
         length = _draw(rng, item.get("days", [7, 14]))
         tail = 60 if item["kind"] in PERMANENT_KINDS else 0
+        # Known calendar windows are excluded from detection by design, so a scenario
+        # placed inside one could never be found. Move it past them.
+        while _overlaps_calendar(t0 + pd.Timedelta(days=cursor), length):
+            cursor += 1
         if cursor + length + tail >= days:
             break
         out.append(Scenario(item["kind"], (t0 + pd.Timedelta(days=cursor)).date().isoformat(), length, params))

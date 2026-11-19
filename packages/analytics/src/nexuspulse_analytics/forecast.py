@@ -75,11 +75,20 @@ class Forecast:
     params: dict
 
 
-def _ets_fit(x: pd.Series):
+_SMOOTHING_KEYS = ("smoothing_level", "smoothing_trend", "smoothing_seasonal", "damping_trend")
+
+
+def _ets_fit(x: pd.Series, fixed: dict | None = None):
+    """Fit ETS. With `fixed` smoothing parameters only the states are updated (fast)."""
     from statsmodels.tsa.holtwinters import ExponentialSmoothing
 
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
+        if fixed:
+            model = ExponentialSmoothing(
+                x.to_numpy(), trend="add", damped_trend=True, seasonal="add", seasonal_periods=7, initialization_method="heuristic"
+            )
+            return model.fit(optimized=False, **{k: fixed[k] for k in _SMOOTHING_KEYS})
         model = ExponentialSmoothing(
             x.to_numpy(), trend="add", damped_trend=True, seasonal="add", seasonal_periods=7, initialization_method="estimated"
         )
@@ -94,6 +103,7 @@ def fit_forecast(
     robust: bool = True,
     exclude_days: pd.Index | None = None,
     train_days: int = 365,
+    fixed_params: dict | None = None,
 ) -> Forecast:
     """Forecast `horizon` days after the last date of `history`.
 
@@ -117,7 +127,7 @@ def fit_forecast(
         mean_t = np.array([last_week[(i - 1) % 7] for i in h])
         sig_h = sigma * np.sqrt(np.ceil(h / 7))
     elif model == "ets":
-        fit = _ets_fit(x)
+        fit = _ets_fit(x, fixed_params)
         resid = x.to_numpy() - fit.fittedvalues
         sigma = _robust_sd(resid[-120:])
         if robust:
@@ -126,12 +136,13 @@ def fit_forecast(
             bound = 3.5 * sigma
             clipped = fit.fittedvalues + np.clip(resid, -bound, bound)
             params["clipped_days"] = int((np.abs(resid) > bound).sum())
-            fit = _ets_fit(pd.Series(clipped, index=x.index))
+            fit = _ets_fit(pd.Series(clipped, index=x.index), fixed_params)
             resid = clipped - fit.fittedvalues
             sigma = _robust_sd(resid[-120:])
         mean_t = np.asarray(fit.forecast(horizon))
         sig_h = sigma * np.sqrt(1 + 0.05 * (h - 1))
-        params.update({k: float(v) for k, v in fit.params.items() if np.isscalar(v) and v is not None and np.isfinite(v)})
+        params["ets"] = {k: float(fit.params[k]) for k in _SMOOTHING_KEYS}
+        params["params_reused"] = fixed_params is not None
     else:
         raise ValueError(f"unknown model {model}")
 
