@@ -45,11 +45,27 @@ def shapley(base: dict[str, float], cur: dict[str, float], f) -> dict[str, float
     return {k: v / n for k, v in contrib.items()}
 
 
+_FUNNEL_CACHE: dict = {}
+
+
 def funnel_daily(tables: dict[str, pd.DataFrame], tz: str, by: str | None = None) -> pd.DataFrame:
     """Session-date counts: sessions, carts, checkouts, converting sessions, orders, gross.
 
     by: optional session dimension (channel, device, region) to split on.
+    Results are memoised per (sessions frame, orders frame) object for repeated investigations.
     """
+    key = (id(tables["sessions"]), id(tables["orders"]), tz, by)
+    hit = _FUNNEL_CACHE.get(key)
+    if hit is not None and hit[0] is tables["sessions"] and hit[1] is tables["orders"]:
+        return hit[2]
+    out = _funnel_daily(tables, tz, by)
+    if len(_FUNNEL_CACHE) > 32:
+        _FUNNEL_CACHE.clear()
+    _FUNNEL_CACHE[key] = (tables["sessions"], tables["orders"], out)
+    return out
+
+
+def _funnel_daily(tables: dict[str, pd.DataFrame], tz: str, by: str | None) -> pd.DataFrame:
     s = tables["sessions"].copy()
     s["date"] = local_date(s["started_at"], tz)
     keys = ["date"] + ([by] if by else [])

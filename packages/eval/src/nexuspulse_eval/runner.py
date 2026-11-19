@@ -165,10 +165,118 @@ def run_eval(suites=("dev", "heldout"), profiles=("main", "low_volume"), configs
     return report
 
 
+# ---------------------------------------------------------------- investigation eval
+DRIVER_GROUP = {"session_conversion_rate": "conversion", "sessions": "sessions"}
+
+
+def _score_investigation(inv: dict, lab: dict) -> dict:
+    exp = lab["expected"]
+    row = {"kind": lab["kind"], "start": lab["start"], "evidence": inv["explanation_evidence"]["level"],
+           "found_driver": inv["driver_group"], "found_segment": inv["segment"],
+           "found_cause": inv["cause_event"]["description"] if inv["cause_event"] else None,
+           "validation_passed": all(c["passed"] for c in inv["validation"])}
+    if not exp["business_anomaly"]:  # red herring: a cause must not be claimed with Moderate+ evidence
+        row["red_herring_rejected"] = not (inv["cause_event"] and row["evidence"] in ("Strong", "Moderate"))
+        return row
+    row["driver_correct"] = inv["driver_group"] == DRIVER_GROUP.get(exp["driver"], exp["driver"])
+    seg = exp.get("segment") or {}
+    if seg:
+        (dim, val), = seg.items()
+        row["segment_correct"] = inv["segment"] == {"dimension": dim, "segment": val}
+    else:  # store-wide change: correct when no segment is singled out
+        row["segment_correct"] = inv["segment"] is None or (inv["drilldown"]["primary"] or {}).get("share", 0) < 0.8
+    truth = exp.get("cause_event")
+    row["cause_correct"] = (inv["cause_event"] is not None and inv["cause_event"]["description"] == truth["text"]) if truth \
+        else inv["cause_event"] is None
+    row["expected_cause"] = truth["text"] if truth else None
+    return row
+
+
+def run_investigation_one(suite: str, profile: str, seed: int, config: MonitorConfig = MonitorConfig()) -> dict:
+    from nexuspulse_analytics.investigate import investigate
+    from nexuspulse_analytics.monitor import known_event_days
+    from nexuspulse_analytics.reconcile import unattributed_share_flags
+
+    p = PROFILES[profile]
+    spec = load_spec(Path("scenarios") / f"{suite}.yaml")
+    store = generate_store(p, seed, scenarios=sample_scenarios(spec, seed, p.start, p.days))
+    tables = store.tables()
+    daily, result = analyze(tables, p.timezone, config)
+    known = known_event_days(tables["change_events"], p.timezone)
+    flags = unattributed_share_flags(tables, p.timezone)
+    dq = flags.index[flags["flag"]]
+    oracle, e2e = [], []
+    for lab in store.labels:
+        if lab["expected"]["data_quality_incident"]:
+            continue
+        s, e = _window(lab)
+        inc = {"incident_id": "oracle", "start": lab["start"], "end": e.date().isoformat(), "anchor_metric": "net_sales",
+               "direction": lab["expected"]["direction"] or "down", "members": []}
+        oracle.append(_score_investigation(investigate(tables, p.timezone, inc, dq, known, daily), lab) | {"seed": seed})
+        if lab["expected"]["business_anomaly"]:
+            hits = [i for i in result.incidents if i["status"] != "suppressed_data_quality" and i["direction"] == lab["expected"]["direction"]
+                    and s - pd.Timedelta(days=2) <= pd.Timestamp(i["start"]) <= e]
+            if hits:
+                e2e.append(_score_investigation(investigate(tables, p.timezone, hits[0], dq, known, daily), lab) | {"seed": seed})
+    return {"oracle": oracle, "end_to_end": e2e}
+
+
+def _rate(rows, key):
+    vals = [r[key] for r in rows if key in r]
+    return {"correct": int(sum(vals)), "n": len(vals), "rate": round(sum(vals) / len(vals), 3) if vals else None}
+
+
+def summarize_investigation(rows: list[dict]) -> dict:
+    biz = [r for r in rows if "driver_correct" in r]
+    by_level = {}
+    for lvl in ("Strong", "Moderate", "Weak", "None"):
+        sel = [r for r in biz if r["evidence"] == lvl]
+        by_level[lvl] = {"n": len(sel), "cause_correct": int(sum(r["cause_correct"] for r in sel))}
+    by_kind = {}
+    for r in biz:
+        k = by_kind.setdefault(r["kind"], {"n": 0, "driver": 0, "segment": 0, "cause": 0})
+        k["n"] += 1
+        k["driver"] += r["driver_correct"]
+        k["segment"] += r["segment_correct"]
+        k["cause"] += r["cause_correct"]
+    return {
+        "driver": _rate(biz, "driver_correct"),
+        "segment": _rate(biz, "segment_correct"),
+        "cause_or_none": _rate(biz, "cause_correct"),
+        "red_herring_rejected": _rate(rows, "red_herring_rejected"),
+        "validation_passed": _rate(rows, "validation_passed"),
+        "cause_correct_by_evidence": by_level,
+        "by_kind": by_kind,
+        "rows": rows,
+    }
+
+
+def run_investigation_eval(suites=("dev", "heldout"), profiles=("main", "low_volume"), out_dir: str | Path = "eval_results") -> dict:
+    out_dir = Path(out_dir)
+    out_dir.mkdir(exist_ok=True)
+    report = {"generated_at": pd.Timestamp.now(tz="UTC").isoformat(), "results": {}}
+    for suite in suites:
+        for profile in profiles:
+            t = time.time()
+            runs = [run_investigation_one(suite, profile, seed) for seed in SUITE_SEEDS[suite]]
+            res = {mode: summarize_investigation([r for run in runs for r in run[mode]]) for mode in ("oracle", "end_to_end")}
+            report["results"][f"{suite}/{profile}"] = res
+            o, e = res["oracle"], res["end_to_end"]
+            print(f"{suite:8s} {profile:10s} oracle driver={o['driver']['rate']} segment={o['segment']['rate']} cause={o['cause_or_none']['rate']} "
+                  f"herring={o['red_herring_rejected']['rate']} | e2e n={e['driver']['n']} driver={e['driver']['rate']} "
+                  f"segment={e['segment']['rate']} cause={e['cause_or_none']['rate']} ({time.time()-t:.0f}s)", flush=True)
+    (out_dir / "investigation.json").write_text(json.dumps(report, indent=1, default=str), encoding="utf-8")
+    return report
+
+
 if __name__ == "__main__":
     import sys
 
     args = dict(a.split("=", 1) for a in sys.argv[1:])
+    if args.get("mode") == "investigation":
+        run_investigation_eval(suites=tuple(args.get("suites", "dev,heldout").split(",")),
+                               profiles=tuple(args.get("profiles", "main,low_volume").split(",")))
+        sys.exit(0)
     run_eval(
         suites=tuple(args.get("suites", "dev,heldout").split(",")),
         profiles=tuple(args.get("profiles", "main,low_volume").split(",")),

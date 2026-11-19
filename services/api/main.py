@@ -19,6 +19,8 @@ from fastapi.middleware.cors import CORSMiddleware  # noqa: E402
 
 from nexuspulse_analytics import daily_kpis, run_reconciliation, unattributed_share_flags  # noqa: E402
 from nexuspulse_analytics.db import read_tables  # noqa: E402
+from nexuspulse_analytics.investigate import investigate  # noqa: E402
+from nexuspulse_analytics.monitor import known_event_days  # noqa: E402
 from nexuspulse_analytics.pipeline import analyze  # noqa: E402
 
 EVAL_RESULTS = ROOT / "eval_results" / "detection.json"
@@ -80,14 +82,23 @@ def _runs(flags: pd.Series) -> list[dict]:
 
 
 @lru_cache(maxsize=4)
-def _compute(workspace: str) -> dict:
+def _state(workspace: str) -> dict:
+    """Load and analyse a workspace once; shared by overview and investigations."""
     cfg = WORKSPACES[workspace]
     tables = read_tables(workspace, cfg["batch"])
     tz = cfg["timezone"]
-    daily = daily_kpis(tables, tz)
+    daily, monitor = analyze(tables, tz)
     flags = unattributed_share_flags(tables, tz)
+    return {"tables": tables, "tz": tz, "daily": daily, "monitor": monitor, "flags": flags,
+            "dq_days": flags.index[flags["flag"]], "known_days": known_event_days(tables["change_events"], tz)}
+
+
+@lru_cache(maxsize=4)
+def _compute(workspace: str) -> dict:
+    cfg = WORKSPACES[workspace]
+    st = _state(workspace)
+    tables, tz, daily, flags, monitor = st["tables"], st["tz"], st["daily"], st["flags"], st["monitor"]
     checks = run_reconciliation(tables, tz)
-    _, monitor = analyze(tables, tz)
 
     cur, prev = daily.iloc[-28:], daily.iloc[-56:-28]
     series = pd.DataFrame(
@@ -142,3 +153,39 @@ def evaluation() -> dict:
     import json
 
     return json.loads(EVAL_RESULTS.read_text(encoding="utf-8"))
+
+
+@lru_cache(maxsize=64)
+def _investigation(workspace: str, incident_id: str) -> dict:
+    st = _state(workspace)
+    inc = next((i for i in st["monitor"].incidents if i["incident_id"] == incident_id), None)
+    if inc is None:
+        raise HTTPException(404, f"unknown incident {incident_id!r}")
+    if inc["status"] == "suppressed_data_quality":
+        raise HTTPException(409, "incident is suppressed because of a data-quality issue; it is not investigated as a business change")
+    inv = investigate(st["tables"], st["tz"], inc, st["dq_days"], st["known_days"], st["daily"])
+    out = {"incident": inc, "workspace": {"id": workspace, **{k: v for k, v in WORKSPACES[workspace].items() if k != "batch"}},
+           "data_label": "Synthetic", **inv}
+    return _clean(out)
+
+
+def _clean(o):
+    """JSON-safe copy: numpy scalars to Python, NaN/inf to None."""
+    import math
+
+    if isinstance(o, dict):
+        return {str(k): _clean(v) for k, v in o.items()}
+    if isinstance(o, (list, tuple)):
+        return [_clean(v) for v in o]
+    if hasattr(o, "item") and not isinstance(o, (str, bytes)):
+        o = o.item()
+    if isinstance(o, float) and not math.isfinite(o):
+        return None
+    return o
+
+
+@app.get("/api/incidents/{incident_id}/investigation")
+def investigation(incident_id: str, workspace: str = "demo") -> dict:
+    if workspace not in WORKSPACES:
+        raise HTTPException(404, f"unknown workspace {workspace!r}")
+    return _investigation(workspace, incident_id)

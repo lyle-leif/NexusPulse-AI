@@ -22,6 +22,7 @@ from .kpis import local_date, valid_orders
 SESSION_DIMS = ["device", "channel", "region"]
 MIN_BASE_SESSIONS = 30
 MIN_NOISE_SCORE = 2.0
+MIN_SHARE, MAX_SHARE = 0.5, 1.5
 
 
 def _noise_score(base: pd.Series, cur: pd.Series) -> float:
@@ -103,10 +104,15 @@ def drill_down(tables: dict[str, pd.DataFrame], tz: str, start: str, end: str, e
     dims["category"] = {"rows": sorted(cats, key=lambda r: r["change"]), "total_change": ctot, "concentration": concentration(cats, ctot)}
 
     # Most concentrated dimension (session dims and category compete on share).
+    # Among segments holding at least half of their dimension's change, pick the one whose
+    # change stands out most from its own day-to-day noise. Shares far above 100% mean
+    # other segments moved the opposite way (offsetting noise), so they are not eligible.
     best = None
     for dim, d in dims.items():
         c = d["concentration"]
-        if c and c["noise_score"] and abs(c["noise_score"]) >= MIN_NOISE_SCORE and (best is None or c["share"] > best[1]["share"]):
+        if not c or not (MIN_SHARE <= c["share"] <= MAX_SHARE) or abs(c["noise_score"]) < MIN_NOISE_SCORE:
+            continue
+        if best is None or abs(c["noise_score"]) > abs(best[1]["noise_score"]):
             best = (dim, c)
 
     second = None

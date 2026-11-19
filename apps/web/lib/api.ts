@@ -94,3 +94,52 @@ export async function getOverview(workspace = "demo"): Promise<Overview> {
   if (!res.ok) throw new Error(`API responded ${res.status}`);
   return res.json();
 }
+
+export type Finding = {
+  finding_id: string;
+  type: string;
+  status: "observed" | "attributed" | "associated" | "hypothesis";
+  text: string;
+  values: Record<string, unknown>;
+};
+
+export type SegmentRow = {
+  dimension: string;
+  segment: string;
+  baseline_per_day: number;
+  current_per_day: number;
+  change: number;
+  traffic_part?: number;
+  rate_part?: number;
+  noise_score: number;
+  volume_ok: boolean;
+};
+
+export type Investigation = {
+  incident: Incident;
+  workspace: { id: string; name: string; timezone: string; currency: string };
+  data_label: string;
+  window: { start: string; end: string; days: number };
+  decomposition: {
+    baseline: { days: number; rule: string };
+    bridge: { line: string; label: string; baseline: number; current: number; change: number; total?: boolean }[];
+    core: { factor: string; baseline: number; current: number; relative_change: number | null; contribution: number }[];
+    core_total: { baseline: number; current: number; change: number };
+  };
+  drilldown: {
+    dimensions: Record<string, { rows: SegmentRow[]; total_change: number; concentration: { segment: string; share: number; noise_score: number } | null }>;
+    primary: { dimension: string; segment: string; share: number; noise_score: number } | null;
+  };
+  events: { event_id: string; occurred_at_local: string; type: string; description: string; scope: Record<string, string>; match: string; hours_before_change: number }[];
+  ruled_out: { alternative: string; ruled_out: boolean; reason: string }[];
+  findings: Finding[];
+  explanation_evidence: { level: "Strong" | "Moderate" | "Weak" | "None"; reasons: string[] };
+  validation: { check: string; passed: boolean; detail: string }[];
+};
+
+export async function getInvestigation(id: string, workspace = "demo"): Promise<Investigation> {
+  await connection();
+  const res = await fetch(`${API_URL}/api/incidents/${encodeURIComponent(id)}/investigation?workspace=${encodeURIComponent(workspace)}`);
+  if (!res.ok) throw new Error(`API responded ${res.status}`);
+  return res.json();
+}

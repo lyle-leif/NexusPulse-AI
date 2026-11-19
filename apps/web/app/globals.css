@@ -13,6 +13,8 @@
   --warn: #b37400;
   --ok: #0a7d0a;
   --fail: #c42f2e;
+  --pos: #2a78d6; /* increases */
+  --neg: #d4762a; /* decreases */
 }
 
 @media (prefers-color-scheme: dark) {
@@ -29,6 +31,8 @@
     --warn: #e0a42e;
     --ok: #3fbf3f;
     --fail: #e66767;
+    --pos: #3987e5;
+    --neg: #e08a45;
   }
 }
 
@@ -45,6 +49,8 @@
   --warn: #e0a42e;
   --ok: #3fbf3f;
   --fail: #e66767;
+  --pos: #3987e5;
+  --neg: #e08a45;
 }
 
 @theme inline {

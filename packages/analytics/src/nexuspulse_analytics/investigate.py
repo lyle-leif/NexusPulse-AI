@@ -11,7 +11,10 @@ Explanation evidence (published rules):
             before the change began, and data quality and calendar ruled out.
 - Moderate: >= 50% in one segment and a scope-matching event; or >= 80% with no event.
 - Weak:     >= 50% in one segment, or an unscoped event in the time window.
-- None:     diffuse change and no matching event. Reported as "no explanation found".
+- None:     diffuse change and no matching event, or neither the store total nor any
+            segment stands out from normal variation. Reported as "no explanation found".
+A store-wide (unscoped) event is only put forward as a possible cause when the store
+total moved beyond normal variation (noise score 2 or more).
 """
 from __future__ import annotations
 
@@ -31,6 +34,7 @@ FACTOR_LABEL = {
 CONVERSION_FACTORS = {"cart_rate", "checkout_rate", "purchase_rate"}
 EVENT_WINDOW_BEFORE = pd.Timedelta(hours=24)
 EVENT_WINDOW_AFTER = pd.Timedelta(hours=24)
+MIN_OVERALL_SCORE = 2.0
 STATUS_ORDER = ["observed", "attributed", "associated", "hypothesis"]
 
 
@@ -139,8 +143,26 @@ def investigate(tables: dict[str, pd.DataFrame], tz: str, incident: dict, dq_day
             + (f", scoped to {ev['scope']}." if ev["scope"] else ", with no scope."),
             event_id=ev["event_id"], match=ev["match"], hours_before_change=ev["hours_before_change"])
 
+    # Is the overall change distinguishable from normal day-to-day variation at all?
+    d = daily if daily is not None else None
+    from .decompose import baseline_days as _bd
+    from .kpis import daily_kpis as _dk
+    d = d if d is not None else _dk(tables, tz)
+    base = _bd(pd.Timestamp(start), pd.Timestamp(end), d.index, exclude=exclude)
+    cur = d.index[(d.index >= pd.Timestamp(start)) & (d.index <= pd.Timestamp(end))]
+    from .drilldown import _noise_score
+    overall = _noise_score(d.loc[base, "net_revenue_bridge"] / 100, d.loc[cur, "net_revenue_bridge"] / 100)
+    add("overall_change", "observed", f"The overall change scores {overall:+.1f} against normal day-to-day variation "
+        f"({'distinguishable' if abs(overall) >= MIN_OVERALL_SCORE else 'not distinguishable'} from noise).",
+        noise_score=overall)
+
     level, reasons = evidence_level(primary["share"] if primary else None, events, all(r["ruled_out"] for r in ruled_out))
-    best_event = next((e for e in events if e["match"] in ("scope_match", "unscoped")), None)
+    overall_ok = abs(overall) >= MIN_OVERALL_SCORE
+    if not overall_ok and not primary:
+        level, reasons = "None", [f"neither the overall change ({overall:+.1f}) nor any segment stands out from normal variation"]
+    # A scoped event can explain a segment change. A store-wide (unscoped) event can only
+    # be put forward when the store total itself moved beyond normal variation.
+    best_event = next((e for e in events if e["match"] == "scope_match" or (e["match"] == "unscoped" and overall_ok)), None)
     cause = None
     if best_event and level in ("Strong", "Moderate", "Weak"):
         cause = {"event_id": best_event["event_id"], "description": best_event["description"], "type": best_event["type"]}

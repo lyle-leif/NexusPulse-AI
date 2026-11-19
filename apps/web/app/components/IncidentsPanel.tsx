@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Incident } from "@/lib/api";
 import { money, shortDate } from "@/lib/format";
 
@@ -45,7 +46,9 @@ export default function IncidentsPanel({ incidents, currency }: { incidents: Inc
               {business.map((i) => (
                 <tr key={i.incident_id}>
                   <td>
-                    {shortDate(i.start)} to {i.end ? shortDate(i.end) : "ongoing"}
+                    <Link href={`/incidents/${i.incident_id}`} className="underline underline-offset-2">
+                      {shortDate(i.start)} to {i.end ? shortDate(i.end) : "ongoing"}
+                    </Link>
                   </td>
                   <td>
                     {METRIC[i.anchor_metric] ?? i.anchor_metric}
@@ -63,7 +66,7 @@ export default function IncidentsPanel({ incidents, currency }: { incidents: Inc
           </table>
         </div>
       )}
-      <p className="muted mt-3 text-xs">Investigations explaining each incident arrive in the next roadmap step.</p>
+      <p className="muted mt-3 text-xs">Open an incident to see its investigation.</p>
     </section>
   );
 }
