@@ -50,6 +50,17 @@ docker compose up -d
 uv run pytest
 ```
 
+To run the overview screen:
+
+```
+uv run python scripts/seed_demo.py
+uv run uvicorn main:app --app-dir services/api --port 8000
+npm --prefix apps/web install
+npm --prefix apps/web run dev
+```
+
+Then open http://localhost:3000. The first page load computes metrics from the database and takes about 15 seconds; later loads are cached by the API.
+
 The development database is published on host port 5433 (to avoid clashing with a local PostgreSQL on 5432). The development credentials in `docker-compose.yml` and `db/roles.sql` are for local use only.
 
 ## Documentation

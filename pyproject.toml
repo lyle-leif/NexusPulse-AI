@@ -4,10 +4,12 @@ version = "0.1.0"
 description = "NexusPulse AI: autonomous business intelligence for small online stores"
 requires-python = ">=3.12,<3.14"
 dependencies = [
+    "fastapi>=0.165.0",
     "numpy>=2.0",
     "pandas>=2.2",
     "psycopg[binary]>=3.2",
     "pyyaml>=6.0",
+    "uvicorn[standard]>=0.54.0",
 ]
 
 [dependency-groups]
