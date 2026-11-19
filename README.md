@@ -39,6 +39,19 @@ Features planned for later releases, including a what-if simulator and conversat
 | Language model | Ollama with a local open-weight model (optional) |
 | Continuous integration | GitHub Actions |
 
+## Local setup
+
+Requirements: Docker Desktop, Python (managed by `uv`), and Node.js for the web app later.
+
+```
+py -m pip install --user uv
+uv sync
+docker compose up -d
+uv run pytest
+```
+
+The development database is published on host port 5433 (to avoid clashing with a local PostgreSQL on 5432). The development credentials in `docker-compose.yml` and `db/roles.sql` are for local use only.
+
 ## Documentation
 
 | Document | Contents |

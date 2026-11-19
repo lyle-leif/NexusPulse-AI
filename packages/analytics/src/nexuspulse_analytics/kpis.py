@@ -10,7 +10,8 @@ import pandas as pd
 
 def local_date(ts: pd.Series, tz: str) -> pd.Series:
     """UTC timestamps -> naive local midnight timestamps."""
-    return ts.dt.tz_convert(tz).dt.tz_localize(None).dt.normalize()
+    # Fix the resolution so results do not depend on whether data came from memory or Postgres.
+    return ts.dt.tz_convert(tz).dt.tz_localize(None).dt.normalize().astype("datetime64[ns]")
 
 
 def valid_orders(orders: pd.DataFrame) -> pd.DataFrame:
