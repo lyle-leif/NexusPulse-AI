@@ -269,10 +269,87 @@ def run_investigation_eval(suites=("dev", "heldout"), profiles=("main", "low_vol
     return report
 
 
+# ---------------------------------------------------------------- narration eval
+def collect_investigations(suite: str = "heldout", profile: str = "main") -> list[dict]:
+    """Oracle investigations of every business scenario in the suite (inputs to narration)."""
+    from nexuspulse_analytics.investigate import investigate
+    from nexuspulse_analytics.monitor import known_event_days
+    from nexuspulse_analytics.reconcile import unattributed_share_flags
+    from nexuspulse_analytics.kpis import daily_kpis as _dk
+
+    p = PROFILES[profile]
+    spec = load_spec(Path("scenarios") / f"{suite}.yaml")
+    out = []
+    for seed in SUITE_SEEDS[suite]:
+        store = generate_store(p, seed, scenarios=sample_scenarios(spec, seed, p.start, p.days))
+        tables = store.tables()
+        daily = _dk(tables, p.timezone)
+        known = known_event_days(tables["change_events"], p.timezone)
+        flags = unattributed_share_flags(tables, p.timezone)
+        dq = flags.index[flags["flag"]]
+        for lab in store.labels:
+            if not lab["expected"]["business_anomaly"]:
+                continue
+            s, e = _window(lab)
+            inc = {"incident_id": f"{seed}_{lab['scenario_id']}", "start": lab["start"], "end": e.date().isoformat(),
+                   "anchor_metric": "net_sales", "direction": lab["expected"]["direction"], "members": []}
+            out.append(investigate(tables, p.timezone, inc, dq, known, daily))
+    return out
+
+
+def run_narration_eval(models=("qwen2.5:3b", "llama3.1:8b"), suite: str = "heldout", profile: str = "main",
+                       out_dir: str | Path = "eval_results") -> dict:
+    from nexuspulse_analytics.narrate import OllamaProvider, narrate, validate_narration
+    from nexuspulse_analytics.report import template_summary
+
+    from .adversarial import run_adversarial
+
+    invs = collect_investigations(suite, profile)
+    report = {"generated_at": pd.Timestamp.now(tz="UTC").isoformat(), "suite": f"{suite}/{profile}", "n_investigations": len(invs)}
+    report["adversarial"] = run_adversarial(invs)
+    tmpl_ok = sum(not validate_narration({"summary": template_summary(i), "next_steps": []}, i) for i in invs)
+    modes = {"template": {"available": True, "n": len(invs), "first_pass": tmpl_ok, "passed_after_retry": 0, "fallback": 0,
+                          "unsupported_number_rate_shown": 0.0, "first_attempt_errors": {}}}
+    for m in models:
+        prov = OllamaProvider(m)
+        if not prov.available():
+            modes[f"ollama:{m}"] = {"available": False, "note": "model not installed; run: ollama pull " + m}
+            continue
+        first = retry = fb = 0
+        err_kinds: dict = {}
+        t = time.time()
+        for inv in invs:
+            n = narrate(inv, prov)
+            v = n["validation"]
+            if v and v[0]["errors"]:
+                for e in v[0]["errors"]:
+                    kind = ("number" if "number" in e else "status" if "status" in e else "direction" if "increase" in e or "decrease" in e
+                            else "causal" if "causal" in e else "overclaim" if "overclaiming" in e else "segment" if "mentions" in e
+                            else "structure")
+                    err_kinds[kind] = err_kinds.get(kind, 0) + 1
+            if n["fallback"]:
+                fb += 1
+            elif n["attempts"] == 1:
+                first += 1
+            else:
+                retry += 1
+        modes[f"ollama:{m}"] = {"available": True, "digest": prov.digest, "n": len(invs), "first_pass": first, "passed_after_retry": retry,
+                                "fallback": fb, "unsupported_number_rate_shown": 0.0, "first_attempt_errors": err_kinds,
+                                "seconds_per_report": round((time.time() - t) / max(1, len(invs)), 1)}
+    report["modes"] = modes
+    print(json.dumps({k: v for k, v in report.items() if k != "adversarial"} | {"adversarial_catch": report["adversarial"]["catch_rate"]}, indent=1))
+    Path(out_dir).mkdir(exist_ok=True)
+    (Path(out_dir) / "narration.json").write_text(json.dumps(report, indent=1, default=str), encoding="utf-8")
+    return report
+
+
 if __name__ == "__main__":
     import sys
 
     args = dict(a.split("=", 1) for a in sys.argv[1:])
+    if args.get("mode") == "narration":
+        run_narration_eval(models=tuple(m for m in args.get("models", "qwen2.5:3b,llama3.1:8b").split(",") if m))
+        sys.exit(0)
     if args.get("mode") == "investigation":
         run_investigation_eval(suites=tuple(args.get("suites", "dev,heldout").split(",")),
                                profiles=tuple(args.get("profiles", "main,low_volume").split(",")))

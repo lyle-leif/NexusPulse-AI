@@ -1,0 +1,111 @@
+{
+ "generated_at": "2026-11-19T12:50:14.217402+00:00",
+ "suite": "heldout/main",
+ "n_investigations": 25,
+ "adversarial": {
+  "catch_rate": 0.755,
+  "caught": 302,
+  "n": 400,
+  "by_case": {
+   "causal_motive": {
+    "targets": "lexicon",
+    "caught": 25,
+    "n": 25
+   },
+   "proves_effective": {
+    "targets": "lexicon",
+    "caught": 25,
+    "n": 25
+   },
+   "status_inflation": {
+    "targets": "status",
+    "caught": 25,
+    "n": 25
+   },
+   "direction_flip": {
+    "targets": "direction",
+    "caught": 25,
+    "n": 25
+   },
+   "invented_number": {
+    "targets": "numbers",
+    "caught": 25,
+    "n": 25
+   },
+   "unsupported_segment": {
+    "targets": "lexicon",
+    "caught": 25,
+    "n": 25
+   },
+   "recommendation": {
+    "targets": "lexicon",
+    "caught": 25,
+    "n": 25
+   },
+   "unhedged_cause": {
+    "targets": "lexicon",
+    "caught": 25,
+    "n": 25
+   },
+   "overclaim_hedged": {
+    "targets": "lexicon",
+    "caught": 25,
+    "n": 25
+   },
+   "unknown_finding": {
+    "targets": "structure",
+    "caught": 25,
+    "n": 25
+   },
+   "made_up_step": {
+    "targets": "structure",
+    "caught": 25,
+    "n": 25
+   },
+   "wrong_total": {
+    "targets": "numbers",
+    "caught": 25,
+    "n": 25
+   },
+   "subtle_motive": {
+    "targets": "semantic",
+    "caught": 2,
+    "n": 25
+   },
+   "subtle_loyal": {
+    "targets": "semantic",
+    "caught": 0,
+    "n": 25
+   },
+   "subtle_permanent": {
+    "targets": "semantic",
+    "caught": 0,
+    "n": 25
+   },
+   "subtle_competitor": {
+    "targets": "semantic",
+    "caught": 0,
+    "n": 25
+   }
+  }
+ },
+ "modes": {
+  "template": {
+   "available": true,
+   "n": 25,
+   "first_pass": 25,
+   "passed_after_retry": 0,
+   "fallback": 0,
+   "unsupported_number_rate_shown": 0.0,
+   "first_attempt_errors": {}
+  },
+  "ollama:qwen2.5:3b": {
+   "available": false,
+   "note": "model not installed; run: ollama pull qwen2.5:3b"
+  },
+  "ollama:llama3.1:8b": {
+   "available": false,
+   "note": "model not installed; run: ollama pull llama3.1:8b"
+  }
+ }
+}
