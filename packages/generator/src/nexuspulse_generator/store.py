@@ -352,7 +352,9 @@ def generate_store(
 
     # ---- change events (holidays + routine newsletter) ----------------------
     nine = pd.Timedelta(hours=9)
-    ev = [(d + nine, typ, desc, {}) for d, typ, desc in holiday_events]
+    # Holidays come from a calendar, so their window length is known in advance.
+    windows = {"Black Friday": 1, "Cyber Monday": 1, "Holiday season begins": 23, "Valentine's Day promotion window": 7}
+    ev = [(d + nine, typ, desc, {"window_days": windows[desc]}) for d, typ, desc in holiday_events]
     for d in dates[dates.day_of_week == 3]:
         ev.append((d + nine, "campaign", "Weekly newsletter sent", {"channel": "email"}))
     ev.extend(fx.events)  # scenario events, already in local time
