@@ -76,7 +76,19 @@ export type EvalSummary = {
   scenarios: ScenarioScore[];
 };
 
+export type Rate = { correct: number; n: number; rate: number | null };
+export type InvestigationSummary = {
+  driver: Rate;
+  segment: Rate;
+  cause_or_none: Rate;
+  red_herring_rejected: Rate;
+  validation_passed: Rate;
+  cause_correct_by_evidence: Record<string, { n: number; cause_correct: number }>;
+  by_kind: Record<string, { n: number; driver: number; segment: number; cause: number }>;
+};
+
 export type Evaluation = {
+  investigation?: { generated_at: string; results: Record<string, { oracle: InvestigationSummary; end_to_end: InvestigationSummary }> };
   generated_at: string;
   results: Record<string, { config: Record<string, unknown> } & Record<string, EvalSummary | Record<string, unknown>>>;
 };

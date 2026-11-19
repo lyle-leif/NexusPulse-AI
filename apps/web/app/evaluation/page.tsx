@@ -1,4 +1,4 @@
-import { getEvaluation, type EvalSummary } from "@/lib/api";
+import { getEvaluation, type EvalSummary, type InvestigationSummary, type Rate } from "@/lib/api";
 import { pct, shortDate } from "@/lib/format";
 import Nav from "../components/Nav";
 
@@ -14,6 +14,74 @@ const SLICE_LABEL: Record<string, string> = {
   "dev/main": "Dev · main store",
   "dev/low_volume": "Dev · low-volume store",
 };
+
+const rate = (r: Rate) => (r.n ? `${Math.round(100 * (r.rate ?? 0))}% (${r.correct}/${r.n})` : "n/a");
+
+function InvestigationScorecard({ results }: { results: Record<string, { oracle: InvestigationSummary; end_to_end: InvestigationSummary }> }) {
+  const slices = SLICES.filter((k) => results[k]);
+  const main = results["heldout/main"]?.oracle;
+  return (
+    <section aria-labelledby="inv" className="card">
+      <h2 id="inv" className="section-title">Investigation accuracy</h2>
+      <p className="muted mb-3">
+        Oracle: investigation run on the true scenario window, which measures the investigation alone. End to end: run on the incident the detector actually
+        raised, so it only covers detected scenarios. Cause is correct when the recorded change that caused it is named, or when none is named and there was none.
+      </p>
+      <div className="overflow-x-auto">
+        <table className="data-table">
+          <thead>
+            <tr>
+              <th scope="col">Slice</th>
+              <th scope="col">Mode</th>
+              <th scope="col" className="num">Driver</th>
+              <th scope="col" className="num">Segment</th>
+              <th scope="col" className="num">Cause or none</th>
+              <th scope="col" className="num">Red herrings rejected</th>
+              <th scope="col" className="num">Validation passed</th>
+            </tr>
+          </thead>
+          <tbody>
+            {slices.flatMap((k) =>
+              (["oracle", "end_to_end"] as const).map((m) => {
+                const r = results[k][m];
+                return (
+                  <tr key={`${k}-${m}`}>
+                    <td>{SLICE_LABEL[k]}</td>
+                    <td>{m === "oracle" ? "Oracle" : "End to end"}</td>
+                    <td className="num">{rate(r.driver)}</td>
+                    <td className="num">{rate(r.segment)}</td>
+                    <td className="num">{rate(r.cause_or_none)}</td>
+                    <td className="num">{m === "oracle" ? rate(r.red_herring_rejected) : "n/a"}</td>
+                    <td className="num">{rate(r.validation_passed)}</td>
+                  </tr>
+                );
+              }),
+            )}
+          </tbody>
+        </table>
+      </div>
+      {main ? (
+        <>
+          <h3 className="sub-title">Is stronger evidence right more often? (held-out, main store, oracle)</h3>
+          <ul className="space-y-3">
+            {Object.entries(main.cause_correct_by_evidence).map(([lvl, v]) => (
+              <li key={lvl}>
+                <div className="flex justify-between text-sm">
+                  <span>{lvl}</span>
+                  <span className="muted">{v.n ? `${v.cause_correct}/${v.n} cause correct` : "no cases"}</span>
+                </div>
+                <div className="meter" role="img" aria-label={`${lvl}: ${v.cause_correct} of ${v.n} correct`}>
+                  <span style={{ width: `${v.n ? (100 * v.cause_correct) / v.n : 0}%` }} />
+                </div>
+              </li>
+            ))}
+          </ul>
+          <p className="muted mt-2 text-xs">For None, correct means no cause was named and the scenario had no recorded cause.</p>
+        </>
+      ) : null}
+    </section>
+  );
+}
 
 const fmt = (v: number | null, digits = 2) => (v === null ? "n/a" : v.toFixed(digits));
 
@@ -189,6 +257,8 @@ export default async function EvaluationPage() {
           </div>
         </section>
       ) : null}
+
+      {ev.investigation ? <InvestigationScorecard results={ev.investigation.results} /> : null}
 
       <footer className="muted border-t pt-4 text-xs" style={{ borderColor: "var(--border)" }}>
         Known limits: forecast bands are too narrow (coverage below 95%); store-level detection misses many 10-30% changes, which segment-level analysis

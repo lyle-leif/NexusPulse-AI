@@ -24,6 +24,7 @@ from nexuspulse_analytics.monitor import known_event_days  # noqa: E402
 from nexuspulse_analytics.pipeline import analyze  # noqa: E402
 
 EVAL_RESULTS = ROOT / "eval_results" / "detection.json"
+INV_RESULTS = ROOT / "eval_results" / "investigation.json"
 
 # Workspace configuration (a workspace table comes with multi-tenancy later).
 WORKSPACES = {
@@ -152,7 +153,10 @@ def evaluation() -> dict:
         raise HTTPException(404, "no evaluation results yet; run the eval runner")
     import json
 
-    return json.loads(EVAL_RESULTS.read_text(encoding="utf-8"))
+    out = json.loads(EVAL_RESULTS.read_text(encoding="utf-8"))
+    if INV_RESULTS.exists():
+        out["investigation"] = json.loads(INV_RESULTS.read_text(encoding="utf-8"))
+    return out
 
 
 @lru_cache(maxsize=64)
