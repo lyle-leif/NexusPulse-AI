@@ -124,6 +124,8 @@ def build_effects(scenarios: tuple[Scenario, ...], dates: pd.DatetimeIndex, cate
             text = _EVENT_TEXT[event_type][int(rng.integers(len(_EVENT_TEXT[event_type])))]
             at = dates[s] + pd.Timedelta(hours=float(p.get("event_offset_hours", -2.0)))
             scope = {k: v for k, v in seg.items()}
+            if sc.kind == "stockout":
+                scope = {"category": p["category"]}
             fx.events.append((at, event_type, text, scope))
             cause_event = {"occurred_at_local": at.isoformat(), "type": event_type, "text": text}
         truth["cause_event"] = cause_event if sc.kind != "red_herring" else None

@@ -16,7 +16,7 @@ import pandas as pd
 
 from .scenarios import Scenario, build_effects
 
-GENERATOR_VERSION = "0.3.0"
+GENERATOR_VERSION = "0.4.0"
 
 CHANNELS = ["organic", "paid_social", "paid_search", "email", "direct"]
 DEVICES = ["mobile", "desktop"]
