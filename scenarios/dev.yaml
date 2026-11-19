@@ -1,0 +1,31 @@
+# Development scenarios: used while building and tuning. Parameters are sampled per run.
+split: dev
+warmup_days: 120
+gap_days: 28
+scenarios:
+  - kind: conversion_drop
+    days: [7, 14]
+    multiplier: [0.45, 0.70]
+    segment: [{device: mobile}]
+    event: [true]
+  - kind: traffic_loss
+    days: [7, 14]
+    multiplier: [0.20, 0.50]
+    segment: [{channel: paid_social}]
+    event: [true]
+  - kind: stockout
+    days: [7, 12]
+    category: [Dresses, Tops]
+    event: [false]
+  - kind: traffic_spike
+    days: [2, 4]
+    multiplier: [1.8, 2.6]
+  - kind: red_herring
+    days: [7, 7]
+    event_type: [deploy, campaign]
+  - kind: tracking_breakage
+    days: [7, 14]
+    lost_share: [0.4, 0.7]
+  - kind: price_increase
+    days: [14, 14]
+    pct: [0.08, 0.15]

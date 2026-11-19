@@ -14,7 +14,9 @@ from dataclasses import dataclass, field, replace
 import numpy as np
 import pandas as pd
 
-GENERATOR_VERSION = "0.1.0"
+from .scenarios import Scenario, build_effects
+
+GENERATOR_VERSION = "0.2.0"
 
 CHANNELS = ["organic", "paid_social", "paid_search", "email", "direct"]
 DEVICES = ["mobile", "desktop"]
@@ -63,14 +65,6 @@ class StoreProfile:
 
 MAIN_FASHION = StoreProfile(name="main_fashion", base_sessions=1500)
 LOW_VOLUME_FASHION = StoreProfile(name="low_volume_fashion", base_sessions=150, day_noise=0.10)
-
-
-@dataclass(frozen=True)
-class Scenario:
-    kind: str
-    start: str
-    days: int
-    params: dict = field(default_factory=dict)
 
 
 @dataclass
@@ -191,6 +185,11 @@ def generate_store(
     n_days = p.days
     t = np.arange(n_days)
 
+    # ---- scenario effects (separate stream so labels never depend on data draws) --
+    cat_w = {c: w for c, (_, _, w) in _CATEGORIES.items()}
+    cat_share = {c: w / sum(cat_w.values()) for c, w in cat_w.items()}
+    fx = build_effects(tuple(scenarios), dates, cat_share, np.random.default_rng([seed, 7]))
+
     # ---- daily traffic level ------------------------------------------------
     h_traffic, h_conv, holiday_events = _holiday_multipliers(dates)
     yearly = 1 + 0.12 * np.cos(2 * np.pi * (dates.day_of_year.to_numpy() - 350) / 365.25)
@@ -208,7 +207,7 @@ def generate_store(
     for c in range(5):
         cell_share[c * 2] = _CHANNEL_SHARE[c] * _MOBILE_SHARE[c]
         cell_share[c * 2 + 1] = _CHANNEL_SHARE[c] * (1 - _MOBILE_SHARE[c])
-    counts = rng.poisson(level[:, None] * cell_share[None, :])  # (days, 10)
+    counts = rng.poisson(level[:, None] * cell_share[None, :] * fx.traffic)  # (days, 10)
     cell = np.repeat(np.arange(n_days * 10), counts.ravel())
     day_idx = cell // 10
     ch_idx = (cell % 10) // 2
@@ -221,10 +220,12 @@ def generate_store(
     started_utc = _local_to_utc(date_values, day_idx, seconds, p.timezone)
 
     # ---- funnel -------------------------------------------------------------
-    p_cart = np.minimum(_P_CART[ch_idx] * _DEVICE_CART_MULT[dev_idx] * h_conv[day_idx], 0.95)
+    cell_in_day = cell % 10
+    p_cart = np.minimum(_P_CART[ch_idx] * _DEVICE_CART_MULT[dev_idx] * h_conv[day_idx] * fx.cart[day_idx, cell_in_day], 0.95)
+    p_buy = np.minimum(_P_BUY[dev_idx] * fx.buy[day_idx, cell_in_day], 0.99)
     reached_cart = rng.random(n_sessions) < p_cart
     reached_checkout = reached_cart & (rng.random(n_sessions) < _P_CHECKOUT[dev_idx])
-    buys = reached_checkout & (rng.random(n_sessions) < _P_BUY[dev_idx])
+    buys = reached_checkout & (rng.random(n_sessions) < p_buy)
 
     session_ids = _hex_ids(rng, n_sessions, "s_")
     sessions = pd.DataFrame(
@@ -263,24 +264,11 @@ def generate_store(
     order_local_day = np.concatenate([order_day, unattr_day])
 
     # ---- scenarios: tracking breakage --------------------------------------
-    labels: list[dict] = []
-    for i, sc in enumerate(scenarios):
-        if sc.kind != "tracking_breakage":
-            raise ValueError(f"unsupported scenario kind: {sc.kind}")
-        start = pd.Timestamp(sc.start)
-        in_window = (dates[order_local_day] >= start) & (dates[order_local_day] < start + pd.Timedelta(days=sc.days))
-        lost = in_window & (order_session_id != None) & (rng.random(n_orders) < sc.params.get("lost_share", 0.6))  # noqa: E711
+    for first, last, lost_share in fx.tracking:
+        in_window = (order_local_day >= first) & (order_local_day <= last)
+        lost = in_window & (order_session_id != None) & (rng.random(n_orders) < lost_share)  # noqa: E711
         order_session_id = np.where(lost, None, order_session_id)
-        labels.append(
-            {
-                "scenario_id": f"sc_{i}",
-                "kind": sc.kind,
-                "start": sc.start,
-                "days": sc.days,
-                "params": sc.params,
-                "expected": {"data_quality_incident": True, "business_anomaly": False},
-            }
-        )
+    labels = fx.labels
 
     # ---- order items, gross, discount --------------------------------------
     products = _build_products()
@@ -289,8 +277,17 @@ def generate_store(
     n_items = rng.choice([1, 2, 3], size=n_orders, p=[0.6, 0.3, 0.1])
     item_order = np.repeat(np.arange(n_orders), n_items)
     item_prod = rng.choice(len(products), size=len(item_order), p=weights)
+    item_day = order_local_day[item_order]
+    prod_cat = products["category"].to_numpy()
+    for first, last, cat in fx.blocked:  # stock-out: those products cannot be bought
+        allowed = prod_cat != cat
+        w_allowed = np.where(allowed, weights, 0.0)
+        w_allowed /= w_allowed.sum()
+        hit = (item_day >= first) & (item_day <= last) & (prod_cat[item_prod] == cat)
+        item_prod[hit] = rng.choice(len(products), size=int(hit.sum()), p=w_allowed)
     item_qty = 1 + (rng.random(len(item_order)) < 0.10).astype(int)
-    gross = np.rint(np.bincount(item_order, weights=item_qty * prices[item_prod], minlength=n_orders)).astype(np.int64)
+    unit_price = np.rint(prices[item_prod] * fx.price[item_day]).astype(np.int64)
+    gross = np.rint(np.bincount(item_order, weights=item_qty * unit_price, minlength=n_orders)).astype(np.int64)
     disc_mask = rng.random(n_orders) < p.discount_rate
     disc_pct = rng.choice([0.10, 0.15, 0.20], size=n_orders)
     discount = np.where(disc_mask, np.rint(gross * disc_pct), 0).astype(np.int64)
@@ -316,7 +313,7 @@ def generate_store(
             "order_id": order_ids[item_order],
             "product_id": products["product_id"].to_numpy(dtype=object)[item_prod],
             "quantity": item_qty,
-            "unit_price": prices[item_prod],
+            "unit_price": unit_price,
         }
     )
 
@@ -354,16 +351,17 @@ def generate_store(
     marketing_spend = pd.concat(spend_rows, ignore_index=True)
 
     # ---- change events (holidays + routine newsletter) ----------------------
-    ev = [(d, typ, desc, {}) for d, typ, desc in holiday_events]
+    nine = pd.Timedelta(hours=9)
+    ev = [(d + nine, typ, desc, {}) for d, typ, desc in holiday_events]
     for d in dates[dates.day_of_week == 3]:
-        ev.append((d, "campaign", "Weekly newsletter sent", {"channel": "email"}))
+        ev.append((d + nine, "campaign", "Weekly newsletter sent", {"channel": "email"}))
+    ev.extend(fx.events)  # scenario events, already in local time
     ev_ids = _hex_ids(rng, len(ev), "e_")
+    local_times = pd.DatetimeIndex([e[0] for e in ev])
     change_events = pd.DataFrame(
         {
             "event_id": ev_ids,
-            "occurred_at": _utc_series(
-                _local_to_utc(date_values, np.array([dates.get_loc(e[0]) for e in ev], dtype=int), np.full(len(ev), 9 * 3600.0), p.timezone)
-            ),
+            "occurred_at": _utc_series(local_times.tz_localize(p.timezone).tz_convert("UTC").tz_localize(None).values),
             "event_type": [e[1] for e in ev],
             "description": [e[2] for e in ev],
             "scope": [e[3] for e in ev],

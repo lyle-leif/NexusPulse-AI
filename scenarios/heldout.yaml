@@ -1,0 +1,33 @@
+# Held-out scenarios: written before tuning and never used to choose thresholds.
+# Differs from dev in segments, magnitudes (including smaller, harder effects) and one unseen kind.
+split: heldout
+warmup_days: 120
+gap_days: 28
+scenarios:
+  - kind: conversion_drop
+    days: [5, 12]
+    multiplier: [0.55, 0.80]
+    segment: [{device: desktop}, {channel: paid_search}]
+    event: [true, false]
+  - kind: traffic_loss
+    days: [5, 12]
+    multiplier: [0.30, 0.60]
+    segment: [{channel: paid_search}, {channel: email}]
+    event: [true, false]
+  - kind: stockout
+    days: [5, 10]
+    category: [Shoes, Bottoms]
+    event: [true, false]
+  - kind: traffic_spike
+    days: [1, 3]
+    multiplier: [1.5, 2.2]
+  - kind: red_herring
+    days: [7, 7]
+    event_type: [deploy, campaign, price_change]
+  - kind: tracking_breakage
+    days: [5, 10]
+    lost_share: [0.3, 0.6]
+  - kind: gradual_conversion_drift
+    days: [21, 35]
+    multiplier: [0.65, 0.80]
+    segment: [{device: mobile}, {}]
