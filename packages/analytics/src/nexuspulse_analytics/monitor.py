@@ -41,8 +41,8 @@ class MonitorConfig:
     reoptimize_every: int = 28
     z_flag: float = 3.5
     z_extreme: float = 5.0
-    z_window3: float = 3.5
-    z_window7: float = 4.0
+    z_window3: float = 3.0
+    z_window7: float = 3.0
     z_in: float = 2.0
     persist: int = 2
     resolve_days: int = 3

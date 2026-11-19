@@ -1,0 +1,176 @@
+"""Detection evaluation runner.
+
+For each (suite, profile, seed): sample scenarios from the suite spec, generate the
+store, run the inference pipeline (which never sees labels), then score incidents
+against the labels. Only this module joins the two.
+
+Matching rules (published):
+- Business scenario detected: a non-suppressed incident with the expected direction
+  that starts no earlier than 2 days before the scenario and no later than its end
+  (or start + 14 days for permanent changes). Delay = incident start - scenario start
+  is reported, clipped at 0, plus the alert delay (first day the monitor could know).
+- Data-quality scenario handled: an overlapping incident is suppressed, or none is raised.
+- Red herring passed: no non-suppressed incident overlaps its window.
+- False alert: a non-suppressed incident that matches no scenario.
+- Effect size: relative change of net sales in the scenario window versus the same
+  seed generated without scenarios (the counterfactual).
+"""
+from __future__ import annotations
+
+import json
+import time
+from dataclasses import replace
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+
+from nexuspulse_analytics import daily_kpis
+from nexuspulse_analytics.forecast import metric_frame
+from nexuspulse_analytics.monitor import MonitorConfig
+from nexuspulse_analytics.pipeline import analyze
+from nexuspulse_generator import LOW_VOLUME_FASHION, MAIN_FASHION, generate_store, load_spec, sample_scenarios
+
+PROFILES = {"main": MAIN_FASHION, "low_volume": LOW_VOLUME_FASHION}
+CONFIGS = {
+    "robust": MonitorConfig(),
+    "robust_masked": MonitorConfig(masking=True),
+    "plain": MonitorConfig(robust=False),
+}
+SUITE_SEEDS = {"dev": range(101, 106), "heldout": range(901, 906)}
+
+
+def _window(label) -> tuple[pd.Timestamp, pd.Timestamp]:
+    s = pd.Timestamp(label["start"])
+    e = pd.Timestamp(label["end"]) if label["end"] else s + pd.Timedelta(days=14)
+    return s, e
+
+
+def score_store(labels: list[dict], incidents: list[dict], daily: pd.DataFrame, counterfactual: pd.Series,
+                monitored_days: int) -> dict:
+    used: set[int] = set()
+    rows = []
+    for lab in labels:
+        s, e = _window(lab)
+        exp = lab["expected"]
+        overl = [
+            (k, i) for k, i in enumerate(incidents)
+            if pd.Timestamp(i["start"]) <= e and pd.Timestamp(i["end"] or "2100-01-01") >= s - pd.Timedelta(days=2)
+        ]
+        live = [(k, i) for k, i in overl if i["status"] != "suppressed_data_quality"]
+        # factual/counterfactual ratio in the window, normalised by the same ratio in the
+        # 28 days before (sample paths drift apart once effects change the random draws)
+        ratio = daily["net_sales"] / counterfactual
+        before = ratio.loc[s - pd.Timedelta(days=28): s - pd.Timedelta(days=1)].median()
+        effect = ratio.loc[s:e].median() / before - 1 if before else np.nan
+        row = {"kind": lab["kind"], "start": lab["start"], "end": lab["end"],
+               "effect_pct": round(100 * float(effect), 1) if np.isfinite(effect) else None}
+        if exp["business_anomaly"]:
+            hits = [(k, i) for k, i in live if i["direction"] == exp["direction"]
+                    and s - pd.Timedelta(days=2) <= pd.Timestamp(i["start"]) <= e]
+            row["outcome"] = "detected" if hits else "missed"
+            if hits:
+                k, i = hits[0]
+                row["delay_days"] = max(0, (pd.Timestamp(i["start"]) - s).days)
+                row["incident"] = i["incident_id"]
+                row["strength"] = i["strength"]
+            used.update(k for k, _ in hits)
+        elif exp["data_quality_incident"]:
+            row["outcome"] = "suppressed" if not live else "alerted_wrongly"
+            used.update(k for k, _ in overl)
+        else:  # red herring
+            row["outcome"] = "passed" if not live else "alerted_wrongly"
+        rows.append(row)
+    false = [i for k, i in enumerate(incidents) if k not in used and i["status"] != "suppressed_data_quality"
+             and not any(r["kind"] == "red_herring" and r["outcome"] == "alerted_wrongly" and _overlap_lab(i, r) for r in rows)]
+    return {"scenarios": rows, "false_alerts": len(false), "monitored_days": monitored_days,
+            "false_alert_list": [{"start": i["start"], "anchor": i["anchor_metric"], "direction": i["direction"]} for i in false]}
+
+
+def _overlap_lab(inc, row) -> bool:
+    s, e = pd.Timestamp(row["start"]), pd.Timestamp(row["end"] or row["start"])
+    return pd.Timestamp(inc["start"]) <= e and pd.Timestamp(inc["end"] or "2100-01-01") >= s
+
+
+def run_one(suite: str, profile: str, seed: int, config: MonitorConfig) -> dict:
+    p = PROFILES[profile]
+    spec = load_spec(Path("scenarios") / f"{suite}.yaml")
+    scen = sample_scenarios(spec, seed, p.start, p.days)
+    store = generate_store(p, seed, scenarios=scen)
+    base = generate_store(p, seed)
+    cf = metric_frame(daily_kpis(base.tables(), p.timezone))["net_sales"]
+    daily, result = analyze(store.tables(), p.timezone, config)
+    metrics = metric_frame(daily)
+    out = score_store(store.labels, result.incidents, metrics, cf, len(metrics) - config.warmup_days)
+    out.update(suite=suite, profile=profile, seed=seed)
+    # forecast quality on this store (net sales, 1-7 day ahead, in-range days only)
+    d = result.daily.xs("net_sales", level="metric")
+    d = d[d["state"].isin(["in_range", "out_of_range"])]
+    out["coverage"] = float(((d["actual"] >= d["lo"]) & (d["actual"] <= d["hi"])).mean())
+    out["mape"] = float((abs(d["actual"] - d["mean"]) / d["actual"]).mean())
+    return out
+
+
+def summarize(runs: list[dict]) -> dict:
+    sc = [r | {"suite": run["suite"], "profile": run["profile"], "seed": run["seed"]} for run in runs for r in run["scenarios"]]
+    biz = [r for r in sc if r["outcome"] in ("detected", "missed")]
+    det = [r for r in biz if r["outcome"] == "detected"]
+    nonbiz = [r for r in sc if r["outcome"] in ("suppressed", "passed", "alerted_wrongly")]
+    days = sum(run["monitored_days"] for run in runs)
+    fa = sum(run["false_alerts"] for run in runs)
+    n_alerts = len(det) + fa + sum(r["outcome"] == "alerted_wrongly" for r in nonbiz)
+    by_kind = {}
+    for r in biz:
+        k = by_kind.setdefault(r["kind"], [0, 0])
+        k[0] += r["outcome"] == "detected"
+        k[1] += 1
+    bins = [(0, 10), (10, 20), (20, 35), (35, 1000)]
+    by_effect = {}
+    for lo, hi in bins:
+        sel = [r for r in biz if r["effect_pct"] is not None and lo <= abs(r["effect_pct"]) < hi]
+        by_effect[f"{lo}-{hi if hi < 1000 else '+'}%"] = {"detected": sum(r["outcome"] == "detected" for r in sel), "n": len(sel)}
+    return {
+        "recall": round(len(det) / len(biz), 3) if biz else None,
+        "precision": round(len(det) / n_alerts, 3) if n_alerts else None,
+        "false_alerts_per_30d": round(30 * fa / days, 3) if days else None,
+        "median_delay_days": float(np.median([r["delay_days"] for r in det])) if det else None,
+        "non_business_handled": f"{sum(r['outcome'] != 'alerted_wrongly' for r in nonbiz)}/{len(nonbiz)}",
+        "recall_by_kind": {k: f"{a}/{b}" for k, (a, b) in sorted(by_kind.items())},
+        "recall_by_effect": by_effect,
+        "forecast_coverage": round(float(np.mean([r["coverage"] for r in runs])), 3),
+        "forecast_mape": round(float(np.mean([r["mape"] for r in runs])), 3),
+        "n_stores": len(runs),
+        "scenarios": sc,
+    }
+
+
+def run_eval(suites=("dev", "heldout"), profiles=("main", "low_volume"), configs=("robust", "robust_masked", "plain"),
+             out_dir: str | Path = "eval_results") -> dict:
+    out_dir = Path(out_dir)
+    out_dir.mkdir(exist_ok=True)
+    report = {"generated_at": pd.Timestamp.now(tz="UTC").isoformat(), "results": {}}
+    for cname in configs:
+        cfg = CONFIGS[cname]
+        report["results"][cname] = {"config": cfg.as_dict()}
+        for suite in suites:
+            for profile in profiles:
+                t = time.time()
+                runs = [run_one(suite, profile, seed, cfg) for seed in SUITE_SEEDS[suite]]
+                summ = summarize(runs)
+                report["results"][cname][f"{suite}/{profile}"] = summ
+                print(f"{cname:14s} {suite:8s} {profile:10s} recall={summ['recall']} precision={summ['precision']} "
+                      f"fa/30d={summ['false_alerts_per_30d']} delay={summ['median_delay_days']} "
+                      f"nonbiz={summ['non_business_handled']} cov={summ['forecast_coverage']} ({time.time()-t:.0f}s)", flush=True)
+    (out_dir / "detection.json").write_text(json.dumps(report, indent=1, default=str), encoding="utf-8")
+    return report
+
+
+if __name__ == "__main__":
+    import sys
+
+    args = dict(a.split("=", 1) for a in sys.argv[1:])
+    run_eval(
+        suites=tuple(args.get("suites", "dev,heldout").split(",")),
+        profiles=tuple(args.get("profiles", "main,low_volume").split(",")),
+        configs=tuple(args.get("configs", "robust,robust_masked,plain").split(",")),
+    )

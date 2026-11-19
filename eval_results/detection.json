@@ -1,0 +1,5090 @@
+{
+ "generated_at": "2026-11-19T11:14:55.444443+00:00",
+ "results": {
+  "robust": {
+   "config": {
+    "model": "ets",
+    "robust": true,
+    "masking": false,
+    "warmup_days": 120,
+    "calibration_days": 42,
+    "refit_every": 7,
+    "reoptimize_every": 28,
+    "z_flag": 3.5,
+    "z_extreme": 5.0,
+    "z_window3": 3.0,
+    "z_window7": 3.0,
+    "z_in": 2.0,
+    "persist": 2,
+    "resolve_days": 3,
+    "max_open_days": 14,
+    "group_gap_days": 2,
+    "model_version": "0.1.0"
+   },
+   "dev/main": {
+    "recall": 0.56,
+    "precision": 0.378,
+    "false_alerts_per_30d": 0.314,
+    "median_delay_days": 0.0,
+    "non_business_handled": "9/10",
+    "recall_by_kind": {
+     "conversion_drop": "2/5",
+     "price_increase": "4/5",
+     "stockout": "1/5",
+     "traffic_loss": "2/5",
+     "traffic_spike": "5/5"
+    },
+    "recall_by_effect": {
+     "0-10%": {
+      "detected": 4,
+      "n": 7
+     },
+     "10-20%": {
+      "detected": 2,
+      "n": 7
+     },
+     "20-35%": {
+      "detected": 3,
+      "n": 6
+     },
+     "35-+%": {
+      "detected": 5,
+      "n": 5
+     }
+    },
+    "forecast_coverage": 0.822,
+    "forecast_mape": 0.4,
+    "n_stores": 5,
+    "scenarios": [
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-05-09",
+      "end": "2025-05-16",
+      "effect_pct": 9.5,
+      "outcome": "suppressed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 101
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-06-19",
+      "end": "2025-07-01",
+      "effect_pct": -5.2,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 101
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-08-10",
+      "end": "2025-08-20",
+      "effect_pct": -27.7,
+      "outcome": "detected",
+      "delay_days": 3,
+      "incident": "inc_2025-08-13_net_sales",
+      "strength": "Moderate",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 101
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-09-18",
+      "end": "2025-09-24",
+      "effect_pct": -8.7,
+      "outcome": "passed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 101
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-11-04",
+      "end": "2025-11-06",
+      "effect_pct": 130.7,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-11-04_net_sales",
+      "strength": "Strong",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 101
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-12-26",
+      "end": "2026-01-03",
+      "effect_pct": -21.5,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 101
+     },
+     {
+      "kind": "price_increase",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": -1.4,
+      "outcome": "detected",
+      "delay_days": 2,
+      "incident": "inc_2026-02-18_session_conversion_rate",
+      "strength": "Moderate",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 101
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-05-03",
+      "end": "2025-05-14",
+      "effect_pct": 6.1,
+      "outcome": "suppressed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 102
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-06-23",
+      "end": "2025-06-29",
+      "effect_pct": -10.5,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 102
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-07-31",
+      "end": "2025-08-12",
+      "effect_pct": -25.8,
+      "outcome": "detected",
+      "delay_days": 6,
+      "incident": "inc_2025-08-06_net_sales",
+      "strength": "Moderate",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 102
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-09-20",
+      "end": "2025-10-01",
+      "effect_pct": 12.3,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-09-20_sessions",
+      "strength": "Moderate",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 102
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-11-12",
+      "end": "2025-11-14",
+      "effect_pct": 163.0,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-11-11_net_sales",
+      "strength": "Strong",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 102
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-12-26",
+      "end": "2026-01-01",
+      "effect_pct": 12.0,
+      "outcome": "passed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 102
+     },
+     {
+      "kind": "price_increase",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": -1.3,
+      "outcome": "detected",
+      "delay_days": 6,
+      "incident": "inc_2026-02-22_net_sales",
+      "strength": "Moderate",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 102
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-05-25",
+      "end": "2025-05-31",
+      "effect_pct": -0.1,
+      "outcome": "passed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 103
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-07-11",
+      "end": "2025-07-21",
+      "effect_pct": -19.3,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 103
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-08-28",
+      "end": "2025-09-07",
+      "effect_pct": 14.6,
+      "outcome": "suppressed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 103
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-10-16",
+      "end": "2025-10-19",
+      "effect_pct": 122.5,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-10-16_sessions",
+      "strength": "Strong",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 103
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-12-26",
+      "end": "2026-01-01",
+      "effect_pct": -27.7,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-12-26_orders",
+      "strength": "Weak",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 103
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2026-02-16",
+      "end": "2026-02-22",
+      "effect_pct": -10.7,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 103
+     },
+     {
+      "kind": "price_increase",
+      "start": "2026-03-30",
+      "end": null,
+      "effect_pct": -11.4,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2026-03-30_orders",
+      "strength": "Weak",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 103
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-05-04",
+      "end": "2025-05-12",
+      "effect_pct": -33.8,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 104
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-06-20",
+      "end": "2025-06-21",
+      "effect_pct": 267.3,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-06-20_orders",
+      "strength": "Strong",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 104
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-07-31",
+      "end": "2025-08-06",
+      "effect_pct": -28.7,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 104
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-09-14",
+      "end": "2025-09-26",
+      "effect_pct": -8.5,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-09-14_orders",
+      "strength": "Moderate",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 104
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-11-07",
+      "end": "2025-11-13",
+      "effect_pct": 11.2,
+      "outcome": "passed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 104
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-12-26",
+      "end": "2026-01-03",
+      "effect_pct": -0.4,
+      "outcome": "suppressed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 104
+     },
+     {
+      "kind": "price_increase",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": 0.8,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 104
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-05-12",
+      "end": "2025-05-18",
+      "effect_pct": 11.7,
+      "outcome": "passed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 105
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-06-18",
+      "end": "2025-06-25",
+      "effect_pct": -14.1,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 105
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-07-27",
+      "end": "2025-08-03",
+      "effect_pct": 3.4,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 105
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-09-03",
+      "end": "2025-09-11",
+      "effect_pct": -9.7,
+      "outcome": "alerted_wrongly",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 105
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-10-17",
+      "end": "2025-10-25",
+      "effect_pct": -15.7,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 105
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-12-26",
+      "end": "2025-12-28",
+      "effect_pct": 120.5,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-12-26_net_sales",
+      "strength": "Strong",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 105
+     },
+     {
+      "kind": "price_increase",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": -4.6,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2026-02-15_orders",
+      "strength": "Moderate",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 105
+     }
+    ]
+   },
+   "dev/low_volume": {
+    "recall": 0.48,
+    "precision": 0.197,
+    "false_alerts_per_30d": 0.7,
+    "median_delay_days": 1.5,
+    "non_business_handled": "10/10",
+    "recall_by_kind": {
+     "conversion_drop": "3/5",
+     "price_increase": "2/5",
+     "stockout": "1/5",
+     "traffic_loss": "3/5",
+     "traffic_spike": "3/5"
+    },
+    "recall_by_effect": {
+     "0-10%": {
+      "detected": 4,
+      "n": 6
+     },
+     "10-20%": {
+      "detected": 2,
+      "n": 4
+     },
+     "20-35%": {
+      "detected": 1,
+      "n": 3
+     },
+     "35-+%": {
+      "detected": 5,
+      "n": 12
+     }
+    },
+    "forecast_coverage": 0.843,
+    "forecast_mape": Infinity,
+    "n_stores": 5,
+    "scenarios": [
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-05-09",
+      "end": "2025-05-16",
+      "effect_pct": 80.4,
+      "outcome": "suppressed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 101
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-06-19",
+      "end": "2025-07-01",
+      "effect_pct": -19.2,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 101
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-08-10",
+      "end": "2025-08-20",
+      "effect_pct": -52.2,
+      "outcome": "detected",
+      "delay_days": 8,
+      "incident": "inc_2025-08-18_net_sales",
+      "strength": "Moderate",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 101
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-09-18",
+      "end": "2025-09-24",
+      "effect_pct": -2.8,
+      "outcome": "passed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 101
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-11-04",
+      "end": "2025-11-06",
+      "effect_pct": 89.1,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-11-04_sessions",
+      "strength": "Weak",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 101
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-12-26",
+      "end": "2026-01-03",
+      "effect_pct": -46.5,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 101
+     },
+     {
+      "kind": "price_increase",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": -2.7,
+      "outcome": "detected",
+      "delay_days": 10,
+      "incident": "inc_2026-02-26_net_sales",
+      "strength": "Strong",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 101
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-05-03",
+      "end": "2025-05-14",
+      "effect_pct": 46.0,
+      "outcome": "suppressed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 102
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-06-23",
+      "end": "2025-06-29",
+      "effect_pct": -44.1,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 102
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-07-31",
+      "end": "2025-08-12",
+      "effect_pct": 4.0,
+      "outcome": "detected",
+      "delay_days": 12,
+      "incident": "inc_2025-08-12_net_sales",
+      "strength": "Moderate",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 102
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-09-20",
+      "end": "2025-10-01",
+      "effect_pct": -20.1,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 102
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-11-12",
+      "end": "2025-11-14",
+      "effect_pct": 90.5,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-11-12_sessions",
+      "strength": "Strong",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 102
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-12-26",
+      "end": "2026-01-01",
+      "effect_pct": -1.5,
+      "outcome": "passed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 102
+     },
+     {
+      "kind": "price_increase",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": -5.1,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 102
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-05-25",
+      "end": "2025-05-31",
+      "effect_pct": -2.6,
+      "outcome": "passed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 103
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-07-11",
+      "end": "2025-07-21",
+      "effect_pct": -10.9,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-07-11_net_sales",
+      "strength": "Strong",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 103
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-08-28",
+      "end": "2025-09-07",
+      "effect_pct": 42.4,
+      "outcome": "suppressed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 103
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-10-16",
+      "end": "2025-10-19",
+      "effect_pct": 269.2,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-10-16_sessions",
+      "strength": "Strong",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 103
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-12-26",
+      "end": "2026-01-01",
+      "effect_pct": -26.4,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-12-26_net_sales",
+      "strength": "Moderate",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 103
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2026-02-16",
+      "end": "2026-02-22",
+      "effect_pct": -13.9,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2026-02-16_net_sales",
+      "strength": "Strong",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 103
+     },
+     {
+      "kind": "price_increase",
+      "start": "2026-03-30",
+      "end": null,
+      "effect_pct": -41.8,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 103
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-05-04",
+      "end": "2025-05-12",
+      "effect_pct": -51.0,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 104
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-06-20",
+      "end": "2025-06-21",
+      "effect_pct": 264.7,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 104
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-07-31",
+      "end": "2025-08-06",
+      "effect_pct": 5.2,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 104
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-09-14",
+      "end": "2025-09-26",
+      "effect_pct": 4.1,
+      "outcome": "detected",
+      "delay_days": 6,
+      "incident": "inc_2025-09-20_net_sales",
+      "strength": "Strong",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 104
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-11-07",
+      "end": "2025-11-13",
+      "effect_pct": 3.4,
+      "outcome": "passed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 104
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-12-26",
+      "end": "2026-01-03",
+      "effect_pct": 17.2,
+      "outcome": "suppressed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 104
+     },
+     {
+      "kind": "price_increase",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": -37.2,
+      "outcome": "detected",
+      "delay_days": 9,
+      "incident": "inc_2026-02-25_net_sales",
+      "strength": "Strong",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 104
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-05-12",
+      "end": "2025-05-18",
+      "effect_pct": 30.1,
+      "outcome": "passed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 105
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-06-18",
+      "end": "2025-06-25",
+      "effect_pct": -9.3,
+      "outcome": "detected",
+      "delay_days": 3,
+      "incident": "inc_2025-06-21_net_sales",
+      "strength": "Moderate",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 105
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-07-27",
+      "end": "2025-08-03",
+      "effect_pct": 15.7,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 105
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-09-03",
+      "end": "2025-09-11",
+      "effect_pct": -15.4,
+      "outcome": "suppressed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 105
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-10-17",
+      "end": "2025-10-25",
+      "effect_pct": 49.3,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 105
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-12-26",
+      "end": "2025-12-28",
+      "effect_pct": 92.4,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 105
+     },
+     {
+      "kind": "price_increase",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": 27.8,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 105
+     }
+    ]
+   },
+   "heldout/main": {
+    "recall": 0.36,
+    "precision": 0.2,
+    "false_alerts_per_30d": 0.485,
+    "median_delay_days": 1.0,
+    "non_business_handled": "8/10",
+    "recall_by_kind": {
+     "conversion_drop": "2/5",
+     "gradual_conversion_drift": "4/5",
+     "stockout": "1/5",
+     "traffic_loss": "1/5",
+     "traffic_spike": "1/5"
+    },
+    "recall_by_effect": {
+     "0-10%": {
+      "detected": 2,
+      "n": 5
+     },
+     "10-20%": {
+      "detected": 6,
+      "n": 11
+     },
+     "20-35%": {
+      "detected": 0,
+      "n": 3
+     },
+     "35-+%": {
+      "detected": 1,
+      "n": 6
+     }
+    },
+    "forecast_coverage": 0.815,
+    "forecast_mape": 0.422,
+    "n_stores": 5,
+    "scenarios": [
+     {
+      "kind": "conversion_drop",
+      "start": "2025-05-24",
+      "end": "2025-06-04",
+      "effect_pct": -11.1,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 901
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-07-03",
+      "end": "2025-07-09",
+      "effect_pct": 8.7,
+      "outcome": "alerted_wrongly",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 901
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-08-11",
+      "end": "2025-08-17",
+      "effect_pct": -15.5,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 901
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-09-16",
+      "end": "2025-09-21",
+      "effect_pct": -3.7,
+      "outcome": "suppressed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 901
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-11-02",
+      "end": "2025-11-03",
+      "effect_pct": 114.5,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-11-02_sessions",
+      "strength": "Strong",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 901
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-12-26",
+      "end": "2026-01-02",
+      "effect_pct": -3.8,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 901
+     },
+     {
+      "kind": "gradual_conversion_drift",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": -13.5,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 901
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-05-18",
+      "end": "2025-05-26",
+      "effect_pct": -8.4,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 902
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-07-06",
+      "end": "2025-07-12",
+      "effect_pct": 25.0,
+      "outcome": "passed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 902
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-08-23",
+      "end": "2025-08-28",
+      "effect_pct": 51.8,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 902
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-09-27",
+      "end": "2025-09-27",
+      "effect_pct": 42.7,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 902
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-11-07",
+      "end": "2025-11-14",
+      "effect_pct": -18.5,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-11-06_session_conversion_rate",
+      "strength": "Strong",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 902
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-12-26",
+      "end": "2026-01-03",
+      "effect_pct": 4.8,
+      "outcome": "suppressed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 902
+     },
+     {
+      "kind": "gradual_conversion_drift",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": -13.6,
+      "outcome": "detected",
+      "delay_days": 11,
+      "incident": "inc_2026-02-27_orders",
+      "strength": "Weak",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 902
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-05-20",
+      "end": "2025-05-24",
+      "effect_pct": -16.5,
+      "outcome": "detected",
+      "delay_days": 1,
+      "incident": "inc_2025-05-21_orders",
+      "strength": "Weak",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 903
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-07-01",
+      "end": "2025-07-06",
+      "effect_pct": -10.0,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 903
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-08-10",
+      "end": "2025-08-10",
+      "effect_pct": 157.4,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 903
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-09-09",
+      "end": "2025-09-15",
+      "effect_pct": 15.9,
+      "outcome": "suppressed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 903
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-10-26",
+      "end": "2025-11-06",
+      "effect_pct": -17.9,
+      "outcome": "detected",
+      "delay_days": 3,
+      "incident": "inc_2025-10-29_orders",
+      "strength": "Moderate",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 903
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-12-26",
+      "end": "2026-01-01",
+      "effect_pct": -7.4,
+      "outcome": "passed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 903
+     },
+     {
+      "kind": "gradual_conversion_drift",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": 14.7,
+      "outcome": "detected",
+      "delay_days": 9,
+      "incident": "inc_2026-02-25_session_conversion_rate",
+      "strength": "Strong",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 903
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-05-10",
+      "end": "2025-05-16",
+      "effect_pct": -19.9,
+      "outcome": "suppressed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 904
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-06-16",
+      "end": "2025-06-16",
+      "effect_pct": 76.4,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 904
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-07-22",
+      "end": "2025-07-30",
+      "effect_pct": -29.2,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 904
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-09-08",
+      "end": "2025-09-18",
+      "effect_pct": -19.4,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-09-07_orders",
+      "strength": "Moderate",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 904
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-10-27",
+      "end": "2025-11-07",
+      "effect_pct": -3.2,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 904
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-12-26",
+      "end": "2026-01-01",
+      "effect_pct": -3.2,
+      "outcome": "passed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 904
+     },
+     {
+      "kind": "gradual_conversion_drift",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": -5.5,
+      "outcome": "detected",
+      "delay_days": 1,
+      "incident": "inc_2026-02-17_net_sales",
+      "strength": "Moderate",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 904
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-05-01",
+      "end": "2025-05-01",
+      "effect_pct": 113.3,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 905
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-06-01",
+      "end": "2025-06-06",
+      "effect_pct": -14.4,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 905
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-07-18",
+      "end": "2025-07-23",
+      "effect_pct": 20.5,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 905
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-08-30",
+      "end": "2025-09-06",
+      "effect_pct": -22.9,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 905
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-10-09",
+      "end": "2025-10-14",
+      "effect_pct": -7.9,
+      "outcome": "suppressed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 905
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-12-26",
+      "end": "2026-01-01",
+      "effect_pct": 1.9,
+      "outcome": "alerted_wrongly",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 905
+     },
+     {
+      "kind": "gradual_conversion_drift",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": -9.7,
+      "outcome": "detected",
+      "delay_days": 4,
+      "incident": "inc_2026-02-20_net_sales",
+      "strength": "Moderate",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 905
+     }
+    ]
+   },
+   "heldout/low_volume": {
+    "recall": 0.28,
+    "precision": 0.135,
+    "false_alerts_per_30d": 0.6,
+    "median_delay_days": 1.0,
+    "non_business_handled": "7/10",
+    "recall_by_kind": {
+     "conversion_drop": "1/5",
+     "gradual_conversion_drift": "3/5",
+     "stockout": "0/5",
+     "traffic_loss": "1/5",
+     "traffic_spike": "2/5"
+    },
+    "recall_by_effect": {
+     "0-10%": {
+      "detected": 1,
+      "n": 3
+     },
+     "10-20%": {
+      "detected": 3,
+      "n": 6
+     },
+     "20-35%": {
+      "detected": 2,
+      "n": 7
+     },
+     "35-+%": {
+      "detected": 1,
+      "n": 9
+     }
+    },
+    "forecast_coverage": 0.876,
+    "forecast_mape": Infinity,
+    "n_stores": 5,
+    "scenarios": [
+     {
+      "kind": "conversion_drop",
+      "start": "2025-05-24",
+      "end": "2025-06-04",
+      "effect_pct": -37.7,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 901
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-07-03",
+      "end": "2025-07-09",
+      "effect_pct": -34.1,
+      "outcome": "alerted_wrongly",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 901
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-08-11",
+      "end": "2025-08-17",
+      "effect_pct": -20.9,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 901
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-09-16",
+      "end": "2025-09-21",
+      "effect_pct": -18.2,
+      "outcome": "suppressed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 901
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-11-02",
+      "end": "2025-11-03",
+      "effect_pct": 205.0,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-11-02_sessions",
+      "strength": "Moderate",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 901
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-12-26",
+      "end": "2026-01-02",
+      "effect_pct": -12.4,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 901
+     },
+     {
+      "kind": "gradual_conversion_drift",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": -12.8,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2026-02-15_net_sales",
+      "strength": "Strong",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 901
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-05-18",
+      "end": "2025-05-26",
+      "effect_pct": -14.4,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 902
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-07-06",
+      "end": "2025-07-12",
+      "effect_pct": 11.4,
+      "outcome": "alerted_wrongly",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 902
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-08-23",
+      "end": "2025-08-28",
+      "effect_pct": 20.7,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 902
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-09-27",
+      "end": "2025-09-27",
+      "effect_pct": 23.2,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-09-27_sessions",
+      "strength": "Moderate",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 902
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-11-07",
+      "end": "2025-11-14",
+      "effect_pct": 1.4,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 902
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-12-26",
+      "end": "2026-01-03",
+      "effect_pct": 50.4,
+      "outcome": "suppressed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 902
+     },
+     {
+      "kind": "gradual_conversion_drift",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": -47.4,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 902
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-05-20",
+      "end": "2025-05-24",
+      "effect_pct": -61.6,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 903
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-07-01",
+      "end": "2025-07-06",
+      "effect_pct": -50.4,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 903
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-08-10",
+      "end": "2025-08-10",
+      "effect_pct": 29.5,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 903
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-09-09",
+      "end": "2025-09-15",
+      "effect_pct": 14.4,
+      "outcome": "suppressed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 903
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-10-26",
+      "end": "2025-11-06",
+      "effect_pct": 16.9,
+      "outcome": "detected",
+      "delay_days": 10,
+      "incident": "inc_2025-11-05_net_sales",
+      "strength": "Moderate",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 903
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-12-26",
+      "end": "2026-01-01",
+      "effect_pct": 0.8,
+      "outcome": "passed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 903
+     },
+     {
+      "kind": "gradual_conversion_drift",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": 14.9,
+      "outcome": "detected",
+      "delay_days": 9,
+      "incident": "inc_2026-02-25_net_sales",
+      "strength": "Strong",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 903
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-05-10",
+      "end": "2025-05-16",
+      "effect_pct": -54.1,
+      "outcome": "suppressed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 904
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-06-16",
+      "end": "2025-06-16",
+      "effect_pct": 71.6,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 904
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-07-22",
+      "end": "2025-07-30",
+      "effect_pct": -17.2,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 904
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-09-08",
+      "end": "2025-09-18",
+      "effect_pct": -40.0,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 904
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-10-27",
+      "end": "2025-11-07",
+      "effect_pct": -22.6,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 904
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-12-26",
+      "end": "2026-01-01",
+      "effect_pct": 35.3,
+      "outcome": "passed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 904
+     },
+     {
+      "kind": "gradual_conversion_drift",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": -0.5,
+      "outcome": "detected",
+      "delay_days": 14,
+      "incident": "inc_2026-03-02_net_sales",
+      "strength": "Moderate",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 904
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-05-01",
+      "end": "2025-05-01",
+      "effect_pct": 174.5,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 905
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-06-01",
+      "end": "2025-06-06",
+      "effect_pct": -29.4,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 905
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-07-18",
+      "end": "2025-07-23",
+      "effect_pct": 82.9,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 905
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-08-30",
+      "end": "2025-09-06",
+      "effect_pct": -27.9,
+      "outcome": "detected",
+      "delay_days": 1,
+      "incident": "inc_2025-08-31_net_sales",
+      "strength": "Weak",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 905
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-10-09",
+      "end": "2025-10-14",
+      "effect_pct": -25.7,
+      "outcome": "suppressed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 905
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-12-26",
+      "end": "2026-01-01",
+      "effect_pct": 39.4,
+      "outcome": "alerted_wrongly",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 905
+     },
+     {
+      "kind": "gradual_conversion_drift",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": 2.3,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 905
+     }
+    ]
+   }
+  },
+  "robust_masked": {
+   "config": {
+    "model": "ets",
+    "robust": true,
+    "masking": true,
+    "warmup_days": 120,
+    "calibration_days": 42,
+    "refit_every": 7,
+    "reoptimize_every": 28,
+    "z_flag": 3.5,
+    "z_extreme": 5.0,
+    "z_window3": 3.0,
+    "z_window7": 3.0,
+    "z_in": 2.0,
+    "persist": 2,
+    "resolve_days": 3,
+    "max_open_days": 14,
+    "group_gap_days": 2,
+    "model_version": "0.1.0"
+   },
+   "dev/main": {
+    "recall": 0.6,
+    "precision": 0.385,
+    "false_alerts_per_30d": 0.314,
+    "median_delay_days": 0.0,
+    "non_business_handled": "8/10",
+    "recall_by_kind": {
+     "conversion_drop": "2/5",
+     "price_increase": "4/5",
+     "stockout": "2/5",
+     "traffic_loss": "2/5",
+     "traffic_spike": "5/5"
+    },
+    "recall_by_effect": {
+     "0-10%": {
+      "detected": 3,
+      "n": 7
+     },
+     "10-20%": {
+      "detected": 3,
+      "n": 7
+     },
+     "20-35%": {
+      "detected": 4,
+      "n": 6
+     },
+     "35-+%": {
+      "detected": 5,
+      "n": 5
+     }
+    },
+    "forecast_coverage": 0.837,
+    "forecast_mape": 0.392,
+    "n_stores": 5,
+    "scenarios": [
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-05-09",
+      "end": "2025-05-16",
+      "effect_pct": 9.5,
+      "outcome": "suppressed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 101
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-06-19",
+      "end": "2025-07-01",
+      "effect_pct": -5.2,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 101
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-08-10",
+      "end": "2025-08-20",
+      "effect_pct": -27.7,
+      "outcome": "detected",
+      "delay_days": 2,
+      "incident": "inc_2025-08-12_net_sales",
+      "strength": "Moderate",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 101
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-09-18",
+      "end": "2025-09-24",
+      "effect_pct": -8.7,
+      "outcome": "passed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 101
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-11-04",
+      "end": "2025-11-06",
+      "effect_pct": 130.7,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-11-03_net_sales",
+      "strength": "Strong",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 101
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-12-26",
+      "end": "2026-01-03",
+      "effect_pct": -21.5,
+      "outcome": "detected",
+      "delay_days": 2,
+      "incident": "inc_2025-12-28_orders",
+      "strength": "Moderate",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 101
+     },
+     {
+      "kind": "price_increase",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": -1.4,
+      "outcome": "detected",
+      "delay_days": 2,
+      "incident": "inc_2026-02-18_orders",
+      "strength": "Moderate",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 101
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-05-03",
+      "end": "2025-05-14",
+      "effect_pct": 6.1,
+      "outcome": "suppressed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 102
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-06-23",
+      "end": "2025-06-29",
+      "effect_pct": -10.5,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 102
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-07-31",
+      "end": "2025-08-12",
+      "effect_pct": -25.8,
+      "outcome": "detected",
+      "delay_days": 6,
+      "incident": "inc_2025-08-06_net_sales",
+      "strength": "Moderate",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 102
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-09-20",
+      "end": "2025-10-01",
+      "effect_pct": 12.3,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-09-20_sessions",
+      "strength": "Moderate",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 102
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-11-12",
+      "end": "2025-11-14",
+      "effect_pct": 163.0,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-11-11_net_sales",
+      "strength": "Strong",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 102
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-12-26",
+      "end": "2026-01-01",
+      "effect_pct": 12.0,
+      "outcome": "alerted_wrongly",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 102
+     },
+     {
+      "kind": "price_increase",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": -1.3,
+      "outcome": "detected",
+      "delay_days": 6,
+      "incident": "inc_2026-02-22_net_sales",
+      "strength": "Moderate",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 102
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-05-25",
+      "end": "2025-05-31",
+      "effect_pct": -0.1,
+      "outcome": "passed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 103
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-07-11",
+      "end": "2025-07-21",
+      "effect_pct": -19.3,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 103
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-08-28",
+      "end": "2025-09-07",
+      "effect_pct": 14.6,
+      "outcome": "suppressed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 103
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-10-16",
+      "end": "2025-10-19",
+      "effect_pct": 122.5,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-10-16_sessions",
+      "strength": "Strong",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 103
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-12-26",
+      "end": "2026-01-01",
+      "effect_pct": -27.7,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-12-26_orders",
+      "strength": "Weak",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 103
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2026-02-16",
+      "end": "2026-02-22",
+      "effect_pct": -10.7,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2026-02-16_sessions",
+      "strength": "Moderate",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 103
+     },
+     {
+      "kind": "price_increase",
+      "start": "2026-03-30",
+      "end": null,
+      "effect_pct": -11.4,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2026-03-30_session_conversion_rate",
+      "strength": "Moderate",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 103
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-05-04",
+      "end": "2025-05-12",
+      "effect_pct": -33.8,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 104
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-06-20",
+      "end": "2025-06-21",
+      "effect_pct": 267.3,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-06-19_net_sales",
+      "strength": "Moderate",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 104
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-07-31",
+      "end": "2025-08-06",
+      "effect_pct": -28.7,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 104
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-09-14",
+      "end": "2025-09-26",
+      "effect_pct": -8.5,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 104
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-11-07",
+      "end": "2025-11-13",
+      "effect_pct": 11.2,
+      "outcome": "passed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 104
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-12-26",
+      "end": "2026-01-03",
+      "effect_pct": -0.4,
+      "outcome": "suppressed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 104
+     },
+     {
+      "kind": "price_increase",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": 0.8,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 104
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-05-12",
+      "end": "2025-05-18",
+      "effect_pct": 11.7,
+      "outcome": "passed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 105
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-06-18",
+      "end": "2025-06-25",
+      "effect_pct": -14.1,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 105
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-07-27",
+      "end": "2025-08-03",
+      "effect_pct": 3.4,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 105
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-09-03",
+      "end": "2025-09-11",
+      "effect_pct": -9.7,
+      "outcome": "alerted_wrongly",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 105
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-10-17",
+      "end": "2025-10-25",
+      "effect_pct": -15.7,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 105
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-12-26",
+      "end": "2025-12-28",
+      "effect_pct": 120.5,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-12-26_net_sales",
+      "strength": "Strong",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 105
+     },
+     {
+      "kind": "price_increase",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": -4.6,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2026-02-15_orders",
+      "strength": "Strong",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 105
+     }
+    ]
+   },
+   "dev/low_volume": {
+    "recall": 0.56,
+    "precision": 0.226,
+    "false_alerts_per_30d": 0.657,
+    "median_delay_days": 0.0,
+    "non_business_handled": "8/10",
+    "recall_by_kind": {
+     "conversion_drop": "3/5",
+     "price_increase": "4/5",
+     "stockout": "1/5",
+     "traffic_loss": "2/5",
+     "traffic_spike": "4/5"
+    },
+    "recall_by_effect": {
+     "0-10%": {
+      "detected": 4,
+      "n": 6
+     },
+     "10-20%": {
+      "detected": 1,
+      "n": 4
+     },
+     "20-35%": {
+      "detected": 1,
+      "n": 3
+     },
+     "35-+%": {
+      "detected": 8,
+      "n": 12
+     }
+    },
+    "forecast_coverage": 0.783,
+    "forecast_mape": Infinity,
+    "n_stores": 5,
+    "scenarios": [
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-05-09",
+      "end": "2025-05-16",
+      "effect_pct": 80.4,
+      "outcome": "suppressed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 101
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-06-19",
+      "end": "2025-07-01",
+      "effect_pct": -19.2,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 101
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-08-10",
+      "end": "2025-08-20",
+      "effect_pct": -52.2,
+      "outcome": "detected",
+      "delay_days": 8,
+      "incident": "inc_2025-08-18_net_sales",
+      "strength": "Moderate",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 101
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-09-18",
+      "end": "2025-09-24",
+      "effect_pct": -2.8,
+      "outcome": "alerted_wrongly",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 101
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-11-04",
+      "end": "2025-11-06",
+      "effect_pct": 89.1,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 101
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-12-26",
+      "end": "2026-01-03",
+      "effect_pct": -46.5,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 101
+     },
+     {
+      "kind": "price_increase",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": -2.7,
+      "outcome": "detected",
+      "delay_days": 10,
+      "incident": "inc_2026-02-26_net_sales",
+      "strength": "Strong",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 101
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-05-03",
+      "end": "2025-05-14",
+      "effect_pct": 46.0,
+      "outcome": "suppressed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 102
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-06-23",
+      "end": "2025-06-29",
+      "effect_pct": -44.1,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 102
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-07-31",
+      "end": "2025-08-12",
+      "effect_pct": 4.0,
+      "outcome": "detected",
+      "delay_days": 12,
+      "incident": "inc_2025-08-12_net_sales",
+      "strength": "Moderate",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 102
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-09-20",
+      "end": "2025-10-01",
+      "effect_pct": -20.1,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 102
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-11-12",
+      "end": "2025-11-14",
+      "effect_pct": 90.5,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-11-12_sessions",
+      "strength": "Strong",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 102
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-12-26",
+      "end": "2026-01-01",
+      "effect_pct": -1.5,
+      "outcome": "passed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 102
+     },
+     {
+      "kind": "price_increase",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": -5.1,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 102
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-05-25",
+      "end": "2025-05-31",
+      "effect_pct": -2.6,
+      "outcome": "passed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 103
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-07-11",
+      "end": "2025-07-21",
+      "effect_pct": -10.9,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-07-11_net_sales",
+      "strength": "Strong",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 103
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-08-28",
+      "end": "2025-09-07",
+      "effect_pct": 42.4,
+      "outcome": "suppressed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 103
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-10-16",
+      "end": "2025-10-19",
+      "effect_pct": 269.2,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-10-15_net_sales",
+      "strength": "Moderate",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 103
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-12-26",
+      "end": "2026-01-01",
+      "effect_pct": -26.4,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 103
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2026-02-16",
+      "end": "2026-02-22",
+      "effect_pct": -13.9,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 103
+     },
+     {
+      "kind": "price_increase",
+      "start": "2026-03-30",
+      "end": null,
+      "effect_pct": -41.8,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2026-03-29_session_conversion_rate",
+      "strength": "Weak",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 103
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-05-04",
+      "end": "2025-05-12",
+      "effect_pct": -51.0,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 104
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-06-20",
+      "end": "2025-06-21",
+      "effect_pct": 264.7,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-06-20_sessions",
+      "strength": "Moderate",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 104
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-07-31",
+      "end": "2025-08-06",
+      "effect_pct": 5.2,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 104
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-09-14",
+      "end": "2025-09-26",
+      "effect_pct": 4.1,
+      "outcome": "detected",
+      "delay_days": 8,
+      "incident": "inc_2025-09-22_net_sales",
+      "strength": "Moderate",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 104
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-11-07",
+      "end": "2025-11-13",
+      "effect_pct": 3.4,
+      "outcome": "passed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 104
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-12-26",
+      "end": "2026-01-03",
+      "effect_pct": 17.2,
+      "outcome": "alerted_wrongly",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 104
+     },
+     {
+      "kind": "price_increase",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": -37.2,
+      "outcome": "detected",
+      "delay_days": 9,
+      "incident": "inc_2026-02-25_net_sales",
+      "strength": "Strong",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 104
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-05-12",
+      "end": "2025-05-18",
+      "effect_pct": 30.1,
+      "outcome": "passed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 105
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-06-18",
+      "end": "2025-06-25",
+      "effect_pct": -9.3,
+      "outcome": "detected",
+      "delay_days": 4,
+      "incident": "inc_2025-06-22_net_sales",
+      "strength": "Moderate",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 105
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-07-27",
+      "end": "2025-08-03",
+      "effect_pct": 15.7,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 105
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-09-03",
+      "end": "2025-09-11",
+      "effect_pct": -15.4,
+      "outcome": "suppressed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 105
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-10-17",
+      "end": "2025-10-25",
+      "effect_pct": 49.3,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-10-16_sessions",
+      "strength": "Moderate",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 105
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-12-26",
+      "end": "2025-12-28",
+      "effect_pct": 92.4,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-12-26_sessions",
+      "strength": "Strong",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 105
+     },
+     {
+      "kind": "price_increase",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": 27.8,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2026-02-15_session_conversion_rate",
+      "strength": "Moderate",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 105
+     }
+    ]
+   },
+   "heldout/main": {
+    "recall": 0.32,
+    "precision": 0.174,
+    "false_alerts_per_30d": 0.5,
+    "median_delay_days": 1.0,
+    "non_business_handled": "7/10",
+    "recall_by_kind": {
+     "conversion_drop": "2/5",
+     "gradual_conversion_drift": "3/5",
+     "stockout": "1/5",
+     "traffic_loss": "1/5",
+     "traffic_spike": "1/5"
+    },
+    "recall_by_effect": {
+     "0-10%": {
+      "detected": 2,
+      "n": 5
+     },
+     "10-20%": {
+      "detected": 5,
+      "n": 11
+     },
+     "20-35%": {
+      "detected": 0,
+      "n": 3
+     },
+     "35-+%": {
+      "detected": 1,
+      "n": 6
+     }
+    },
+    "forecast_coverage": 0.82,
+    "forecast_mape": 0.368,
+    "n_stores": 5,
+    "scenarios": [
+     {
+      "kind": "conversion_drop",
+      "start": "2025-05-24",
+      "end": "2025-06-04",
+      "effect_pct": -11.1,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 901
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-07-03",
+      "end": "2025-07-09",
+      "effect_pct": 8.7,
+      "outcome": "alerted_wrongly",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 901
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-08-11",
+      "end": "2025-08-17",
+      "effect_pct": -15.5,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 901
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-09-16",
+      "end": "2025-09-21",
+      "effect_pct": -3.7,
+      "outcome": "suppressed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 901
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-11-02",
+      "end": "2025-11-03",
+      "effect_pct": 114.5,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-11-02_sessions",
+      "strength": "Strong",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 901
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-12-26",
+      "end": "2026-01-02",
+      "effect_pct": -3.8,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 901
+     },
+     {
+      "kind": "gradual_conversion_drift",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": -13.5,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 901
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-05-18",
+      "end": "2025-05-26",
+      "effect_pct": -8.4,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 902
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-07-06",
+      "end": "2025-07-12",
+      "effect_pct": 25.0,
+      "outcome": "passed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 902
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-08-23",
+      "end": "2025-08-28",
+      "effect_pct": 51.8,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 902
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-09-27",
+      "end": "2025-09-27",
+      "effect_pct": 42.7,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 902
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-11-07",
+      "end": "2025-11-14",
+      "effect_pct": -18.5,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-11-06_session_conversion_rate",
+      "strength": "Moderate",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 902
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-12-26",
+      "end": "2026-01-03",
+      "effect_pct": 4.8,
+      "outcome": "alerted_wrongly",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 902
+     },
+     {
+      "kind": "gradual_conversion_drift",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": -13.6,
+      "outcome": "detected",
+      "delay_days": 4,
+      "incident": "inc_2026-02-20_orders",
+      "strength": "Moderate",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 902
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-05-20",
+      "end": "2025-05-24",
+      "effect_pct": -16.5,
+      "outcome": "detected",
+      "delay_days": 1,
+      "incident": "inc_2025-05-21_orders",
+      "strength": "Weak",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 903
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-07-01",
+      "end": "2025-07-06",
+      "effect_pct": -10.0,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 903
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-08-10",
+      "end": "2025-08-10",
+      "effect_pct": 157.4,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 903
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-09-09",
+      "end": "2025-09-15",
+      "effect_pct": 15.9,
+      "outcome": "alerted_wrongly",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 903
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-10-26",
+      "end": "2025-11-06",
+      "effect_pct": -17.9,
+      "outcome": "detected",
+      "delay_days": 3,
+      "incident": "inc_2025-10-29_sessions",
+      "strength": "Moderate",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 903
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-12-26",
+      "end": "2026-01-01",
+      "effect_pct": -7.4,
+      "outcome": "passed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 903
+     },
+     {
+      "kind": "gradual_conversion_drift",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": 14.7,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 903
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-05-10",
+      "end": "2025-05-16",
+      "effect_pct": -19.9,
+      "outcome": "suppressed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 904
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-06-16",
+      "end": "2025-06-16",
+      "effect_pct": 76.4,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 904
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-07-22",
+      "end": "2025-07-30",
+      "effect_pct": -29.2,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 904
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-09-08",
+      "end": "2025-09-18",
+      "effect_pct": -19.4,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-09-07_orders",
+      "strength": "Moderate",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 904
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-10-27",
+      "end": "2025-11-07",
+      "effect_pct": -3.2,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 904
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-12-26",
+      "end": "2026-01-01",
+      "effect_pct": -3.2,
+      "outcome": "passed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 904
+     },
+     {
+      "kind": "gradual_conversion_drift",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": -5.5,
+      "outcome": "detected",
+      "delay_days": 1,
+      "incident": "inc_2026-02-17_net_sales",
+      "strength": "Moderate",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 904
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-05-01",
+      "end": "2025-05-01",
+      "effect_pct": 113.3,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 905
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-06-01",
+      "end": "2025-06-06",
+      "effect_pct": -14.4,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 905
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-07-18",
+      "end": "2025-07-23",
+      "effect_pct": 20.5,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 905
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-08-30",
+      "end": "2025-09-06",
+      "effect_pct": -22.9,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 905
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-10-09",
+      "end": "2025-10-14",
+      "effect_pct": -7.9,
+      "outcome": "suppressed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 905
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-12-26",
+      "end": "2026-01-01",
+      "effect_pct": 1.9,
+      "outcome": "passed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 905
+     },
+     {
+      "kind": "gradual_conversion_drift",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": -9.7,
+      "outcome": "detected",
+      "delay_days": 4,
+      "incident": "inc_2026-02-20_net_sales",
+      "strength": "Moderate",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 905
+     }
+    ]
+   },
+   "heldout/low_volume": {
+    "recall": 0.28,
+    "precision": 0.179,
+    "false_alerts_per_30d": 0.414,
+    "median_delay_days": 8.0,
+    "non_business_handled": "7/10",
+    "recall_by_kind": {
+     "conversion_drop": "0/5",
+     "gradual_conversion_drift": "4/5",
+     "stockout": "0/5",
+     "traffic_loss": "1/5",
+     "traffic_spike": "2/5"
+    },
+    "recall_by_effect": {
+     "0-10%": {
+      "detected": 1,
+      "n": 3
+     },
+     "10-20%": {
+      "detected": 3,
+      "n": 6
+     },
+     "20-35%": {
+      "detected": 1,
+      "n": 7
+     },
+     "35-+%": {
+      "detected": 2,
+      "n": 9
+     }
+    },
+    "forecast_coverage": 0.871,
+    "forecast_mape": Infinity,
+    "n_stores": 5,
+    "scenarios": [
+     {
+      "kind": "conversion_drop",
+      "start": "2025-05-24",
+      "end": "2025-06-04",
+      "effect_pct": -37.7,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 901
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-07-03",
+      "end": "2025-07-09",
+      "effect_pct": -34.1,
+      "outcome": "alerted_wrongly",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 901
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-08-11",
+      "end": "2025-08-17",
+      "effect_pct": -20.9,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 901
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-09-16",
+      "end": "2025-09-21",
+      "effect_pct": -18.2,
+      "outcome": "suppressed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 901
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-11-02",
+      "end": "2025-11-03",
+      "effect_pct": 205.0,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-11-02_sessions",
+      "strength": "Moderate",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 901
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-12-26",
+      "end": "2026-01-02",
+      "effect_pct": -12.4,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 901
+     },
+     {
+      "kind": "gradual_conversion_drift",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": -12.8,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2026-02-15_net_sales",
+      "strength": "Strong",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 901
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-05-18",
+      "end": "2025-05-26",
+      "effect_pct": -14.4,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 902
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-07-06",
+      "end": "2025-07-12",
+      "effect_pct": 11.4,
+      "outcome": "alerted_wrongly",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 902
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-08-23",
+      "end": "2025-08-28",
+      "effect_pct": 20.7,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 902
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-09-27",
+      "end": "2025-09-27",
+      "effect_pct": 23.2,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-09-27_sessions",
+      "strength": "Strong",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 902
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-11-07",
+      "end": "2025-11-14",
+      "effect_pct": 1.4,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 902
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-12-26",
+      "end": "2026-01-03",
+      "effect_pct": 50.4,
+      "outcome": "suppressed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 902
+     },
+     {
+      "kind": "gradual_conversion_drift",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": -47.4,
+      "outcome": "detected",
+      "delay_days": 8,
+      "incident": "inc_2026-02-24_session_conversion_rate",
+      "strength": "Strong",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 902
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-05-20",
+      "end": "2025-05-24",
+      "effect_pct": -61.6,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 903
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-07-01",
+      "end": "2025-07-06",
+      "effect_pct": -50.4,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 903
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-08-10",
+      "end": "2025-08-10",
+      "effect_pct": 29.5,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 903
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-09-09",
+      "end": "2025-09-15",
+      "effect_pct": 14.4,
+      "outcome": "suppressed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 903
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-10-26",
+      "end": "2025-11-06",
+      "effect_pct": 16.9,
+      "outcome": "detected",
+      "delay_days": 10,
+      "incident": "inc_2025-11-05_net_sales",
+      "strength": "Moderate",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 903
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-12-26",
+      "end": "2026-01-01",
+      "effect_pct": 0.8,
+      "outcome": "passed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 903
+     },
+     {
+      "kind": "gradual_conversion_drift",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": 14.9,
+      "outcome": "detected",
+      "delay_days": 9,
+      "incident": "inc_2026-02-25_net_sales",
+      "strength": "Moderate",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 903
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-05-10",
+      "end": "2025-05-16",
+      "effect_pct": -54.1,
+      "outcome": "suppressed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 904
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-06-16",
+      "end": "2025-06-16",
+      "effect_pct": 71.6,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 904
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-07-22",
+      "end": "2025-07-30",
+      "effect_pct": -17.2,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 904
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-09-08",
+      "end": "2025-09-18",
+      "effect_pct": -40.0,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 904
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-10-27",
+      "end": "2025-11-07",
+      "effect_pct": -22.6,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 904
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-12-26",
+      "end": "2026-01-01",
+      "effect_pct": 35.3,
+      "outcome": "passed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 904
+     },
+     {
+      "kind": "gradual_conversion_drift",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": -0.5,
+      "outcome": "detected",
+      "delay_days": 14,
+      "incident": "inc_2026-03-02_net_sales",
+      "strength": "Moderate",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 904
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-05-01",
+      "end": "2025-05-01",
+      "effect_pct": 174.5,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 905
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-06-01",
+      "end": "2025-06-06",
+      "effect_pct": -29.4,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 905
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-07-18",
+      "end": "2025-07-23",
+      "effect_pct": 82.9,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 905
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-08-30",
+      "end": "2025-09-06",
+      "effect_pct": -27.9,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 905
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-10-09",
+      "end": "2025-10-14",
+      "effect_pct": -25.7,
+      "outcome": "suppressed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 905
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-12-26",
+      "end": "2026-01-01",
+      "effect_pct": 39.4,
+      "outcome": "alerted_wrongly",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 905
+     },
+     {
+      "kind": "gradual_conversion_drift",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": 2.3,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 905
+     }
+    ]
+   }
+  },
+  "plain": {
+   "config": {
+    "model": "ets",
+    "robust": false,
+    "masking": false,
+    "warmup_days": 120,
+    "calibration_days": 42,
+    "refit_every": 7,
+    "reoptimize_every": 28,
+    "z_flag": 3.5,
+    "z_extreme": 5.0,
+    "z_window3": 3.0,
+    "z_window7": 3.0,
+    "z_in": 2.0,
+    "persist": 2,
+    "resolve_days": 3,
+    "max_open_days": 14,
+    "group_gap_days": 2,
+    "model_version": "0.1.0"
+   },
+   "dev/main": {
+    "recall": 0.56,
+    "precision": 0.438,
+    "false_alerts_per_30d": 0.257,
+    "median_delay_days": 0.0,
+    "non_business_handled": "10/10",
+    "recall_by_kind": {
+     "conversion_drop": "3/5",
+     "price_increase": "4/5",
+     "stockout": "1/5",
+     "traffic_loss": "1/5",
+     "traffic_spike": "5/5"
+    },
+    "recall_by_effect": {
+     "0-10%": {
+      "detected": 3,
+      "n": 7
+     },
+     "10-20%": {
+      "detected": 3,
+      "n": 7
+     },
+     "20-35%": {
+      "detected": 3,
+      "n": 6
+     },
+     "35-+%": {
+      "detected": 5,
+      "n": 5
+     }
+    },
+    "forecast_coverage": 0.821,
+    "forecast_mape": 0.4,
+    "n_stores": 5,
+    "scenarios": [
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-05-09",
+      "end": "2025-05-16",
+      "effect_pct": 9.5,
+      "outcome": "suppressed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 101
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-06-19",
+      "end": "2025-07-01",
+      "effect_pct": -5.2,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 101
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-08-10",
+      "end": "2025-08-20",
+      "effect_pct": -27.7,
+      "outcome": "detected",
+      "delay_days": 3,
+      "incident": "inc_2025-08-13_net_sales",
+      "strength": "Moderate",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 101
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-09-18",
+      "end": "2025-09-24",
+      "effect_pct": -8.7,
+      "outcome": "passed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 101
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-11-04",
+      "end": "2025-11-06",
+      "effect_pct": 130.7,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-11-04_net_sales",
+      "strength": "Strong",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 101
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-12-26",
+      "end": "2026-01-03",
+      "effect_pct": -21.5,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 101
+     },
+     {
+      "kind": "price_increase",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": -1.4,
+      "outcome": "detected",
+      "delay_days": 2,
+      "incident": "inc_2026-02-18_session_conversion_rate",
+      "strength": "Moderate",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 101
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-05-03",
+      "end": "2025-05-14",
+      "effect_pct": 6.1,
+      "outcome": "suppressed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 102
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-06-23",
+      "end": "2025-06-29",
+      "effect_pct": -10.5,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 102
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-07-31",
+      "end": "2025-08-12",
+      "effect_pct": -25.8,
+      "outcome": "detected",
+      "delay_days": 6,
+      "incident": "inc_2025-08-06_net_sales",
+      "strength": "Moderate",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 102
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-09-20",
+      "end": "2025-10-01",
+      "effect_pct": 12.3,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-09-20_sessions",
+      "strength": "Moderate",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 102
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-11-12",
+      "end": "2025-11-14",
+      "effect_pct": 163.0,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-11-11_net_sales",
+      "strength": "Strong",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 102
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-12-26",
+      "end": "2026-01-01",
+      "effect_pct": 12.0,
+      "outcome": "passed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 102
+     },
+     {
+      "kind": "price_increase",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": -1.3,
+      "outcome": "detected",
+      "delay_days": 6,
+      "incident": "inc_2026-02-22_net_sales",
+      "strength": "Moderate",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 102
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-05-25",
+      "end": "2025-05-31",
+      "effect_pct": -0.1,
+      "outcome": "passed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 103
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-07-11",
+      "end": "2025-07-21",
+      "effect_pct": -19.3,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-07-09_session_conversion_rate",
+      "strength": "Moderate",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 103
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-08-28",
+      "end": "2025-09-07",
+      "effect_pct": 14.6,
+      "outcome": "suppressed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 103
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-10-16",
+      "end": "2025-10-19",
+      "effect_pct": 122.5,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-10-16_sessions",
+      "strength": "Strong",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 103
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-12-26",
+      "end": "2026-01-01",
+      "effect_pct": -27.7,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-12-26_orders",
+      "strength": "Weak",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 103
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2026-02-16",
+      "end": "2026-02-22",
+      "effect_pct": -10.7,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 103
+     },
+     {
+      "kind": "price_increase",
+      "start": "2026-03-30",
+      "end": null,
+      "effect_pct": -11.4,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2026-03-30_orders",
+      "strength": "Weak",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 103
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-05-04",
+      "end": "2025-05-12",
+      "effect_pct": -33.8,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 104
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-06-20",
+      "end": "2025-06-21",
+      "effect_pct": 267.3,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-06-20_orders",
+      "strength": "Strong",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 104
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-07-31",
+      "end": "2025-08-06",
+      "effect_pct": -28.7,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 104
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-09-14",
+      "end": "2025-09-26",
+      "effect_pct": -8.5,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 104
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-11-07",
+      "end": "2025-11-13",
+      "effect_pct": 11.2,
+      "outcome": "passed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 104
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-12-26",
+      "end": "2026-01-03",
+      "effect_pct": -0.4,
+      "outcome": "suppressed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 104
+     },
+     {
+      "kind": "price_increase",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": 0.8,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 104
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-05-12",
+      "end": "2025-05-18",
+      "effect_pct": 11.7,
+      "outcome": "passed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 105
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-06-18",
+      "end": "2025-06-25",
+      "effect_pct": -14.1,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 105
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-07-27",
+      "end": "2025-08-03",
+      "effect_pct": 3.4,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 105
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-09-03",
+      "end": "2025-09-11",
+      "effect_pct": -9.7,
+      "outcome": "suppressed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 105
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-10-17",
+      "end": "2025-10-25",
+      "effect_pct": -15.7,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 105
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-12-26",
+      "end": "2025-12-28",
+      "effect_pct": 120.5,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-12-26_net_sales",
+      "strength": "Strong",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 105
+     },
+     {
+      "kind": "price_increase",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": -4.6,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2026-02-15_orders",
+      "strength": "Moderate",
+      "suite": "dev",
+      "profile": "main",
+      "seed": 105
+     }
+    ]
+   },
+   "dev/low_volume": {
+    "recall": 0.48,
+    "precision": 0.245,
+    "false_alerts_per_30d": 0.529,
+    "median_delay_days": 3.0,
+    "non_business_handled": "10/10",
+    "recall_by_kind": {
+     "conversion_drop": "3/5",
+     "price_increase": "2/5",
+     "stockout": "1/5",
+     "traffic_loss": "3/5",
+     "traffic_spike": "3/5"
+    },
+    "recall_by_effect": {
+     "0-10%": {
+      "detected": 4,
+      "n": 6
+     },
+     "10-20%": {
+      "detected": 2,
+      "n": 4
+     },
+     "20-35%": {
+      "detected": 1,
+      "n": 3
+     },
+     "35-+%": {
+      "detected": 5,
+      "n": 12
+     }
+    },
+    "forecast_coverage": 0.801,
+    "forecast_mape": Infinity,
+    "n_stores": 5,
+    "scenarios": [
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-05-09",
+      "end": "2025-05-16",
+      "effect_pct": 80.4,
+      "outcome": "suppressed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 101
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-06-19",
+      "end": "2025-07-01",
+      "effect_pct": -19.2,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 101
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-08-10",
+      "end": "2025-08-20",
+      "effect_pct": -52.2,
+      "outcome": "detected",
+      "delay_days": 8,
+      "incident": "inc_2025-08-18_net_sales",
+      "strength": "Moderate",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 101
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-09-18",
+      "end": "2025-09-24",
+      "effect_pct": -2.8,
+      "outcome": "passed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 101
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-11-04",
+      "end": "2025-11-06",
+      "effect_pct": 89.1,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 101
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-12-26",
+      "end": "2026-01-03",
+      "effect_pct": -46.5,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 101
+     },
+     {
+      "kind": "price_increase",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": -2.7,
+      "outcome": "detected",
+      "delay_days": 10,
+      "incident": "inc_2026-02-26_net_sales",
+      "strength": "Strong",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 101
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-05-03",
+      "end": "2025-05-14",
+      "effect_pct": 46.0,
+      "outcome": "suppressed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 102
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-06-23",
+      "end": "2025-06-29",
+      "effect_pct": -44.1,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 102
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-07-31",
+      "end": "2025-08-12",
+      "effect_pct": 4.0,
+      "outcome": "detected",
+      "delay_days": 9,
+      "incident": "inc_2025-08-09_net_sales",
+      "strength": "Moderate",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 102
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-09-20",
+      "end": "2025-10-01",
+      "effect_pct": -20.1,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 102
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-11-12",
+      "end": "2025-11-14",
+      "effect_pct": 90.5,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-11-12_sessions",
+      "strength": "Strong",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 102
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-12-26",
+      "end": "2026-01-01",
+      "effect_pct": -1.5,
+      "outcome": "passed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 102
+     },
+     {
+      "kind": "price_increase",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": -5.1,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 102
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-05-25",
+      "end": "2025-05-31",
+      "effect_pct": -2.6,
+      "outcome": "passed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 103
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-07-11",
+      "end": "2025-07-21",
+      "effect_pct": -10.9,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-07-11_net_sales",
+      "strength": "Moderate",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 103
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-08-28",
+      "end": "2025-09-07",
+      "effect_pct": 42.4,
+      "outcome": "suppressed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 103
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-10-16",
+      "end": "2025-10-19",
+      "effect_pct": 269.2,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-10-16_sessions",
+      "strength": "Strong",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 103
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-12-26",
+      "end": "2026-01-01",
+      "effect_pct": -26.4,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-12-26_net_sales",
+      "strength": "Weak",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 103
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2026-02-16",
+      "end": "2026-02-22",
+      "effect_pct": -13.9,
+      "outcome": "detected",
+      "delay_days": 3,
+      "incident": "inc_2026-02-19_net_sales",
+      "strength": "Strong",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 103
+     },
+     {
+      "kind": "price_increase",
+      "start": "2026-03-30",
+      "end": null,
+      "effect_pct": -41.8,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 103
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-05-04",
+      "end": "2025-05-12",
+      "effect_pct": -51.0,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 104
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-06-20",
+      "end": "2025-06-21",
+      "effect_pct": 264.7,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 104
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-07-31",
+      "end": "2025-08-06",
+      "effect_pct": 5.2,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 104
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-09-14",
+      "end": "2025-09-26",
+      "effect_pct": 4.1,
+      "outcome": "detected",
+      "delay_days": 6,
+      "incident": "inc_2025-09-20_net_sales",
+      "strength": "Moderate",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 104
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-11-07",
+      "end": "2025-11-13",
+      "effect_pct": 3.4,
+      "outcome": "passed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 104
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-12-26",
+      "end": "2026-01-03",
+      "effect_pct": 17.2,
+      "outcome": "suppressed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 104
+     },
+     {
+      "kind": "price_increase",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": -37.2,
+      "outcome": "detected",
+      "delay_days": 9,
+      "incident": "inc_2026-02-25_net_sales",
+      "strength": "Strong",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 104
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-05-12",
+      "end": "2025-05-18",
+      "effect_pct": 30.1,
+      "outcome": "passed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 105
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-06-18",
+      "end": "2025-06-25",
+      "effect_pct": -9.3,
+      "outcome": "detected",
+      "delay_days": 3,
+      "incident": "inc_2025-06-21_net_sales",
+      "strength": "Moderate",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 105
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-07-27",
+      "end": "2025-08-03",
+      "effect_pct": 15.7,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 105
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-09-03",
+      "end": "2025-09-11",
+      "effect_pct": -15.4,
+      "outcome": "suppressed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 105
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-10-17",
+      "end": "2025-10-25",
+      "effect_pct": 49.3,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 105
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-12-26",
+      "end": "2025-12-28",
+      "effect_pct": 92.4,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-12-26_sessions",
+      "strength": "Strong",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 105
+     },
+     {
+      "kind": "price_increase",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": 27.8,
+      "outcome": "missed",
+      "suite": "dev",
+      "profile": "low_volume",
+      "seed": 105
+     }
+    ]
+   },
+   "heldout/main": {
+    "recall": 0.28,
+    "precision": 0.2,
+    "false_alerts_per_30d": 0.386,
+    "median_delay_days": 4.0,
+    "non_business_handled": "9/10",
+    "recall_by_kind": {
+     "conversion_drop": "2/5",
+     "gradual_conversion_drift": "3/5",
+     "stockout": "0/5",
+     "traffic_loss": "1/5",
+     "traffic_spike": "1/5"
+    },
+    "recall_by_effect": {
+     "0-10%": {
+      "detected": 2,
+      "n": 5
+     },
+     "10-20%": {
+      "detected": 4,
+      "n": 11
+     },
+     "20-35%": {
+      "detected": 0,
+      "n": 3
+     },
+     "35-+%": {
+      "detected": 1,
+      "n": 6
+     }
+    },
+    "forecast_coverage": 0.816,
+    "forecast_mape": 0.421,
+    "n_stores": 5,
+    "scenarios": [
+     {
+      "kind": "conversion_drop",
+      "start": "2025-05-24",
+      "end": "2025-06-04",
+      "effect_pct": -11.1,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 901
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-07-03",
+      "end": "2025-07-09",
+      "effect_pct": 8.7,
+      "outcome": "passed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 901
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-08-11",
+      "end": "2025-08-17",
+      "effect_pct": -15.5,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 901
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-09-16",
+      "end": "2025-09-21",
+      "effect_pct": -3.7,
+      "outcome": "suppressed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 901
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-11-02",
+      "end": "2025-11-03",
+      "effect_pct": 114.5,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-11-02_sessions",
+      "strength": "Strong",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 901
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-12-26",
+      "end": "2026-01-02",
+      "effect_pct": -3.8,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 901
+     },
+     {
+      "kind": "gradual_conversion_drift",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": -13.5,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 901
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-05-18",
+      "end": "2025-05-26",
+      "effect_pct": -8.4,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 902
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-07-06",
+      "end": "2025-07-12",
+      "effect_pct": 25.0,
+      "outcome": "passed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 902
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-08-23",
+      "end": "2025-08-28",
+      "effect_pct": 51.8,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 902
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-09-27",
+      "end": "2025-09-27",
+      "effect_pct": 42.7,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 902
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-11-07",
+      "end": "2025-11-14",
+      "effect_pct": -18.5,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 902
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-12-26",
+      "end": "2026-01-03",
+      "effect_pct": 4.8,
+      "outcome": "suppressed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 902
+     },
+     {
+      "kind": "gradual_conversion_drift",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": -13.6,
+      "outcome": "detected",
+      "delay_days": 11,
+      "incident": "inc_2026-02-27_orders",
+      "strength": "Moderate",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 902
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-05-20",
+      "end": "2025-05-24",
+      "effect_pct": -16.5,
+      "outcome": "detected",
+      "delay_days": 1,
+      "incident": "inc_2025-05-21_orders",
+      "strength": "Weak",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 903
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-07-01",
+      "end": "2025-07-06",
+      "effect_pct": -10.0,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 903
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-08-10",
+      "end": "2025-08-10",
+      "effect_pct": 157.4,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 903
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-09-09",
+      "end": "2025-09-15",
+      "effect_pct": 15.9,
+      "outcome": "suppressed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 903
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-10-26",
+      "end": "2025-11-06",
+      "effect_pct": -17.9,
+      "outcome": "detected",
+      "delay_days": 6,
+      "incident": "inc_2025-11-01_orders",
+      "strength": "Moderate",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 903
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-12-26",
+      "end": "2026-01-01",
+      "effect_pct": -7.4,
+      "outcome": "passed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 903
+     },
+     {
+      "kind": "gradual_conversion_drift",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": 14.7,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 903
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-05-10",
+      "end": "2025-05-16",
+      "effect_pct": -19.9,
+      "outcome": "suppressed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 904
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-06-16",
+      "end": "2025-06-16",
+      "effect_pct": 76.4,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 904
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-07-22",
+      "end": "2025-07-30",
+      "effect_pct": -29.2,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 904
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-09-08",
+      "end": "2025-09-18",
+      "effect_pct": -19.4,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-09-07_orders",
+      "strength": "Moderate",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 904
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-10-27",
+      "end": "2025-11-07",
+      "effect_pct": -3.2,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 904
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-12-26",
+      "end": "2026-01-01",
+      "effect_pct": -3.2,
+      "outcome": "passed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 904
+     },
+     {
+      "kind": "gradual_conversion_drift",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": -5.5,
+      "outcome": "detected",
+      "delay_days": 5,
+      "incident": "inc_2026-02-21_net_sales",
+      "strength": "Moderate",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 904
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-05-01",
+      "end": "2025-05-01",
+      "effect_pct": 113.3,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 905
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-06-01",
+      "end": "2025-06-06",
+      "effect_pct": -14.4,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 905
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-07-18",
+      "end": "2025-07-23",
+      "effect_pct": 20.5,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 905
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-08-30",
+      "end": "2025-09-06",
+      "effect_pct": -22.9,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 905
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-10-09",
+      "end": "2025-10-14",
+      "effect_pct": -7.9,
+      "outcome": "suppressed",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 905
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-12-26",
+      "end": "2026-01-01",
+      "effect_pct": 1.9,
+      "outcome": "alerted_wrongly",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 905
+     },
+     {
+      "kind": "gradual_conversion_drift",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": -9.7,
+      "outcome": "detected",
+      "delay_days": 4,
+      "incident": "inc_2026-02-20_net_sales",
+      "strength": "Moderate",
+      "suite": "heldout",
+      "profile": "main",
+      "seed": 905
+     }
+    ]
+   },
+   "heldout/low_volume": {
+    "recall": 0.28,
+    "precision": 0.135,
+    "false_alerts_per_30d": 0.586,
+    "median_delay_days": 3.0,
+    "non_business_handled": "6/10",
+    "recall_by_kind": {
+     "conversion_drop": "1/5",
+     "gradual_conversion_drift": "3/5",
+     "stockout": "0/5",
+     "traffic_loss": "1/5",
+     "traffic_spike": "2/5"
+    },
+    "recall_by_effect": {
+     "0-10%": {
+      "detected": 0,
+      "n": 3
+     },
+     "10-20%": {
+      "detected": 3,
+      "n": 6
+     },
+     "20-35%": {
+      "detected": 2,
+      "n": 7
+     },
+     "35-+%": {
+      "detected": 2,
+      "n": 9
+     }
+    },
+    "forecast_coverage": 0.883,
+    "forecast_mape": Infinity,
+    "n_stores": 5,
+    "scenarios": [
+     {
+      "kind": "conversion_drop",
+      "start": "2025-05-24",
+      "end": "2025-06-04",
+      "effect_pct": -37.7,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 901
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-07-03",
+      "end": "2025-07-09",
+      "effect_pct": -34.1,
+      "outcome": "alerted_wrongly",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 901
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-08-11",
+      "end": "2025-08-17",
+      "effect_pct": -20.9,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 901
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-09-16",
+      "end": "2025-09-21",
+      "effect_pct": -18.2,
+      "outcome": "suppressed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 901
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-11-02",
+      "end": "2025-11-03",
+      "effect_pct": 205.0,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-11-02_sessions",
+      "strength": "Moderate",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 901
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-12-26",
+      "end": "2026-01-02",
+      "effect_pct": -12.4,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 901
+     },
+     {
+      "kind": "gradual_conversion_drift",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": -12.8,
+      "outcome": "detected",
+      "delay_days": 3,
+      "incident": "inc_2026-02-19_net_sales",
+      "strength": "Strong",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 901
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-05-18",
+      "end": "2025-05-26",
+      "effect_pct": -14.4,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 902
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-07-06",
+      "end": "2025-07-12",
+      "effect_pct": 11.4,
+      "outcome": "alerted_wrongly",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 902
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-08-23",
+      "end": "2025-08-28",
+      "effect_pct": 20.7,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 902
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-09-27",
+      "end": "2025-09-27",
+      "effect_pct": 23.2,
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-09-27_sessions",
+      "strength": "Moderate",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 902
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-11-07",
+      "end": "2025-11-14",
+      "effect_pct": 1.4,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 902
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-12-26",
+      "end": "2026-01-03",
+      "effect_pct": 50.4,
+      "outcome": "suppressed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 902
+     },
+     {
+      "kind": "gradual_conversion_drift",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": -47.4,
+      "outcome": "detected",
+      "delay_days": 8,
+      "incident": "inc_2026-02-24_session_conversion_rate",
+      "strength": "Strong",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 902
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-05-20",
+      "end": "2025-05-24",
+      "effect_pct": -61.6,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 903
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-07-01",
+      "end": "2025-07-06",
+      "effect_pct": -50.4,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 903
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-08-10",
+      "end": "2025-08-10",
+      "effect_pct": 29.5,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 903
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-09-09",
+      "end": "2025-09-15",
+      "effect_pct": 14.4,
+      "outcome": "suppressed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 903
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-10-26",
+      "end": "2025-11-06",
+      "effect_pct": 16.9,
+      "outcome": "detected",
+      "delay_days": 10,
+      "incident": "inc_2025-11-05_net_sales",
+      "strength": "Moderate",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 903
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-12-26",
+      "end": "2026-01-01",
+      "effect_pct": 0.8,
+      "outcome": "passed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 903
+     },
+     {
+      "kind": "gradual_conversion_drift",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": 14.9,
+      "outcome": "detected",
+      "delay_days": 9,
+      "incident": "inc_2026-02-25_net_sales",
+      "strength": "Strong",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 903
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-05-10",
+      "end": "2025-05-16",
+      "effect_pct": -54.1,
+      "outcome": "suppressed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 904
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-06-16",
+      "end": "2025-06-16",
+      "effect_pct": 71.6,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 904
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-07-22",
+      "end": "2025-07-30",
+      "effect_pct": -17.2,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 904
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-09-08",
+      "end": "2025-09-18",
+      "effect_pct": -40.0,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 904
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-10-27",
+      "end": "2025-11-07",
+      "effect_pct": -22.6,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 904
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-12-26",
+      "end": "2026-01-01",
+      "effect_pct": 35.3,
+      "outcome": "alerted_wrongly",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 904
+     },
+     {
+      "kind": "gradual_conversion_drift",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": -0.5,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 904
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-05-01",
+      "end": "2025-05-01",
+      "effect_pct": 174.5,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 905
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-06-01",
+      "end": "2025-06-06",
+      "effect_pct": -29.4,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 905
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-07-18",
+      "end": "2025-07-23",
+      "effect_pct": 82.9,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 905
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-08-30",
+      "end": "2025-09-06",
+      "effect_pct": -27.9,
+      "outcome": "detected",
+      "delay_days": 1,
+      "incident": "inc_2025-08-31_net_sales",
+      "strength": "Weak",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 905
+     },
+     {
+      "kind": "tracking_breakage",
+      "start": "2025-10-09",
+      "end": "2025-10-14",
+      "effect_pct": -25.7,
+      "outcome": "suppressed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 905
+     },
+     {
+      "kind": "red_herring",
+      "start": "2025-12-26",
+      "end": "2026-01-01",
+      "effect_pct": 39.4,
+      "outcome": "alerted_wrongly",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 905
+     },
+     {
+      "kind": "gradual_conversion_drift",
+      "start": "2026-02-16",
+      "end": null,
+      "effect_pct": 2.3,
+      "outcome": "missed",
+      "suite": "heldout",
+      "profile": "low_volume",
+      "seed": 905
+     }
+    ]
+   }
+  }
+ }
+}
