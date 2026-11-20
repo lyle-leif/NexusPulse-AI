@@ -14,7 +14,7 @@ const RANGES = [
 export default function TrendPanel({ data }: { data: Overview }) {
   const [range, setRange] = useState(180);
   const series = range === Infinity ? data.series : data.series.slice(-range);
-  const bands: Band[] = data.data_quality_incidents.map((i) => ({ start: i.start, end: i.end, label: "Data-quality incident" }));
+  const bands: Band[] = data.data_quality_incidents.map((i) => ({ start: i.start, end: i.end, label: "Tracking problem" }));
   const cur = data.workspace.currency;
 
   return (
@@ -30,19 +30,19 @@ export default function TrendPanel({ data }: { data: Overview }) {
         </div>
       </div>
       <div className="grid gap-4 lg:grid-cols-2">
-        <LineChart title="Net revenue (order date)" data={series.map((s) => ({ date: s.date, value: s.net_revenue }))} format={(v) => money(v, cur)} bands={bands} />
-        <LineChart title="Sessions" data={series.map((s) => ({ date: s.date, value: s.sessions }))} format={int} bands={bands} />
+        <LineChart title="Net revenue" data={series.map((s) => ({ date: s.date, value: s.net_revenue }))} format={(v) => money(v, cur)} bands={bands} />
+        <LineChart title="Visits" data={series.map((s) => ({ date: s.date, value: s.sessions }))} format={int} bands={bands} />
         <LineChart
-          title="Session conversion rate"
+          title="Visits that bought"
           data={series.map((s) => ({ date: s.date, value: s.session_conversion_rate }))}
           format={(v) => pct(v, 1)}
           bands={bands}
         />
         <LineChart
-          title="Unattributed order share (14-day trailing)"
+          title="Orders we could not link to a visit (14-day)"
           data={series.map((s) => ({ date: s.date, value: s.unattributed_share }))}
           format={(v) => pct(v, 0)}
-          threshold={{ value: 0.1, label: "Alert threshold 10%" }}
+          threshold={{ value: 0.1, label: "Check tracking above 10%" }}
           bands={bands}
         />
       </div>

@@ -31,6 +31,15 @@ export type SeriesPoint = {
   unattributed_share: number | null;
 };
 
+export type FunnelCounts = {
+  sessions: number;
+  reached_cart: number;
+  reached_checkout: number;
+  converting_sessions: number;
+  orders: number;
+  net_revenue: number;
+};
+
 export type Overview = {
   workspace: { id: string; name: string; timezone: string; currency: string };
   data_label: "Synthetic" | "Semi-synthetic" | "Real";
@@ -38,6 +47,11 @@ export type Overview = {
   current_period: PeriodSummary;
   previous_period: PeriodSummary;
   revenue_bridge: { label: string; amount: number; total?: boolean }[];
+  funnel: { current: FunnelCounts; previous: FunnelCounts };
+  forecast: {
+    series: { date: string; actual: number; expected: number; lo: number; hi: number; state: string }[];
+    forecast_ahead: { date: string; expected: number; lo: number; hi: number }[];
+  };
   series: SeriesPoint[];
   reconciliation: { name: string; passed: boolean; detail: string }[];
   data_quality_incidents: { type: string; threshold: number; start: string; end: string; open?: boolean }[];

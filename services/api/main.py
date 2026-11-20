@@ -99,6 +99,51 @@ def _state(workspace: str) -> dict:
             "dq_days": flags.index[flags["flag"]], "known_days": known_event_days(tables["change_events"], tz)}
 
 
+def _funnel(tables: dict, tz: str, daily: pd.DataFrame, start: pd.Timestamp, end: pd.Timestamp) -> dict:
+    """Visitors to revenue for one period, by session date (orders and revenue by order date)."""
+    s = tables["sessions"]
+    day = s["started_at"].dt.tz_convert(tz).dt.tz_localize(None).dt.normalize()
+    s = s[(day >= start) & (day <= end)]
+    d = daily.loc[start:end].sum()
+    return {
+        "sessions": int(len(s)),
+        "reached_cart": int(s["reached_cart"].sum()),
+        "reached_checkout": int(s["reached_checkout"].sum()),
+        "converting_sessions": int(d["converting_sessions"]),
+        "orders": int(d["orders"]),
+        "net_revenue": _dollars(d["net_revenue_bridge"]),
+    }
+
+
+def _forecast_view(monitor, day: pd.Timestamp, window: int) -> dict:
+    """As-of forecast band for the last `window` days and the forecast issued for the days after `day`."""
+    ns = monitor.daily.xs("net_sales", level="metric")
+    past = ns.loc[day - pd.Timedelta(days=window - 1): day]
+    series = [{"date": i.date().isoformat(), "actual": round(float(r["actual"]), 2), "expected": round(float(r["mean"]), 2),
+               "lo": round(float(r["lo"]), 2), "hi": round(float(r["hi"]), 2), "state": r["state"]} for i, r in past.iterrows()]
+    issued = [f for f in monitor.forecasts if f.metric == "net_sales" and f.as_of <= day and f.frame.index[-1] > day]
+    ahead = []
+    if issued:
+        fc = issued[-1]
+        ahead = [{"date": i.date().isoformat(), "expected": round(float(r["mean"]), 2), "lo": round(float(r["lo"]), 2),
+                  "hi": round(float(r["hi"]), 2)} for i, r in fc.frame[fc.frame.index > day].iterrows()]
+    return {"series": series, "forecast_ahead": ahead}
+
+
+def _overview_forecast(st: dict) -> dict:
+    """As-of band for the last 56 days plus a 7-day forecast issued from all data up to today."""
+    from nexuspulse_analytics.forecast import fit_forecast, metric_frame
+
+    mon = st["monitor"]
+    view = _forecast_view(mon, mon.daily.index.get_level_values("date").max(), 56)
+    if not view["forecast_ahead"]:
+        hist = metric_frame(st["daily"])["net_sales"]
+        fc = fit_forecast(hist, "net_sales", 7, model=mon.config.model, robust=mon.config.robust, exclude_days=st["known_days"])
+        view["forecast_ahead"] = [{"date": i.date().isoformat(), "expected": round(float(r["mean"]), 2), "lo": round(float(r["lo"]), 2),
+                                   "hi": round(float(r["hi"]), 2)} for i, r in fc.frame.iterrows()]
+    return view
+
+
 @lru_cache(maxsize=4)
 def _compute(workspace: str) -> dict:
     cfg = WORKSPACES[workspace]
@@ -131,6 +176,9 @@ def _compute(workspace: str) -> dict:
             {"type": "unattributed_order_share", "threshold": 0.10, **r} for r in _runs(flags["flag"])
         ],
         "incidents": sorted(monitor.incidents, key=lambda i: i["start"], reverse=True),
+        "funnel": {"current": _funnel(tables, tz, daily, cur.index[0], cur.index[-1]),
+                   "previous": _funnel(tables, tz, daily, prev.index[0], prev.index[-1])},
+        "forecast": _overview_forecast(st),
         "monitor_config": monitor.config.as_dict(),
         "notes": [
             "Recent refunds are restated as they arrive, so the latest days may understate refunds.",
@@ -148,7 +196,7 @@ def health() -> dict:
 def overview(workspace: str = "demo") -> dict:
     if workspace not in WORKSPACES:
         raise HTTPException(404, f"unknown workspace {workspace!r}")
-    return _compute(workspace)
+    return _clean(_compute(workspace))
 
 
 @app.get("/api/evaluation")
@@ -262,16 +310,8 @@ def timemachine(day: str | None = None, workspace: str = "demo", window: int = 1
         raise HTTPException(404, "no timeline recorded")
     day = day if day in mon.timeline else days[0]
     d = pd.Timestamp(day)
-    ns = mon.daily.xs("net_sales", level="metric")
-    past = ns.loc[d - pd.Timedelta(days=window - 1): d]
-    series = [{"date": i.date().isoformat(), "actual": round(float(r["actual"]), 2), "expected": round(float(r["mean"]), 2),
-               "lo": round(float(r["lo"]), 2), "hi": round(float(r["hi"]), 2), "state": r["state"]} for i, r in past.iterrows()]
-    issued = [f for f in mon.forecasts if f.metric == "net_sales" and f.as_of <= d and f.frame.index[-1] > d]
-    ahead = []
-    if issued:
-        fc = issued[-1]
-        ahead = [{"date": i.date().isoformat(), "expected": round(float(r["mean"]), 2), "lo": round(float(r["lo"]), 2),
-                  "hi": round(float(r["hi"]), 2)} for i, r in fc.frame[fc.frame.index > d].iterrows()]
+    fv = _forecast_view(mon, d, window)
+    series, ahead = fv["series"], fv["forecast_ahead"]
     ev = st["tables"]["change_events"]
     cutoff = (d + pd.Timedelta(days=1)).tz_localize(st["tz"]).tz_convert("UTC")
     recent = ev[(ev["occurred_at"] < cutoff) & (ev["occurred_at"] >= cutoff - pd.Timedelta(days=30))]
