@@ -5,7 +5,11 @@ import { STATIC_DEMO, getTimeMachineDay, getTimeMachineReport, type TimeMachineD
 import { money, shortDate } from "@/lib/format";
 import ForecastChart from "../components/ForecastChart";
 import IssueCard, { issueTitle } from "../components/IssueCard";
+import CopySummary from "../components/CopySummary";
+import { summaryText } from "@/lib/summary";
+import Icon from "../components/Icons";
 import { EvidenceMeter } from "../components/Mini";
+import { SkeletonBlock, SkeletonCard } from "../components/Skeleton";
 
 const addDays = (iso: string, n: number) => {
   const d = new Date(`${iso}T00:00:00Z`);
@@ -91,21 +95,28 @@ export default function TimeMachine() {
   }, [playing, tm, go]);
 
   if (err) return <p role="alert">Could not load the Time Machine: {err}. Is the API running?</p>;
-  if (!tm) return <p className="muted">Loading...</p>;
+  if (!tm)
+    return (
+      <div className="space-y-5" aria-busy="true">
+        <p className="sr-only" role="status">Loading the Time Machine</p>
+        <SkeletonCard lines={2} />
+        <SkeletonCard chart lines={0} />
+      </div>
+    );
   const cur = tm.workspace.currency;
   const dayIdx = Math.round((Date.parse(tm.day) - Date.parse(tm.first_day)) / 86400000);
   const total = Math.round((Date.parse(tm.last_day) - Date.parse(tm.first_day)) / 86400000);
 
   return (
-    <div className="space-y-6">
-      <section className="card" aria-labelledby="ctl">
+    <div className="space-y-5">
+      <section className="card bracket" aria-labelledby="ctl">
         <h2 id="ctl" className="sr-only">
           Controls
         </h2>
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="label">Viewing the store as of</p>
-            <p className="hero-value" style={{ fontSize: "2rem" }}>
+            <p className="hero-value" style={{ fontSize: "2.2rem" }}>
               {shortDate(tm.day)}
             </p>
             <p className="faint text-xs">
@@ -132,14 +143,22 @@ export default function TimeMachine() {
         </div>
         <label className="mt-4 block">
           <span className="sr-only">Day</span>
-          <input type="range" min={0} max={total} value={dayIdx} className="w-full" onChange={(e) => go(addDays(tm.first_day, Number(e.target.value)))} />
+          <input
+            type="range"
+            min={0}
+            max={total}
+            value={dayIdx}
+            className="w-full"
+            style={{ ["--fill" as string]: `${total ? (100 * dayIdx) / total : 0}%` }}
+            onChange={(e) => go(addDays(tm.first_day, Number(e.target.value)))}
+          />
         </label>
         <p className="status-sentence mt-3">{knewSentence(tm)}</p>
       </section>
 
       <section className="card" aria-labelledby="chart">
-        <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <h2 id="chart" className="section-title">Revenue vs expected, as of this day</h2>
+        <div className="card-head">
+          <h2 id="chart" className="section-title"><Icon name="chart" /> Revenue vs expected, as of this day</h2>
           <span className="faint text-xs">Nothing after this day is used</span>
         </div>
         <ForecastChart
@@ -151,10 +170,10 @@ export default function TimeMachine() {
         />
       </section>
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-5 lg:grid-cols-2">
         <section className="card" aria-labelledby="inc">
-          <div className="flex items-baseline justify-between">
-            <h2 id="inc" className="section-title">Issues known on this day</h2>
+          <div className="card-head">
+            <h2 id="inc" className="section-title"><Icon name="issue" /> Issues known on this day</h2>
             <span className="faint text-xs">{tm.incidents.length}</span>
           </div>
           {tm.incidents.length === 0 ? (
@@ -179,8 +198,21 @@ export default function TimeMachine() {
           )}
         </section>
 
-        <section className="card" aria-labelledby="rep" aria-live="polite">
-          <h2 id="rep" className="section-title">Investigation as of {shortDate(rep?.day ?? tm.day)}</h2>
+        <section className="card solid" aria-labelledby="rep" aria-live="polite">
+          <div className="card-head">
+            <h2 id="rep" className="section-title"><Icon name="search" /> Investigation as of {shortDate(rep?.day ?? tm.day)}</h2>
+            {rep && sel ? (
+              <CopySummary
+                text={summaryText({
+                  title: issueTitle(tm.incidents.find((i) => i.incident_id === sel) ?? tm.incidents[0]),
+                  dates: `as of ${shortDate(rep.day)}`,
+                  summary: rep.report.summary.map((x) => x.text),
+                  evidence: rep.evidence.level,
+                  nextSteps: rep.report.next_steps.map((x) => x.text),
+                })}
+              />
+            ) : null}
+          </div>
           {STATIC_DEMO && rep && rep.day !== tm.day ? (
             <p className="faint mb-2 text-xs">Static demo: investigations are stored for the detection day and the end day. The live app runs one for any day.</p>
           ) : null}
@@ -189,7 +221,14 @@ export default function TimeMachine() {
           ) : repErr ? (
             <p className="text-sm">{repErr}</p>
           ) : !rep ? (
-            <p className="muted text-sm">Investigating...</p>
+            <div className="space-y-3" aria-busy="true">
+              <p className="sr-only" role="status">Investigating</p>
+              <SkeletonBlock h={10} w="40%" />
+              <SkeletonBlock h={8} />
+              <SkeletonBlock h={12} w="90%" />
+              <SkeletonBlock h={12} w="75%" />
+              <SkeletonBlock h={12} w="60%" />
+            </div>
           ) : (
             <div className="space-y-4 text-sm">
               <div>
@@ -216,8 +255,8 @@ export default function TimeMachine() {
         </section>
       </div>
 
-      <section className="card" aria-labelledby="ev">
-        <h2 id="ev" className="section-title">Recorded changes in the last 30 days</h2>
+      <section className="card solid" aria-labelledby="ev">
+        <h2 id="ev" className="section-title"><Icon name="clock" /> Recorded changes in the last 30 days</h2>
         {tm.events.length === 0 ? (
           <p className="muted text-sm">None.</p>
         ) : (

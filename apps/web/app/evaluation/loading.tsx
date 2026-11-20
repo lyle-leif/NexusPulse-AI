@@ -1,7 +1,5 @@
+import PageSkeleton from "../components/Skeleton";
+
 export default function Loading() {
-  return (
-    <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
-      <p className="muted">Loading evaluation results.</p>
-    </main>
-  );
+  return <PageSkeleton label="Loading the accuracy results" />;
 }

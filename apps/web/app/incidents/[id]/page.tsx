@@ -2,6 +2,9 @@ import Link from "next/link";
 import { API_URL, STATIC_DEMO, getInvestigation, getReport, type Investigation, type Overview, type Report } from "@/lib/api";
 import { money, shortDate } from "@/lib/format";
 import { METRIC_PLAIN } from "../../components/IssueCard";
+import CopySummary from "../../components/CopySummary";
+import { summaryText } from "@/lib/summary";
+import Icon from "../../components/Icons";
 import { EvidenceMeter } from "../../components/Mini";
 import Nav from "../../components/Nav";
 
@@ -37,12 +40,8 @@ function Waterfall({ inv, currency }: { inv: Investigation; currency: string }) 
             <span className="relative h-4" title={`${FACTOR[c.factor]}: ${money(c.contribution, currency, 2)} per day`}>
               <span className="absolute inset-y-0 left-1/2 w-px" style={{ background: "var(--border)" }} />
               <span
-                className="absolute inset-y-0 rounded"
-                style={{
-                  left: neg ? `${50 - w}%` : "50%",
-                  width: `${Math.max(w, 0.5)}%`,
-                  background: neg ? "var(--warn)" : "var(--accent-fill)",
-                }}
+                className={`absolute inset-y-0 rounded ${neg ? "bar-warn" : "bar-fill"}`}
+                style={{ left: neg ? `${50 - w}%` : "50%", width: `${Math.max(w, 0.5)}%` }}
               />
             </span>
             <span className="num text-right tabular-nums">{money(c.contribution, currency, 0)}</span>
@@ -57,9 +56,9 @@ function Summary({ rep, id, ai: wantAi }: { rep: Report; id: string; ai: boolean
   const ai = rep.summary.some((s) => s.source === "model");
   const n = rep.narration;
   return (
-    <section aria-labelledby="summary" className="card">
+    <section aria-labelledby="summary" className="card solid h-full">
       <h2 id="summary" className="section-title">
-        What happened{" "}
+        <Icon name="search" /> What happened{" "}
         <span className="badge" title="Who wrote these sentences">
           {ai ? `AI-written (${n.model}), validated` : "Template, no AI"}
         </span>
@@ -132,25 +131,36 @@ export default async function IncidentPage({ params, searchParams }: PageProps<"
   const title = `${METRIC_PLAIN[inv.incident.anchor_metric] ?? inv.incident.anchor_metric} ${inv.incident.direction === "up" ? "higher" : "lower"} than expected`;
 
   return (
-    <main className="mx-auto w-full max-w-6xl space-y-6 px-4 py-6 sm:px-6">
+    <main className="mx-auto w-full max-w-6xl space-y-5 px-4 py-5 sm:px-6">
       <Nav active="overview" />
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="eyebrow">
             <Link href="/" className="link">Overview</Link> / Issue
           </p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-tight">{title}</h1>
+          <h1 className="page-title mt-2">{title}</h1>
           <p className="muted mt-1">
             {shortDate(inv.window.start)} to {shortDate(inv.window.end)} ({inv.window.days} days), compared with the same weekdays in the 4 weeks before
           </p>
         </div>
-        <span className="chip">Data: {inv.data_label}</span>
+        <div className="flex flex-wrap items-center gap-2">
+          <CopySummary
+            text={summaryText({
+              title,
+              dates: `${shortDate(inv.window.start)} to ${shortDate(inv.window.end)}`,
+              summary: rep.summary.map((x) => x.text),
+              evidence: ev.level,
+              nextSteps: rep.next_steps.map((x) => x.text),
+            })}
+          />
+          <span className="chip">Data: {inv.data_label}</span>
+        </div>
       </header>
 
-      <div className="grid gap-6 lg:grid-cols-[1.6fr_1fr]">
-        <Summary rep={rep} id={id} ai={wantAi} />
-        <section aria-labelledby="evidence" className="card">
-          <h2 id="evidence" className="section-title">How well we can explain it</h2>
+      <div className="grid gap-5 lg:grid-cols-12">
+        <div className="lg:col-span-8"><Summary rep={rep} id={id} ai={wantAi} /></div>
+        <section aria-labelledby="evidence" className="card bracket lg:col-span-4">
+          <h2 id="evidence" className="section-title"><Icon name="target" /> How well we can explain it</h2>
           <EvidenceMeter level={ev.level} />
           <ul className="muted mt-3 list-disc space-y-1 pl-5 text-sm">
             {ev.reasons.map((r) => (
@@ -164,9 +174,9 @@ export default async function IncidentPage({ params, searchParams }: PageProps<"
         </section>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-5 lg:grid-cols-2">
         <section aria-labelledby="where" className="card">
-          <h2 id="where" className="section-title">Where it changed</h2>
+          <h2 id="where" className="section-title"><Icon name="channel" /> Where it changed</h2>
           {primary ? (
             <>
               <p className="mb-3 text-sm">
@@ -183,11 +193,11 @@ export default async function IncidentPage({ params, searchParams }: PageProps<"
                       <span className="relative h-3" aria-hidden>
                         <span className="absolute inset-y-0 left-1/2 w-px" style={{ background: "var(--border)" }} />
                         <span
-                          className="absolute inset-y-0 rounded-sm"
+                          className={`absolute inset-y-0 rounded-sm ${hot ? (r.change < 0 ? "bar-warn" : "bar-fill") : ""}`}
                           style={{
                             left: r.change < 0 ? `${50 - w}%` : "50%",
                             width: `${Math.max(w, 0.5)}%`,
-                            background: hot ? (r.change < 0 ? "var(--warn)" : "var(--accent-fill)") : "var(--text-muted)",
+                            ...(hot ? {} : { background: "var(--text-muted)", opacity: 0.6 }),
                           }}
                         />
                       </span>
@@ -248,7 +258,7 @@ export default async function IncidentPage({ params, searchParams }: PageProps<"
         </section>
 
         <section aria-labelledby="factors" className="card">
-          <h2 id="factors" className="section-title">What moved</h2>
+          <h2 id="factors" className="section-title"><Icon name="bridge" /> What moved</h2>
           <p className="mb-3 text-sm">
             Sales from tracked visits changed by <strong className="num">{money(inv.decomposition.core_total.change, cur)}</strong> per day. Each bar is one
             factor&apos;s exact share; together they add up to that change.
@@ -286,9 +296,9 @@ export default async function IncidentPage({ params, searchParams }: PageProps<"
         </section>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <section aria-labelledby="events" className="card">
-          <h2 id="events" className="section-title">What happened around then</h2>
+      <div className="grid gap-5 lg:grid-cols-2">
+        <section aria-labelledby="events" className="card solid">
+          <h2 id="events" className="section-title"><Icon name="clock" /> What happened around then</h2>
           {inv.events.length === 0 ? (
             <p className="muted">No recorded changes (releases, prices, campaigns) within 24 hours of the start.</p>
           ) : (
@@ -320,8 +330,8 @@ export default async function IncidentPage({ params, searchParams }: PageProps<"
           </ul>
         </section>
 
-        <section aria-labelledby="findings" className="card">
-          <h2 id="findings" className="section-title">Findings behind the summary</h2>
+        <section aria-labelledby="findings" className="card solid">
+          <h2 id="findings" className="section-title"><Icon name="check" /> Findings behind the summary</h2>
           <p className="status-line">
             <span aria-hidden className={`status-icon ${allValid ? "ok" : "fail"}`}>{allValid ? "✓" : "!"}</span>
             {allValid ? `All ${inv.validation.length} numbers re-checked` : "Some checks failed"}

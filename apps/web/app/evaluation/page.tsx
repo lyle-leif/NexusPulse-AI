@@ -1,6 +1,7 @@
 import { getEvaluation, type EvalSummary, type ExternalEval, type InvestigationSummary, type NarrationEval, type Rate } from "@/lib/api";
 import { pct, shortDate } from "@/lib/format";
 import { Ring, StatTile } from "../components/Mini";
+import Icon from "../components/Icons";
 import Nav from "../components/Nav";
 
 export const metadata = { title: "How accurate is it | NexusPulse AI" };
@@ -68,9 +69,9 @@ function InvestigationDetail({ results }: { results: Record<string, { oracle: In
   const slices = SLICES.filter((k) => results[k]);
   const main = results["heldout/main"]?.oracle;
   return (
-    <section aria-labelledby="inv" className="card">
+    <section aria-labelledby="inv" className="card solid">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 id="inv" className="section-title">Does a stronger explanation mean a right one?</h2>
+        <h2 id="inv" className="section-title"><Icon name="target" /> Does a stronger explanation mean a right one?</h2>
         <Data kind="Synthetic" />
       </div>
       {main ? (
@@ -135,9 +136,9 @@ function InvestigationDetail({ results }: { results: Record<string, { oracle: In
 function NarrationDetail({ n }: { n: NarrationEval }) {
   const cases = Object.entries(n.adversarial.by_case);
   return (
-    <section aria-labelledby="nar" className="card">
+    <section aria-labelledby="nar" className="card solid">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 id="nar" className="section-title">Can a misleading summary slip through?</h2>
+        <h2 id="nar" className="section-title"><Icon name="check" /> Can a misleading summary slip through?</h2>
         <Data kind="Synthetic" />
       </div>
       <p className="text-sm">
@@ -206,13 +207,13 @@ function ExternalDetail({ x }: { x: ExternalEval }) {
   const p = (v: number) => `${Math.round(100 * v)}%`;
   const ns = r.forecast.net_sales;
   return (
-    <section aria-labelledby="ext" className="card">
-      <h2 id="ext" className="section-title">On a real store: {x.dataset}</h2>
+    <section aria-labelledby="ext" className="card solid">
+      <h2 id="ext" className="section-title"><Icon name="orders" /> On a real store: {x.dataset}</h2>
       <p className="muted mb-4 text-sm">
         A real UK online gift retailer, {x.real.notes.orders.toLocaleString()} orders. It has orders only (no visits, funnel, channels or change log), so only
         net sales and orders are monitored and causes cannot be checked.
       </p>
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-5 lg:grid-cols-2">
         <div>
           <div className="flex items-baseline justify-between gap-2">
             <p className="sub-title" style={{ marginTop: 0 }}>The data as it is</p>
@@ -291,18 +292,18 @@ export default async function EvaluationPage() {
   const r = (x: Rate | undefined) => ({ rate: x && x.n ? x.rate : null, text: x && x.n ? `${x.correct} of ${x.n}` : "no cases" });
 
   return (
-    <main className="mx-auto w-full max-w-6xl space-y-6 px-4 py-6 sm:px-6">
+    <main className="mx-auto w-full max-w-6xl space-y-5 px-4 py-5 sm:px-6">
       <Nav active="evaluation" />
       <header className="grid gap-6 lg:grid-cols-[1fr_1.1fr] lg:items-end">
         <div>
           <p className="eyebrow">
             Test run {shortDate(ev.generated_at.slice(0, 10))} · {main?.n_stores ?? 0} generated stores per slice
           </p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-tight">How accurate is it?</h1>
+          <h1 className="page-title mt-2">How accurate is it?</h1>
           <p className="muted mt-1">Scored on stores where we planted the changes and know the answers.</p>
         </div>
         {main ? (
-          <div className="card">
+          <div className="card bracket">
             <div className="flex items-baseline justify-between gap-2">
               <p className="label">In plain words</p>
               <Data kind="Synthetic" />
@@ -316,7 +317,7 @@ export default async function EvaluationPage() {
         <section aria-labelledby="head">
           <h2 id="head" className="sr-only">Headline scores</h2>
           <p className="faint mb-2 text-xs">Held-out stores, default settings. Rings fill to 100%.</p>
-          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
             <RingTile label="Changes caught" r={{ rate: main.recall, text: main.recall === null ? "n/a" : pct(main.recall, 0) }} note="Recall" />
             <RingTile label="Alerts that were real" r={{ rate: main.precision, text: main.precision === null ? "n/a" : pct(main.precision, 0) }} note="Precision" />
             {inv ? (
@@ -327,15 +328,16 @@ export default async function EvaluationPage() {
               </>
             ) : null}
           </ul>
-          <ul className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <StatTile label="False alerts" value={fmt(main.false_alerts_per_30d)} delta={<span className="faint text-xs">per 30 days</span>} />
+          <ul className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            <StatTile icon="issue" label="False alerts" value={fmt(main.false_alerts_per_30d)} delta={<span className="faint text-xs">per 30 days</span>} />
             <StatTile
+              icon="clock"
               label="Time to detect"
               value={days(main.median_delay_days)}
               delta={<span className="faint text-xs">median, from the change starting</span>}
             />
-            <StatTile label="Tracking problems and decoys" value={main.non_business_handled} delta={<span className="faint text-xs">correctly not called business changes</span>} />
-            <StatTile label="Expected range held" value={pct(main.forecast_coverage, 0)} delta={<span className="faint text-xs">target 95%: the range is too narrow</span>}>
+            <StatTile icon="check" label="Tracking problems and decoys" value={main.non_business_handled} delta={<span className="faint text-xs">correctly not called business changes</span>} />
+            <StatTile icon="chart" label="Expected range held" value={pct(main.forecast_coverage, 0)} delta={<span className="faint text-xs">target 95%: the range is too narrow</span>}>
               <div className="flex justify-end">
                 <Ring value={main.forecast_coverage} label={`Expected range held on ${pct(main.forecast_coverage, 0)} of days, target 95%`} />
               </div>
@@ -347,10 +349,10 @@ export default async function EvaluationPage() {
       )}
 
       {main ? (
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid gap-5 lg:grid-cols-2">
           <section aria-labelledby="kind" className="card">
             <div className="flex flex-wrap items-baseline justify-between gap-2">
-              <h2 id="kind" className="section-title">What kinds of change it catches</h2>
+              <h2 id="kind" className="section-title"><Icon name="issue" /> What kinds of change it catches</h2>
               <Data kind="Synthetic" />
             </div>
             <Bars
@@ -363,7 +365,7 @@ export default async function EvaluationPage() {
           </section>
           <section aria-labelledby="effect" className="card">
             <div className="flex flex-wrap items-baseline justify-between gap-2">
-              <h2 id="effect" className="section-title">How big a change it needs</h2>
+              <h2 id="effect" className="section-title"><Icon name="bridge" /> How big a change it needs</h2>
               <Data kind="Synthetic" />
             </div>
             <Bars
@@ -379,8 +381,8 @@ export default async function EvaluationPage() {
       {ev.narration ? <NarrationDetail n={ev.narration} /> : null}
       {ev.external ? <ExternalDetail x={ev.external} /> : null}
 
-      <section aria-labelledby="method" className="card">
-        <h2 id="method" className="section-title">How it was tested</h2>
+      <section aria-labelledby="method" className="card solid">
+        <h2 id="method" className="section-title"><Icon name="info" /> How it was tested</h2>
         <p className="muted text-sm">
           Each store is generated with planted changes whose answers are kept where the system cannot read them. Settings were tuned on a separate dev set;
           the held-out stores use different segments, smaller changes and one kind of change never seen in tuning, so their numbers are the honest ones.

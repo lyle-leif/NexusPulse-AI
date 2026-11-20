@@ -19,10 +19,10 @@ export function SkeletonCard({ lines = 3, chart = false }: { lines?: number; cha
 export default function PageSkeleton({ label }: { label: string }) {
   return (
     <main className="mx-auto w-full max-w-6xl space-y-5 px-4 py-5 sm:px-6" aria-busy="true">
-      <p className="sr-only" role="status">
+      <SkeletonBlock h={58} className="rounded-xl" />
+      <p className="faint text-sm" role="status">
         {label}
       </p>
-      <SkeletonBlock h={58} className="rounded-xl" />
       <SkeletonBlock h={42} w="45%" />
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {[0, 1, 2, 3].map((i) => (
