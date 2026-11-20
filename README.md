@@ -84,10 +84,12 @@ The UK bank-holiday calendar matters. Without it the real data produces 19 alert
 
 ## Screens
 
-- **Overview:** KPIs with the revenue bridge, trends, reconciliation checks, data-quality incidents, and open incidents.
-- **Investigation:** evidence level, summary with citations, revenue bridge, Shapley waterfall, segment table, findings by status, recorded changes, and validation results.
-- **Time Machine:** step through the store day by day and see exactly what the monitor knew on each day. Each day's incident list is identical to that of a run stopped on that day, which a test checks. Investigations use no later data.
-- **Evaluation:** every result above, labeled by data type.
+Each screen opens with one plain sentence, generated from the data, that says what is happening. Technical detail (tables, rules, methods) sits in expandable sections below it. The UI uses issue for incident and "how well we can explain it" for evidence level.
+
+- **Overview:** net revenue and its change; a visits-to-revenue flow drawn to scale that highlights a step only when it weakened by more than 5%; tiles for orders, visits, conversion and average order value; revenue against the expected range with a 7-day forecast; open issues; the revenue bridge; and data health.
+- **Investigation:** a summary with citations next to an evidence meter; segment bars showing where the change happened; a Shapley waterfall showing what moved; recorded changes around the start; the alternatives that were checked; and findings by status. Full tables are in expandable sections.
+- **Time Machine:** replay the store one day at a time and see exactly what the monitor knew on each day. Each day's issue list is identical to that of a run stopped on that day, which a test checks. Investigations use no later data.
+- **Evaluation:** headline scores as rings, recall by kind and size of change, and whether stronger evidence is right more often. Every section is labeled Synthetic, Semi-synthetic or Real.
 
 ## Technology
 
