@@ -4,16 +4,17 @@
    in both modes (light mode separates them by lightness). Dark first. One accent (lime) for data only; text stays neutral. No glows or gradients. */
 :root {
   color-scheme: dark;
-  --background: #0b0c0a;
-  --surface: #131512;
-  --surface-2: #1a1c18;
-  --foreground: #ecede6;
+  --background: #141612;
+  --surface: #1b1d19;
+  --surface-2: #22251f;
+  --foreground: #dcdfd6;
   --text-secondary: #a3a69a;
-  --text-muted: #73766c;
-  --border: #262823;
-  --grid: #1f211d;
+  --text-muted: #8e9186;
+  --border: #2b2e27;
+  --grid: #262922;
   --accent: #b5e655;
-  --accent-ink: #0b0c0a;
+  --accent-ink: #141612;
+  --accent-fill: #6e8c36;
   --accent-soft: rgba(181, 230, 85, 0.16);
   --series-1: var(--accent);
   --band: rgba(181, 230, 85, 0.12);
@@ -40,6 +41,7 @@
   --grid: #ecece5;
   --accent: #3f6b0b;
   --accent-ink: #ffffff;
+  --accent-fill: var(--accent);
   --accent-soft: rgba(63, 107, 11, 0.12);
   --band: rgba(63, 107, 11, 0.12);
   --band-ahead: rgba(63, 107, 11, 0.06);
@@ -72,9 +74,9 @@ body {
 /* type */
 .muted { color: var(--text-secondary); font-size: 0.875rem; }
 .faint { color: var(--text-muted); }
-.eyebrow, .label { color: var(--text-secondary); font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
-.section-title { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 10px; }
-.sub-title { font-size: 0.7rem; font-weight: 600; margin: 16px 0 8px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+.eyebrow, .label { color: var(--text-secondary); font-size: 0.78rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
+.section-title { font-size: 0.8rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 10px; }
+.sub-title { font-size: 0.78rem; font-weight: 600; margin: 16px 0 8px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.04em; }
 .lead { font-size: 1.05rem; line-height: 1.55; }
 
 /* hero */
@@ -95,7 +97,7 @@ button.pill[aria-pressed="true"] { background: var(--accent); color: var(--accen
 .link:hover { text-decoration-color: var(--accent); }
 
 /* stat tiles */
-.tile-label { color: var(--text-secondary); font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+.tile-label { color: var(--text-secondary); font-size: 0.82rem; font-weight: 600; }
 .tile-value { font-size: 1.6rem; font-weight: 600; margin: 4px 0 2px; letter-spacing: -0.01em; }
 .delta { color: var(--text-secondary); font-size: 0.78rem; font-variant-numeric: tabular-nums; }
 .delta.up { color: var(--accent); }
@@ -127,7 +129,7 @@ button.pill[aria-pressed="true"] { background: var(--accent); color: var(--accen
 .badge.strong { color: var(--foreground); border-color: var(--text-muted); }
 .stat { font-size: 1.75rem; font-weight: 600; }
 .meter { height: 6px; border-radius: 3px; background: var(--grid); overflow: hidden; }
-.meter > span { display: block; height: 100%; background: var(--accent); border-radius: 3px; }
+.meter > span { display: block; height: 100%; background: var(--accent-fill); border-radius: 3px; }
 
 /* disclosures */
 details.more { border-top: 1px solid var(--grid); margin-top: 14px; padding-top: 10px; }

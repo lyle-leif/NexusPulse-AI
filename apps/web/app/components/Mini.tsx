@@ -71,7 +71,7 @@ export function EvidenceMeter({ level }: { level: string }) {
     <div>
       <div className="flex gap-1" role="img" aria-label={`Explanation evidence: ${level} (${k} of 3)`}>
         {LEVELS.slice(1).map((l, i) => (
-          <span key={l} className="h-2 flex-1 rounded-sm" style={{ background: i < k ? "var(--accent)" : "var(--grid)" }} />
+          <span key={l} className="h-2 flex-1 rounded-sm" style={{ background: i < k ? "var(--accent-fill)" : "var(--grid)" }} />
         ))}
       </div>
       <p className="mt-2 text-sm">

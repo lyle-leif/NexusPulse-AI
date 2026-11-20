@@ -41,7 +41,7 @@ function Waterfall({ inv, currency }: { inv: Investigation; currency: string }) 
                 style={{
                   left: neg ? `${50 - w}%` : "50%",
                   width: `${Math.max(w, 0.5)}%`,
-                  background: neg ? "var(--warn)" : "var(--accent)",
+                  background: neg ? "var(--warn)" : "var(--accent-fill)",
                 }}
               />
             </span>
@@ -187,7 +187,7 @@ export default async function IncidentPage({ params, searchParams }: PageProps<"
                           style={{
                             left: r.change < 0 ? `${50 - w}%` : "50%",
                             width: `${Math.max(w, 0.5)}%`,
-                            background: hot ? (r.change < 0 ? "var(--warn)" : "var(--accent)") : "var(--text-muted)",
+                            background: hot ? (r.change < 0 ? "var(--warn)" : "var(--accent-fill)") : "var(--text-muted)",
                           }}
                         />
                       </span>

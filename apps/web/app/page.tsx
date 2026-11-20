@@ -229,7 +229,7 @@ function Bridge({ lines, currency }: { lines: { label: string; amount: number; t
                 style={{
                   left: `${(100 * start) / max}%`,
                   width: `${Math.max(0.4, (100 * w) / max)}%`,
-                  background: l.total ? "var(--accent)" : neg ? "var(--warn)" : "var(--accent-soft)",
+                  background: l.total ? "var(--accent-fill)" : neg ? "var(--warn)" : "var(--accent-soft)",
                   border: l.total || neg ? "none" : "1px solid var(--accent)",
                 }}
               />
