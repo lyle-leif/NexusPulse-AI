@@ -5,6 +5,8 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 REPO_NAME="${REPO_NAME:-NexusPulse-AI}"
+# Clear the fetch cache so pages use the current API responses, not those of an earlier build.
+rm -rf apps/web/.next-static/cache/fetch-cache apps/web/.next/cache/fetch-cache
 ( cd apps/web && MSYS_NO_PATHCONV=1 NEXT_PUBLIC_STATIC_DEMO=1 NEXT_PUBLIC_BASE_PATH="/$REPO_NAME" npx next build )
 OUT="apps/web/.next-static-out"
 rm -rf "$OUT" && cp -r apps/web/.next-static "$OUT" && touch "$OUT/.nojekyll"
