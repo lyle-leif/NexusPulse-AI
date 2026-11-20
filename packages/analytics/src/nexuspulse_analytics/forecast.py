@@ -85,19 +85,22 @@ _SMOOTHING_KEYS = ("smoothing_level", "smoothing_trend", "smoothing_seasonal", "
 
 
 def _ets_fit(x: pd.Series, fixed: dict | None = None):
-    """Fit ETS. With `fixed` smoothing parameters only the states are updated (fast)."""
+    """Fit ETS. With `fixed` smoothing parameters only the initial states are estimated.
+
+    Initial states are always estimated, never taken from the heuristic: with little or
+    no seasonal smoothing the heuristic start (from the first weeks of the window) would
+    persist, and those weeks can be unrepresentative (e.g. a holiday shutdown).
+    """
     from statsmodels.tsa.holtwinters import ExponentialSmoothing
 
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        if fixed:
-            model = ExponentialSmoothing(
-                x.to_numpy(), trend="add", damped_trend=True, seasonal="add", seasonal_periods=7, initialization_method="heuristic"
-            )
-            return model.fit(optimized=False, **{k: fixed[k] for k in _SMOOTHING_KEYS})
         model = ExponentialSmoothing(
             x.to_numpy(), trend="add", damped_trend=True, seasonal="add", seasonal_periods=7, initialization_method="estimated"
         )
+        if fixed:
+            with model.fix_params({k: fixed[k] for k in _SMOOTHING_KEYS}):
+                return model.fit(optimized=True)
         return model.fit(optimized=True)
 
 

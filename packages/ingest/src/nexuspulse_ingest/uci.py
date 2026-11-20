@@ -112,8 +112,28 @@ def to_tables(raw: pd.DataFrame) -> tuple[dict[str, pd.DataFrame], dict]:
     return tables, notes
 
 
-def load_uci() -> tuple[dict[str, pd.DataFrame], dict]:
+# England and Wales bank holidays (public calendar, gov.uk). A calendar is observable
+# information any store owner has; it is not a label.
+UK_BANK_HOLIDAYS = [
+    "2009-12-25", "2009-12-28", "2010-01-01", "2010-04-02", "2010-04-05", "2010-05-03", "2010-05-31",
+    "2010-08-30", "2010-12-27", "2010-12-28", "2011-01-03", "2011-04-22", "2011-04-25", "2011-04-29",
+    "2011-05-02", "2011-05-30", "2011-08-29", "2011-12-26", "2011-12-27",
+]
+
+
+def holiday_events(days: list[str] = UK_BANK_HOLIDAYS) -> pd.DataFrame:
+    occurred = pd.to_datetime(days).tz_localize(TIMEZONE).tz_convert("UTC").astype("datetime64[us, UTC]")
+    return pd.DataFrame({
+        "event_id": [f"hol_{d}" for d in days], "occurred_at": occurred, "event_type": "holiday",
+        "description": "UK bank holiday", "scope": [{"window_days": 1} for _ in days], "source": "calendar",
+    })
+
+
+def load_uci(calendar: bool = True) -> tuple[dict[str, pd.DataFrame], dict]:
     tables, notes = to_tables(read_raw())
+    if calendar:
+        tables["change_events"] = holiday_events()
+    notes["calendar"] = "UK bank holidays" if calendar else None
     notes["source"] = "UCI Online Retail II (CC BY 4.0), https://archive.ics.uci.edu/dataset/502/online+retail+ii"
     notes["sha256"] = file_sha256() if RAW_ZIP.exists() else None
     return tables, notes

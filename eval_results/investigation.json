@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-19T12:07:15.204886+00:00",
+ "generated_at": "2026-11-20T12:51:46.286574+00:00",
  "results": {
   "dev/main": {
    "oracle": {
@@ -548,19 +548,19 @@
    },
    "end_to_end": {
     "driver": {
-     "correct": 11,
-     "n": 14,
-     "rate": 0.786
+     "correct": 16,
+     "n": 17,
+     "rate": 0.941
     },
     "segment": {
-     "correct": 10,
-     "n": 14,
-     "rate": 0.714
+     "correct": 11,
+     "n": 17,
+     "rate": 0.647
     },
     "cause_or_none": {
-     "correct": 7,
-     "n": 14,
-     "rate": 0.5
+     "correct": 9,
+     "n": 17,
+     "rate": 0.529
     },
     "red_herring_rejected": {
      "correct": 0,
@@ -568,8 +568,8 @@
      "rate": null
     },
     "validation_passed": {
-     "correct": 14,
-     "n": 14,
+     "correct": 17,
+     "n": 17,
      "rate": 1.0
     },
     "cause_correct_by_evidence": {
@@ -578,24 +578,30 @@
       "cause_correct": 0
      },
      "Moderate": {
-      "n": 1,
-      "cause_correct": 0
+      "n": 4,
+      "cause_correct": 2
      },
      "Weak": {
-      "n": 10,
-      "cause_correct": 6
+      "n": 9,
+      "cause_correct": 5
      },
      "None": {
-      "n": 3,
-      "cause_correct": 1
+      "n": 4,
+      "cause_correct": 2
      }
     },
     "by_kind": {
-     "conversion_drop": {
-      "n": 2,
-      "driver": 1,
-      "segment": 1,
+     "traffic_loss": {
+      "n": 3,
+      "driver": 2,
+      "segment": 0,
       "cause": 0
+     },
+     "conversion_drop": {
+      "n": 4,
+      "driver": 4,
+      "segment": 3,
+      "cause": 1
      },
      "traffic_spike": {
       "n": 5,
@@ -604,25 +610,36 @@
       "cause": 5
      },
      "price_increase": {
-      "n": 4,
-      "driver": 4,
-      "segment": 4,
-      "cause": 1
-     },
-     "traffic_loss": {
       "n": 2,
-      "driver": 0,
-      "segment": 0,
+      "driver": 2,
+      "segment": 2,
       "cause": 0
      },
      "stockout": {
-      "n": 1,
-      "driver": 1,
-      "segment": 0,
-      "cause": 1
+      "n": 3,
+      "driver": 3,
+      "segment": 1,
+      "cause": 3
      }
     },
     "rows": [
+     {
+      "kind": "traffic_loss",
+      "start": "2025-06-19",
+      "evidence": "Moderate",
+      "found_driver": "sessions",
+      "found_segment": {
+       "dimension": "region",
+       "segment": "north_america"
+      },
+      "found_cause": null,
+      "validation_passed": true,
+      "driver_correct": true,
+      "segment_correct": false,
+      "cause_correct": false,
+      "expected_cause": "Campaign settings changed",
+      "seed": 101
+     },
      {
       "kind": "conversion_drop",
       "start": "2025-08-10",
@@ -660,9 +677,12 @@
      {
       "kind": "price_increase",
       "start": "2026-02-16",
-      "evidence": "None",
+      "evidence": "Weak",
       "found_driver": "conversion",
-      "found_segment": null,
+      "found_segment": {
+       "dimension": "region",
+       "segment": "north_america"
+      },
       "found_cause": null,
       "validation_passed": true,
       "driver_correct": true,
@@ -675,14 +695,14 @@
       "kind": "conversion_drop",
       "start": "2025-07-31",
       "evidence": "Weak",
-      "found_driver": "sessions",
+      "found_driver": "conversion",
       "found_segment": {
        "dimension": "region",
-       "segment": "north_america"
+       "segment": "europe"
       },
       "found_cause": null,
       "validation_passed": true,
-      "driver_correct": false,
+      "driver_correct": true,
       "segment_correct": false,
       "cause_correct": false,
       "expected_cause": "Storefront theme update deployed",
@@ -768,21 +788,21 @@
       "seed": 103
      },
      {
-      "kind": "price_increase",
-      "start": "2026-03-30",
+      "kind": "conversion_drop",
+      "start": "2025-05-04",
       "evidence": "Weak",
       "found_driver": "conversion",
       "found_segment": {
-       "dimension": "channel",
-       "segment": "paid_search"
+       "dimension": "device",
+       "segment": "mobile"
       },
       "found_cause": null,
       "validation_passed": true,
       "driver_correct": true,
       "segment_correct": true,
       "cause_correct": false,
-      "expected_cause": "Price list updated",
-      "seed": 103
+      "expected_cause": "Payment form update deployed",
+      "seed": 104
      },
      {
       "kind": "traffic_spike",
@@ -802,21 +822,66 @@
       "seed": 104
      },
      {
+      "kind": "stockout",
+      "start": "2025-07-31",
+      "evidence": "None",
+      "found_driver": "conversion",
+      "found_segment": null,
+      "found_cause": null,
+      "validation_passed": true,
+      "driver_correct": true,
+      "segment_correct": false,
+      "cause_correct": true,
+      "expected_cause": null,
+      "seed": 104
+     },
+     {
       "kind": "traffic_loss",
       "start": "2025-09-14",
-      "evidence": "Weak",
+      "evidence": "None",
+      "found_driver": "sessions",
+      "found_segment": null,
+      "found_cause": null,
+      "validation_passed": true,
+      "driver_correct": true,
+      "segment_correct": false,
+      "cause_correct": false,
+      "expected_cause": "Campaign paused",
+      "seed": 104
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-07-27",
+      "evidence": "Moderate",
       "found_driver": "conversion",
       "found_segment": {
        "dimension": "device",
        "segment": "mobile"
       },
+      "found_cause": "Storefront theme update deployed",
+      "validation_passed": true,
+      "driver_correct": true,
+      "segment_correct": true,
+      "cause_correct": true,
+      "expected_cause": "Storefront theme update deployed",
+      "seed": 105
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-10-17",
+      "evidence": "Moderate",
+      "found_driver": "conversion",
+      "found_segment": {
+       "dimension": "category",
+       "segment": "Tops"
+      },
       "found_cause": null,
       "validation_passed": true,
-      "driver_correct": false,
-      "segment_correct": false,
-      "cause_correct": false,
-      "expected_cause": "Campaign paused",
-      "seed": 104
+      "driver_correct": true,
+      "segment_correct": true,
+      "cause_correct": true,
+      "expected_cause": null,
+      "seed": 105
      },
      {
       "kind": "traffic_spike",
@@ -833,23 +898,6 @@
       "segment_correct": true,
       "cause_correct": true,
       "expected_cause": null,
-      "seed": 105
-     },
-     {
-      "kind": "price_increase",
-      "start": "2026-02-16",
-      "evidence": "Weak",
-      "found_driver": "conversion",
-      "found_segment": {
-       "dimension": "device",
-       "segment": "mobile"
-      },
-      "found_cause": "Price list updated",
-      "validation_passed": true,
-      "driver_correct": true,
-      "segment_correct": true,
-      "cause_correct": true,
-      "expected_cause": "Price list updated",
       "seed": 105
      }
     ]
@@ -1390,19 +1438,19 @@
    },
    "end_to_end": {
     "driver": {
-     "correct": 10,
-     "n": 12,
-     "rate": 0.833
+     "correct": 12,
+     "n": 15,
+     "rate": 0.8
     },
     "segment": {
-     "correct": 4,
-     "n": 12,
+     "correct": 5,
+     "n": 15,
      "rate": 0.333
     },
     "cause_or_none": {
-     "correct": 4,
-     "n": 12,
-     "rate": 0.333
+     "correct": 7,
+     "n": 15,
+     "rate": 0.467
     },
     "red_herring_rejected": {
      "correct": 0,
@@ -1410,8 +1458,8 @@
      "rate": null
     },
     "validation_passed": {
-     "correct": 12,
-     "n": 12,
+     "correct": 15,
+     "n": 15,
      "rate": 1.0
     },
     "cause_correct_by_evidence": {
@@ -1420,47 +1468,47 @@
       "cause_correct": 0
      },
      "Moderate": {
-      "n": 1,
-      "cause_correct": 0
+      "n": 3,
+      "cause_correct": 1
      },
      "Weak": {
-      "n": 6,
-      "cause_correct": 3
+      "n": 5,
+      "cause_correct": 4
      },
      "None": {
-      "n": 5,
-      "cause_correct": 1
+      "n": 7,
+      "cause_correct": 2
      }
     },
     "by_kind": {
      "conversion_drop": {
-      "n": 3,
-      "driver": 3,
+      "n": 4,
+      "driver": 4,
       "segment": 0,
       "cause": 0
      },
      "traffic_spike": {
-      "n": 3,
-      "driver": 3,
-      "segment": 3,
-      "cause": 3
+      "n": 5,
+      "driver": 5,
+      "segment": 4,
+      "cause": 5
+     },
+     "stockout": {
+      "n": 2,
+      "driver": 1,
+      "segment": 0,
+      "cause": 2
+     },
+     "traffic_loss": {
+      "n": 2,
+      "driver": 0,
+      "segment": 0,
+      "cause": 0
      },
      "price_increase": {
       "n": 2,
       "driver": 2,
       "segment": 1,
-      "cause": 0
-     },
-     "stockout": {
-      "n": 1,
-      "driver": 1,
-      "segment": 0,
-      "cause": 1
-     },
-     "traffic_loss": {
-      "n": 3,
-      "driver": 1,
-      "segment": 0,
       "cause": 0
      }
     },
@@ -1468,11 +1516,11 @@
      {
       "kind": "conversion_drop",
       "start": "2025-08-10",
-      "evidence": "Weak",
+      "evidence": "Moderate",
       "found_driver": "conversion",
       "found_segment": {
-       "dimension": "region",
-       "segment": "north_america"
+       "dimension": "device",
+       "segment": "desktop"
       },
       "found_cause": null,
       "validation_passed": true,
@@ -1488,8 +1536,8 @@
       "evidence": "Weak",
       "found_driver": "sessions",
       "found_segment": {
-       "dimension": "channel",
-       "segment": "organic"
+       "dimension": "region",
+       "segment": "europe"
       },
       "found_cause": null,
       "validation_passed": true,
@@ -1497,23 +1545,6 @@
       "segment_correct": true,
       "cause_correct": true,
       "expected_cause": null,
-      "seed": 101
-     },
-     {
-      "kind": "price_increase",
-      "start": "2026-02-16",
-      "evidence": "Moderate",
-      "found_driver": "conversion",
-      "found_segment": {
-       "dimension": "device",
-       "segment": "mobile"
-      },
-      "found_cause": null,
-      "validation_passed": true,
-      "driver_correct": true,
-      "segment_correct": false,
-      "cause_correct": false,
-      "expected_cause": "Price list updated",
       "seed": 101
      },
      {
@@ -1567,8 +1598,8 @@
       "evidence": "Weak",
       "found_driver": "sessions",
       "found_segment": {
-       "dimension": "device",
-       "segment": "desktop"
+       "dimension": "region",
+       "segment": "north_america"
       },
       "found_cause": null,
       "validation_passed": true,
@@ -1596,18 +1627,49 @@
       "kind": "traffic_loss",
       "start": "2026-02-16",
       "evidence": "Weak",
-      "found_driver": "sessions",
+      "found_driver": "conversion",
       "found_segment": {
-       "dimension": "device",
-       "segment": "desktop"
+       "dimension": "region",
+       "segment": "north_america"
       },
+      "found_cause": null,
+      "validation_passed": true,
+      "driver_correct": false,
+      "segment_correct": false,
+      "cause_correct": false,
+      "expected_cause": "Campaign paused",
+      "seed": 103
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-05-04",
+      "evidence": "None",
+      "found_driver": "conversion",
+      "found_segment": null,
       "found_cause": null,
       "validation_passed": true,
       "driver_correct": true,
       "segment_correct": false,
       "cause_correct": false,
-      "expected_cause": "Campaign paused",
-      "seed": 103
+      "expected_cause": "Payment form update deployed",
+      "seed": 104
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-06-20",
+      "evidence": "Weak",
+      "found_driver": "sessions",
+      "found_segment": {
+       "dimension": "region",
+       "segment": "north_america"
+      },
+      "found_cause": null,
+      "validation_passed": true,
+      "driver_correct": true,
+      "segment_correct": true,
+      "cause_correct": true,
+      "expected_cause": null,
+      "seed": 104
      },
      {
       "kind": "traffic_loss",
@@ -1626,32 +1688,63 @@
      {
       "kind": "price_increase",
       "start": "2026-02-16",
-      "evidence": "Weak",
+      "evidence": "Moderate",
       "found_driver": "conversion",
       "found_segment": {
-       "dimension": "category",
-       "segment": "Shoes"
+       "dimension": "device",
+       "segment": "desktop"
       },
+      "found_cause": null,
+      "validation_passed": true,
+      "driver_correct": true,
+      "segment_correct": false,
+      "cause_correct": false,
+      "expected_cause": "Price list updated",
+      "seed": 104
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-10-17",
+      "evidence": "None",
+      "found_driver": "sessions",
+      "found_segment": null,
+      "found_cause": null,
+      "validation_passed": true,
+      "driver_correct": false,
+      "segment_correct": false,
+      "cause_correct": true,
+      "expected_cause": null,
+      "seed": 105
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-12-26",
+      "evidence": "Moderate",
+      "found_driver": "sessions",
+      "found_segment": {
+       "dimension": "channel",
+       "segment": "organic"
+      },
+      "found_cause": null,
+      "validation_passed": true,
+      "driver_correct": true,
+      "segment_correct": false,
+      "cause_correct": true,
+      "expected_cause": null,
+      "seed": 105
+     },
+     {
+      "kind": "price_increase",
+      "start": "2026-02-16",
+      "evidence": "None",
+      "found_driver": "conversion",
+      "found_segment": null,
       "found_cause": null,
       "validation_passed": true,
       "driver_correct": true,
       "segment_correct": true,
       "cause_correct": false,
       "expected_cause": "Price list updated",
-      "seed": 104
-     },
-     {
-      "kind": "traffic_loss",
-      "start": "2025-06-18",
-      "evidence": "None",
-      "found_driver": "attributed_aov",
-      "found_segment": null,
-      "found_cause": null,
-      "validation_passed": true,
-      "driver_correct": false,
-      "segment_correct": false,
-      "cause_correct": false,
-      "expected_cause": "Campaign settings changed",
       "seed": 105
      }
     ]
@@ -2225,18 +2318,18 @@
    },
    "end_to_end": {
     "driver": {
-     "correct": 8,
-     "n": 9,
-     "rate": 0.889
+     "correct": 11,
+     "n": 12,
+     "rate": 0.917
     },
     "segment": {
-     "correct": 4,
-     "n": 9,
-     "rate": 0.444
+     "correct": 6,
+     "n": 12,
+     "rate": 0.5
     },
     "cause_or_none": {
-     "correct": 6,
-     "n": 9,
+     "correct": 8,
+     "n": 12,
      "rate": 0.667
     },
     "red_herring_rejected": {
@@ -2245,22 +2338,22 @@
      "rate": null
     },
     "validation_passed": {
-     "correct": 9,
-     "n": 9,
+     "correct": 12,
+     "n": 12,
      "rate": 1.0
     },
     "cause_correct_by_evidence": {
      "Strong": {
-      "n": 1,
-      "cause_correct": 1
+      "n": 0,
+      "cause_correct": 0
      },
      "Moderate": {
-      "n": 2,
-      "cause_correct": 2
+      "n": 0,
+      "cause_correct": 0
      },
      "Weak": {
-      "n": 6,
-      "cause_correct": 3
+      "n": 12,
+      "cause_correct": 8
      },
      "None": {
       "n": 0,
@@ -2268,29 +2361,23 @@
      }
     },
     "by_kind": {
-     "traffic_spike": {
-      "n": 1,
-      "driver": 1,
-      "segment": 1,
-      "cause": 1
-     },
-     "stockout": {
-      "n": 1,
-      "driver": 0,
+     "conversion_drop": {
+      "n": 3,
+      "driver": 3,
       "segment": 0,
       "cause": 0
      },
-     "gradual_conversion_drift": {
+     "traffic_spike": {
       "n": 4,
       "driver": 4,
-      "segment": 2,
+      "segment": 4,
       "cause": 4
      },
-     "conversion_drop": {
-      "n": 2,
-      "driver": 2,
-      "segment": 1,
-      "cause": 1
+     "gradual_conversion_drift": {
+      "n": 4,
+      "driver": 3,
+      "segment": 2,
+      "cause": 4
      },
      "traffic_loss": {
       "n": 1,
@@ -2300,6 +2387,23 @@
      }
     },
     "rows": [
+     {
+      "kind": "conversion_drop",
+      "start": "2025-05-24",
+      "evidence": "Weak",
+      "found_driver": "conversion",
+      "found_segment": {
+       "dimension": "device",
+       "segment": "mobile"
+      },
+      "found_cause": null,
+      "validation_passed": true,
+      "driver_correct": true,
+      "segment_correct": false,
+      "cause_correct": false,
+      "expected_cause": "Checkout page update deployed",
+      "seed": 901
+     },
      {
       "kind": "traffic_spike",
       "start": "2025-11-02",
@@ -2318,27 +2422,27 @@
       "seed": 901
      },
      {
-      "kind": "stockout",
-      "start": "2025-11-07",
+      "kind": "gradual_conversion_drift",
+      "start": "2026-02-16",
       "evidence": "Weak",
-      "found_driver": "sessions",
+      "found_driver": "conversion",
       "found_segment": {
-       "dimension": "category",
-       "segment": "Dresses"
+       "dimension": "device",
+       "segment": "desktop"
       },
       "found_cause": null,
       "validation_passed": true,
-      "driver_correct": false,
+      "driver_correct": true,
       "segment_correct": false,
-      "cause_correct": false,
-      "expected_cause": "Inventory sync completed",
-      "seed": 902
+      "cause_correct": true,
+      "expected_cause": null,
+      "seed": 901
      },
      {
-      "kind": "gradual_conversion_drift",
-      "start": "2026-02-16",
-      "evidence": "Moderate",
-      "found_driver": "conversion",
+      "kind": "traffic_spike",
+      "start": "2025-09-27",
+      "evidence": "Weak",
+      "found_driver": "sessions",
       "found_segment": {
        "dimension": "region",
        "segment": "north_america"
@@ -2346,6 +2450,23 @@
       "found_cause": null,
       "validation_passed": true,
       "driver_correct": true,
+      "segment_correct": true,
+      "cause_correct": true,
+      "expected_cause": null,
+      "seed": 902
+     },
+     {
+      "kind": "gradual_conversion_drift",
+      "start": "2026-02-16",
+      "evidence": "Weak",
+      "found_driver": "attributed_aov",
+      "found_segment": {
+       "dimension": "category",
+       "segment": "Tops"
+      },
+      "found_cause": null,
+      "validation_passed": true,
+      "driver_correct": false,
       "segment_correct": false,
       "cause_correct": true,
       "expected_cause": null,
@@ -2374,8 +2495,8 @@
       "evidence": "Weak",
       "found_driver": "sessions",
       "found_segment": {
-       "dimension": "channel",
-       "segment": "organic"
+       "dimension": "device",
+       "segment": "mobile"
       },
       "found_cause": null,
       "validation_passed": true,
@@ -2386,37 +2507,20 @@
       "seed": 903
      },
      {
-      "kind": "gradual_conversion_drift",
-      "start": "2026-02-16",
-      "evidence": "Moderate",
-      "found_driver": "conversion",
+      "kind": "traffic_spike",
+      "start": "2025-06-16",
+      "evidence": "Weak",
+      "found_driver": "sessions",
       "found_segment": {
-       "dimension": "region",
-       "segment": "north_america"
+       "dimension": "category",
+       "segment": "Shoes"
       },
       "found_cause": null,
       "validation_passed": true,
       "driver_correct": true,
-      "segment_correct": false,
-      "cause_correct": true,
-      "expected_cause": null,
-      "seed": 903
-     },
-     {
-      "kind": "conversion_drop",
-      "start": "2025-09-08",
-      "evidence": "Strong",
-      "found_driver": "conversion",
-      "found_segment": {
-       "dimension": "device",
-       "segment": "desktop"
-      },
-      "found_cause": "Checkout page update deployed",
-      "validation_passed": true,
-      "driver_correct": true,
       "segment_correct": true,
       "cause_correct": true,
-      "expected_cause": "Checkout page update deployed",
+      "expected_cause": null,
       "seed": 904
      },
      {
@@ -2435,6 +2539,40 @@
       "cause_correct": true,
       "expected_cause": null,
       "seed": 904
+     },
+     {
+      "kind": "traffic_spike",
+      "start": "2025-05-01",
+      "evidence": "Weak",
+      "found_driver": "sessions",
+      "found_segment": {
+       "dimension": "channel",
+       "segment": "direct"
+      },
+      "found_cause": null,
+      "validation_passed": true,
+      "driver_correct": true,
+      "segment_correct": true,
+      "cause_correct": true,
+      "expected_cause": null,
+      "seed": 905
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-08-30",
+      "evidence": "Weak",
+      "found_driver": "conversion",
+      "found_segment": {
+       "dimension": "channel",
+       "segment": "organic"
+      },
+      "found_cause": null,
+      "validation_passed": true,
+      "driver_correct": true,
+      "segment_correct": false,
+      "cause_correct": false,
+      "expected_cause": "Payment form update deployed",
+      "seed": 905
      },
      {
       "kind": "gradual_conversion_drift",
@@ -2982,19 +3120,19 @@
    },
    "end_to_end": {
     "driver": {
-     "correct": 6,
-     "n": 7,
-     "rate": 0.857
+     "correct": 9,
+     "n": 10,
+     "rate": 0.9
     },
     "segment": {
-     "correct": 2,
-     "n": 7,
-     "rate": 0.286
+     "correct": 3,
+     "n": 10,
+     "rate": 0.3
     },
     "cause_or_none": {
-     "correct": 5,
-     "n": 7,
-     "rate": 0.714
+     "correct": 6,
+     "n": 10,
+     "rate": 0.6
     },
     "red_herring_rejected": {
      "correct": 0,
@@ -3002,8 +3140,8 @@
      "rate": null
     },
     "validation_passed": {
-     "correct": 7,
-     "n": 7,
+     "correct": 10,
+     "n": 10,
      "rate": 1.0
     },
     "cause_correct_by_evidence": {
@@ -3012,40 +3150,40 @@
       "cause_correct": 0
      },
      "Moderate": {
-      "n": 1,
-      "cause_correct": 1
+      "n": 6,
+      "cause_correct": 4
      },
      "Weak": {
-      "n": 2,
+      "n": 3,
       "cause_correct": 2
      },
      "None": {
-      "n": 4,
-      "cause_correct": 2
+      "n": 1,
+      "cause_correct": 0
      }
     },
     "by_kind": {
      "traffic_spike": {
       "n": 2,
       "driver": 2,
-      "segment": 1,
+      "segment": 0,
       "cause": 2
      },
      "gradual_conversion_drift": {
       "n": 3,
-      "driver": 3,
-      "segment": 1,
+      "driver": 2,
+      "segment": 2,
       "cause": 3
      },
-     "traffic_loss": {
-      "n": 1,
-      "driver": 0,
-      "segment": 0,
-      "cause": 0
+     "stockout": {
+      "n": 3,
+      "driver": 3,
+      "segment": 1,
+      "cause": 1
      },
      "conversion_drop": {
-      "n": 1,
-      "driver": 1,
+      "n": 2,
+      "driver": 2,
       "segment": 0,
       "cause": 0
      }
@@ -3071,13 +3209,16 @@
      {
       "kind": "gradual_conversion_drift",
       "start": "2026-02-16",
-      "evidence": "None",
+      "evidence": "Moderate",
       "found_driver": "conversion",
-      "found_segment": null,
+      "found_segment": {
+       "dimension": "device",
+       "segment": "mobile"
+      },
       "found_cause": null,
       "validation_passed": true,
       "driver_correct": true,
-      "segment_correct": false,
+      "segment_correct": true,
       "cause_correct": true,
       "expected_cause": null,
       "seed": 901
@@ -3085,35 +3226,75 @@
      {
       "kind": "traffic_spike",
       "start": "2025-09-27",
-      "evidence": "None",
+      "evidence": "Moderate",
       "found_driver": "sessions",
-      "found_segment": null,
+      "found_segment": {
+       "dimension": "channel",
+       "segment": "paid_search"
+      },
       "found_cause": null,
       "validation_passed": true,
       "driver_correct": true,
-      "segment_correct": true,
+      "segment_correct": false,
       "cause_correct": true,
       "expected_cause": null,
       "seed": 902
      },
      {
-      "kind": "traffic_loss",
-      "start": "2025-10-26",
-      "evidence": "None",
+      "kind": "stockout",
+      "start": "2025-11-07",
+      "evidence": "Weak",
       "found_driver": "conversion",
-      "found_segment": null,
+      "found_segment": {
+       "dimension": "device",
+       "segment": "mobile"
+      },
       "found_cause": null,
       "validation_passed": true,
-      "driver_correct": false,
+      "driver_correct": true,
       "segment_correct": false,
       "cause_correct": false,
-      "expected_cause": "Campaign settings changed",
-      "seed": 903
+      "expected_cause": "Inventory sync completed",
+      "seed": 902
      },
      {
       "kind": "gradual_conversion_drift",
       "start": "2026-02-16",
       "evidence": "Weak",
+      "found_driver": "attributed_aov",
+      "found_segment": {
+       "dimension": "region",
+       "segment": "north_america"
+      },
+      "found_cause": null,
+      "validation_passed": true,
+      "driver_correct": false,
+      "segment_correct": false,
+      "cause_correct": true,
+      "expected_cause": null,
+      "seed": 902
+     },
+     {
+      "kind": "conversion_drop",
+      "start": "2025-05-20",
+      "evidence": "Moderate",
+      "found_driver": "conversion",
+      "found_segment": {
+       "dimension": "region",
+       "segment": "europe"
+      },
+      "found_cause": null,
+      "validation_passed": true,
+      "driver_correct": true,
+      "segment_correct": false,
+      "cause_correct": false,
+      "expected_cause": "Payment form update deployed",
+      "seed": 903
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-07-01",
+      "evidence": "Moderate",
       "found_driver": "conversion",
       "found_segment": {
        "dimension": "region",
@@ -3122,9 +3303,9 @@
       "found_cause": null,
       "validation_passed": true,
       "driver_correct": true,
-      "segment_correct": true,
-      "cause_correct": true,
-      "expected_cause": null,
+      "segment_correct": false,
+      "cause_correct": false,
+      "expected_cause": "Inventory sync completed",
       "seed": 903
      },
      {
@@ -3133,15 +3314,32 @@
       "evidence": "Weak",
       "found_driver": "conversion",
       "found_segment": {
-       "dimension": "category",
-       "segment": "Shoes"
+       "dimension": "device",
+       "segment": "mobile"
       },
       "found_cause": null,
       "validation_passed": true,
       "driver_correct": true,
-      "segment_correct": false,
+      "segment_correct": true,
       "cause_correct": true,
       "expected_cause": null,
+      "seed": 903
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-07-22",
+      "evidence": "Moderate",
+      "found_driver": "conversion",
+      "found_segment": {
+       "dimension": "category",
+       "segment": "Bottoms"
+      },
+      "found_cause": "Inventory sync completed",
+      "validation_passed": true,
+      "driver_correct": true,
+      "segment_correct": true,
+      "cause_correct": true,
+      "expected_cause": "Inventory sync completed",
       "seed": 904
      },
      {

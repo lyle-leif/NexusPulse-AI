@@ -1,4 +1,4 @@
-import { getEvaluation, type EvalSummary, type InvestigationSummary, type NarrationEval, type Rate } from "@/lib/api";
+import { getEvaluation, type EvalSummary, type InvestigationSummary, type ExternalEval, type NarrationEval, type Rate } from "@/lib/api";
 import { pct, shortDate } from "@/lib/format";
 import Nav from "../components/Nav";
 
@@ -136,6 +136,72 @@ function NarrationScorecard({ n }: { n: NarrationEval }) {
               {k.replaceAll("_", " ")} <span className="muted">({v.targets})</span>
             </span>
             <span className={v.caught === v.n ? "" : "muted"}>{v.caught}/{v.n} caught</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+function ExternalScorecard({ x }: { x: ExternalEval }) {
+  const r = x.real.with_calendar;
+  const pct = (v: number) => `${Math.round(100 * v)}%`;
+  const rate = (v: { detected: number; n: number }) => `${v.detected}/${v.n}`;
+  return (
+    <section aria-labelledby="ext" className="card">
+      <h2 id="ext" className="section-title">External dataset: {x.dataset}</h2>
+      <p className="muted mb-3">
+        A real UK online gift retailer, {x.real.notes.orders.toLocaleString()} orders. Order data only: no sessions, funnel, channel or change log, so
+        only net sales and orders are monitored and causes cannot be checked. UK bank holidays are supplied as a public calendar.
+      </p>
+      <h3 className="sub-title">
+        Real <span className="muted">(dataset as-is, no labels)</span>
+      </h3>
+      <div className="overflow-x-auto">
+        <table className="data-table">
+          <thead>
+            <tr>
+              <th scope="col">Metric</th>
+              <th scope="col" className="num">Forecast error (MAPE)</th>
+              <th scope="col" className="num">Seasonal naive error</th>
+              <th scope="col" className="num">Band coverage</th>
+            </tr>
+          </thead>
+          <tbody>
+            {(["net_sales", "orders"] as const).map((m) => (
+              <tr key={m}>
+                <td>{m === "net_sales" ? "Net sales" : "Orders"}</td>
+                <td className="num">{pct(r.forecast[m].mape)}</td>
+                <td className="num">{pct(r.forecast[m].mape_seasonal_naive)}</td>
+                <td className="num">{pct(r.forecast[m].coverage)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p className="mt-2 text-sm">
+        Alerts: {r.alerts} in {r.monitored_days} days ({r.alerts_per_30d.toFixed(2)} per 30 days) with the holiday calendar,{" "}
+        {x.real.no_calendar.alerts} ({x.real.no_calendar.alerts_per_30d.toFixed(2)} per 30 days) without it.{" "}
+        <span className="muted">With no labels, this is an upper bound on false alerts: some may be real events.</span>
+      </p>
+      <h3 className="sub-title">
+        Semi-synthetic <span className="muted">(real data with injected order drops)</span>
+      </h3>
+      <p className="text-sm">
+        Recall {pct(x.semi_synthetic.recall)} ({x.semi_synthetic.n} injected drops), median delay {x.semi_synthetic.median_delay_days ?? "n/a"} days,{" "}
+        {x.semi_synthetic.new_alerts_not_injected} extra alerts not present on the untouched data.
+      </p>
+      <ul className="mt-1 grid gap-x-6 gap-y-1 text-sm sm:grid-cols-2">
+        {Object.entries(x.semi_synthetic.recall_by_drop).map(([k, v]) => (
+          <li key={k} className="flex justify-between">
+            <span>{k} of orders removed</span>
+            <span>{rate(v)} detected</span>
+          </li>
+        ))}
+        {Object.entries(x.semi_synthetic.recall_by_duration).map(([k, v]) => (
+          <li key={k} className="flex justify-between">
+            <span>Lasting {k}</span>
+            <span>{rate(v)} detected</span>
           </li>
         ))}
       </ul>
@@ -322,9 +388,11 @@ export default async function EvaluationPage() {
 
       {ev.narration ? <NarrationScorecard n={ev.narration} /> : null}
 
+      {ev.external ? <ExternalScorecard x={ev.external} /> : null}
+
       <footer className="muted border-t pt-4 text-xs" style={{ borderColor: "var(--border)" }}>
         Known limits: forecast bands are too narrow (coverage below 95%); store-level detection misses many 10-30% changes, which segment-level analysis
-        in the next step targets. Results are from synthetic data only.
+        in the next step targets. Detection, investigation and narration scores are from synthetic data; the external dataset section is labeled Real or Semi-synthetic.
       </footer>
     </main>
   );

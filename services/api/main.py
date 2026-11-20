@@ -29,6 +29,7 @@ from nexuspulse_analytics.pipeline import analyze  # noqa: E402
 EVAL_RESULTS = ROOT / "eval_results" / "detection.json"
 INV_RESULTS = ROOT / "eval_results" / "investigation.json"
 NAR_RESULTS = ROOT / "eval_results" / "narration.json"
+EXT_RESULTS = ROOT / "eval_results" / "external.json"
 
 # Workspace configuration (a workspace table comes with multi-tenancy later).
 WORKSPACES = {
@@ -162,6 +163,10 @@ def evaluation() -> dict:
         out["investigation"] = json.loads(INV_RESULTS.read_text(encoding="utf-8"))
     if NAR_RESULTS.exists():
         out["narration"] = json.loads(NAR_RESULTS.read_text(encoding="utf-8"))
+    if EXT_RESULTS.exists():
+        ext = json.loads(EXT_RESULTS.read_text(encoding="utf-8"))
+        ext["semi_synthetic"].pop("injections", None)
+        out["external"] = ext
     return out
 
 

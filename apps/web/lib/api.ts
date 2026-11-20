@@ -94,7 +94,24 @@ export type NarrationEval = {
   modes: Record<string, { available: boolean; note?: string; n?: number; first_pass?: number; passed_after_retry?: number; fallback?: number; seconds_per_report?: number }>;
 };
 
+type DetRate = { detected: number; n: number };
+type FcQuality = { mape: number; mape_seasonal_naive: number; coverage: number; days: number };
+type RealRun = { monitored_days: number; alerts: number; alerts_per_30d: number; forecast: Record<"net_sales" | "orders", FcQuality> };
+export type ExternalEval = {
+  dataset: string;
+  real: { with_calendar: RealRun; no_calendar: RealRun; notes: { orders: number; first_order: string; last_order: string } };
+  semi_synthetic: {
+    recall: number;
+    n: number;
+    recall_by_drop: Record<string, DetRate>;
+    recall_by_duration: Record<string, DetRate>;
+    median_delay_days: number | null;
+    new_alerts_not_injected: number;
+  };
+};
+
 export type Evaluation = {
+  external?: ExternalEval;
   narration?: NarrationEval;
   investigation?: { generated_at: string; results: Record<string, { oracle: InvestigationSummary; end_to_end: InvestigationSummary }> };
   generated_at: string;

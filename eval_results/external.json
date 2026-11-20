@@ -1,0 +1,508 @@
+{
+  "dataset": "UCI Online Retail II",
+  "real": {
+    "with_calendar": {
+      "monitored_days": 619,
+      "alerts": 3,
+      "alerts_per_30d": 0.145,
+      "alert_list": [
+        {
+          "start": "2010-09-20",
+          "end": "2010-09-28",
+          "anchor": "net_sales",
+          "direction": "up",
+          "strength": "Moderate"
+        },
+        {
+          "start": "2010-12-09",
+          "end": "2011-01-05",
+          "anchor": "net_sales",
+          "direction": "down",
+          "strength": "Strong"
+        },
+        {
+          "start": "2011-05-24",
+          "end": "2011-06-06",
+          "anchor": "orders",
+          "direction": "down",
+          "strength": "Moderate"
+        }
+      ],
+      "forecast": {
+        "net_sales": {
+          "mape": 0.305,
+          "mape_seasonal_naive": 0.396,
+          "coverage": 0.911,
+          "days": 503
+        },
+        "orders": {
+          "mape": 0.202,
+          "mape_seasonal_naive": 0.246,
+          "coverage": 0.934,
+          "days": 499
+        }
+      }
+    },
+    "no_calendar": {
+      "monitored_days": 619,
+      "alerts": 19,
+      "alerts_per_30d": 0.921,
+      "alert_list": [
+        {
+          "start": "2010-04-07",
+          "end": "2010-04-20",
+          "anchor": "net_sales",
+          "direction": "up",
+          "strength": "Strong"
+        },
+        {
+          "start": "2010-04-28",
+          "end": "2010-05-11",
+          "anchor": "net_sales",
+          "direction": "down",
+          "strength": "Moderate"
+        },
+        {
+          "start": "2010-05-05",
+          "end": "2010-05-12",
+          "anchor": "orders",
+          "direction": "up",
+          "strength": "Moderate"
+        },
+        {
+          "start": "2010-05-25",
+          "end": "2010-06-07",
+          "anchor": "net_sales",
+          "direction": "down",
+          "strength": "Strong"
+        },
+        {
+          "start": "2010-06-02",
+          "end": "2010-06-09",
+          "anchor": "net_sales",
+          "direction": "up",
+          "strength": "Strong"
+        },
+        {
+          "start": "2010-08-23",
+          "end": "2010-09-05",
+          "anchor": "net_sales",
+          "direction": "down",
+          "strength": "Strong"
+        },
+        {
+          "start": "2010-08-31",
+          "end": "2010-09-09",
+          "anchor": "net_sales",
+          "direction": "up",
+          "strength": "Strong"
+        },
+        {
+          "start": "2010-12-08",
+          "end": "2011-01-04",
+          "anchor": "net_sales",
+          "direction": "down",
+          "strength": "Moderate"
+        },
+        {
+          "start": "2010-12-31",
+          "end": "2011-01-17",
+          "anchor": "net_sales",
+          "direction": "up",
+          "strength": "Strong"
+        },
+        {
+          "start": "2011-01-19",
+          "end": "2011-01-27",
+          "anchor": "net_sales",
+          "direction": "down",
+          "strength": "Moderate"
+        },
+        {
+          "start": "2011-04-17",
+          "end": "2011-05-05",
+          "anchor": "orders",
+          "direction": "up",
+          "strength": "Strong"
+        },
+        {
+          "start": "2011-04-22",
+          "end": "2011-05-05",
+          "anchor": "net_sales",
+          "direction": "down",
+          "strength": "Strong"
+        },
+        {
+          "start": "2011-04-26",
+          "end": "2011-05-16",
+          "anchor": "net_sales",
+          "direction": "up",
+          "strength": "Strong"
+        },
+        {
+          "start": "2011-05-25",
+          "end": "2011-06-07",
+          "anchor": "net_sales",
+          "direction": "down",
+          "strength": "Moderate"
+        },
+        {
+          "start": "2011-06-01",
+          "end": "2011-06-14",
+          "anchor": "net_sales",
+          "direction": "up",
+          "strength": "Strong"
+        },
+        {
+          "start": "2011-08-29",
+          "end": "2011-09-11",
+          "anchor": "net_sales",
+          "direction": "down",
+          "strength": "Moderate"
+        },
+        {
+          "start": "2011-08-31",
+          "end": "2011-09-13",
+          "anchor": "orders",
+          "direction": "up",
+          "strength": "Strong"
+        },
+        {
+          "start": "2011-11-02",
+          "end": "2011-11-07",
+          "anchor": "net_sales",
+          "direction": "up",
+          "strength": "Moderate"
+        },
+        {
+          "start": "2011-11-23",
+          "end": "2011-12-01",
+          "anchor": "orders",
+          "direction": "down",
+          "strength": "Moderate"
+        }
+      ],
+      "forecast": {
+        "net_sales": {
+          "mape": 0.786,
+          "mape_seasonal_naive": 0.395,
+          "coverage": 0.816,
+          "days": 506
+        },
+        "orders": {
+          "mape": 0.301,
+          "mape_seasonal_naive": 0.246,
+          "coverage": 0.866,
+          "days": 499
+        }
+      }
+    },
+    "notes": {
+      "raw_lines": 1067371,
+      "duplicate_lines_removed": 34335,
+      "kept_lines": 1003214,
+      "cancellation_lines_excluded": 19104,
+      "non_product_or_invalid_lines_excluded": 10718,
+      "orders": 39516,
+      "first_order": "2009-12-01 07:45:00+00:00",
+      "last_order": "2011-12-09 12:50:00+00:00",
+      "capabilities": {
+        "orders": true,
+        "revenue": true,
+        "products": true,
+        "categories": false,
+        "sessions": false,
+        "funnel": false,
+        "channel": false,
+        "device": false,
+        "marketing_spend": false,
+        "change_log": false
+      },
+      "calendar": null,
+      "source": "UCI Online Retail II (CC BY 4.0), https://archive.ics.uci.edu/dataset/502/online+retail+ii",
+      "sha256": "572e36277c2390fbfde10664750731e0a86f55e33470d91919085f0408e67bfb"
+    }
+  },
+  "semi_synthetic": {
+    "recall": 0.333,
+    "n": 30,
+    "recall_by_drop": {
+      "15-25%": {
+        "detected": 1,
+        "n": 7
+      },
+      "25-40%": {
+        "detected": 2,
+        "n": 7
+      },
+      "40-60%": {
+        "detected": 7,
+        "n": 16
+      }
+    },
+    "recall_by_duration": {
+      "3-6 days": {
+        "detected": 4,
+        "n": 16
+      },
+      "7-14 days": {
+        "detected": 6,
+        "n": 14
+      }
+    },
+    "median_delay_days": 0.0,
+    "new_alerts_not_injected": 13,
+    "injections": [
+      {
+        "start": "2010-06-12",
+        "end": "2010-06-22",
+        "days": 11,
+        "drop": 0.18,
+        "seed": 701,
+        "detected": true,
+        "delay_days": 5
+      },
+      {
+        "start": "2010-10-04",
+        "end": "2010-10-09",
+        "days": 6,
+        "drop": 0.18,
+        "seed": 701,
+        "detected": false
+      },
+      {
+        "start": "2011-01-19",
+        "end": "2011-01-21",
+        "days": 3,
+        "drop": 0.46,
+        "seed": 701,
+        "detected": true,
+        "delay_days": 0
+      },
+      {
+        "start": "2011-02-20",
+        "end": "2011-03-03",
+        "days": 12,
+        "drop": 0.43,
+        "seed": 701,
+        "detected": false
+      },
+      {
+        "start": "2011-07-15",
+        "end": "2011-07-20",
+        "days": 6,
+        "drop": 0.6,
+        "seed": 701,
+        "detected": true,
+        "delay_days": 2
+      },
+      {
+        "start": "2011-10-02",
+        "end": "2011-10-04",
+        "days": 3,
+        "drop": 0.58,
+        "seed": 701,
+        "detected": true,
+        "delay_days": 0
+      },
+      {
+        "start": "2010-05-18",
+        "end": "2010-05-25",
+        "days": 8,
+        "drop": 0.29,
+        "seed": 702,
+        "detected": false
+      },
+      {
+        "start": "2010-06-23",
+        "end": "2010-06-26",
+        "days": 4,
+        "drop": 0.24,
+        "seed": 702,
+        "detected": false
+      },
+      {
+        "start": "2010-10-16",
+        "end": "2010-10-22",
+        "days": 7,
+        "drop": 0.5,
+        "seed": 702,
+        "detected": true,
+        "delay_days": 1
+      },
+      {
+        "start": "2011-01-19",
+        "end": "2011-02-01",
+        "days": 14,
+        "drop": 0.5,
+        "seed": 702,
+        "detected": false
+      },
+      {
+        "start": "2011-03-17",
+        "end": "2011-03-19",
+        "days": 3,
+        "drop": 0.54,
+        "seed": 702,
+        "detected": false
+      },
+      {
+        "start": "2011-07-11",
+        "end": "2011-07-24",
+        "days": 14,
+        "drop": 0.2,
+        "seed": 702,
+        "detected": false
+      },
+      {
+        "start": "2010-05-16",
+        "end": "2010-05-24",
+        "days": 9,
+        "drop": 0.31,
+        "seed": 703,
+        "detected": false
+      },
+      {
+        "start": "2010-07-20",
+        "end": "2010-07-28",
+        "days": 9,
+        "drop": 0.36,
+        "seed": 703,
+        "detected": false
+      },
+      {
+        "start": "2010-10-05",
+        "end": "2010-10-14",
+        "days": 10,
+        "drop": 0.29,
+        "seed": 703,
+        "detected": false
+      },
+      {
+        "start": "2011-02-13",
+        "end": "2011-02-18",
+        "days": 6,
+        "drop": 0.55,
+        "seed": 703,
+        "detected": false
+      },
+      {
+        "start": "2011-05-09",
+        "end": "2011-05-11",
+        "days": 3,
+        "drop": 0.48,
+        "seed": 703,
+        "detected": false
+      },
+      {
+        "start": "2011-07-01",
+        "end": "2011-07-13",
+        "days": 13,
+        "drop": 0.38,
+        "seed": 703,
+        "detected": true,
+        "delay_days": 0
+      },
+      {
+        "start": "2010-07-10",
+        "end": "2010-07-14",
+        "days": 5,
+        "drop": 0.19,
+        "seed": 704,
+        "detected": false
+      },
+      {
+        "start": "2010-09-26",
+        "end": "2010-09-30",
+        "days": 5,
+        "drop": 0.39,
+        "seed": 704,
+        "detected": false
+      },
+      {
+        "start": "2010-11-19",
+        "end": "2010-11-28",
+        "days": 10,
+        "drop": 0.54,
+        "seed": 704,
+        "detected": true,
+        "delay_days": 0
+      },
+      {
+        "start": "2011-02-25",
+        "end": "2011-02-28",
+        "days": 4,
+        "drop": 0.57,
+        "seed": 704,
+        "detected": false
+      },
+      {
+        "start": "2011-05-14",
+        "end": "2011-05-19",
+        "days": 6,
+        "drop": 0.52,
+        "seed": 704,
+        "detected": false
+      },
+      {
+        "start": "2011-10-14",
+        "end": "2011-10-20",
+        "days": 7,
+        "drop": 0.37,
+        "seed": 704,
+        "detected": true,
+        "delay_days": 0
+      },
+      {
+        "start": "2010-04-15",
+        "end": "2010-04-17",
+        "days": 3,
+        "drop": 0.4,
+        "seed": 705,
+        "detected": false
+      },
+      {
+        "start": "2010-07-10",
+        "end": "2010-07-18",
+        "days": 9,
+        "drop": 0.43,
+        "seed": 705,
+        "detected": true,
+        "delay_days": 1
+      },
+      {
+        "start": "2010-11-17",
+        "end": "2010-11-22",
+        "days": 6,
+        "drop": 0.45,
+        "seed": 705,
+        "detected": true,
+        "delay_days": 0
+      },
+      {
+        "start": "2011-01-09",
+        "end": "2011-01-13",
+        "days": 5,
+        "drop": 0.19,
+        "seed": 705,
+        "detected": false
+      },
+      {
+        "start": "2011-03-30",
+        "end": "2011-04-02",
+        "days": 4,
+        "drop": 0.4,
+        "seed": 705,
+        "detected": false
+      },
+      {
+        "start": "2011-09-15",
+        "end": "2011-09-28",
+        "days": 14,
+        "drop": 0.21,
+        "seed": 705,
+        "detected": false
+      }
+    ]
+  }
+}
