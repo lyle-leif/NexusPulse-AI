@@ -243,7 +243,8 @@ details.more[open] > summary::before { content: "- "; }
 
 /* nav */
 .nav-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 12px 10px 16px; }
-.nav-seg { display: inline-flex; gap: 2px; padding: 3px; border: 1px solid var(--glass-border); border-radius: 999px; background: var(--glass-strong); }
+.nav-seg { display: none; gap: 2px; padding: 3px; border: 1px solid var(--glass-border); border-radius: 999px; background: var(--glass-strong); }
+@media (min-width: 768px) { .nav-seg { display: inline-flex; } }
 .nav-link { white-space: nowrap; padding: 0.35rem 0.85rem; border-radius: 999px; color: var(--text-secondary); font-size: 0.85rem; transition: color .15s; }
 .nav-link:hover { color: var(--foreground); }
 .nav-link.active { color: var(--accent-ink); background: var(--accent); box-shadow: var(--glow-box); font-weight: 600; }

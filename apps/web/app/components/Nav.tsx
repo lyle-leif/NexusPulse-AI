@@ -20,7 +20,7 @@ export default function Nav({ active }: { active: Key }) {
         <Link href="/" aria-label="NexusPulse home">
           <Logo />
         </Link>
-        <nav aria-label="Main" className="nav-seg hidden md:inline-flex">
+        <nav aria-label="Main" className="nav-seg">
           {ITEMS.map((i) => (
             <Link key={i.key} href={i.href} className={i.key === active ? "nav-link active" : "nav-link"} aria-current={i.key === active ? "page" : undefined}>
               {i.label}
@@ -29,7 +29,7 @@ export default function Nav({ active }: { active: Key }) {
         </nav>
         <ThemeToggle />
       </div>
-      <nav aria-label="Main" className="card bottom-nav md:hidden">
+      <nav aria-label="Main" className="card bottom-nav">
         {ITEMS.map((i) => (
           <Link key={i.key} href={i.href} aria-current={i.key === active ? "page" : undefined}>
             <Icon name={i.icon} size={20} />
