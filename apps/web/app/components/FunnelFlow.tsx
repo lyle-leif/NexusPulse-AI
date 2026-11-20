@@ -45,8 +45,10 @@ export default function FunnelFlow({ cur, prev, currency }: { cur: FunnelPeriod;
   const worstFell = steps[worst].rate < steps[worst].prevRate * 0.95;
   const revChange = prev.net_revenue ? cur.net_revenue / prev.net_revenue - 1 : null;
 
+  // A table ignores width:1px, so the sr-only box goes on a wrapper div.
   const table = (
-    <table className="sr-only">
+    <div className="sr-only">
+    <table>
       <caption>Visits to purchases, last 28 days, with the share that continued at each step</caption>
       <tbody>
         {STAGES.map((s, i) => (
@@ -62,6 +64,7 @@ export default function FunnelFlow({ cur, prev, currency }: { cur: FunnelPeriod;
         </tr>
       </tbody>
     </table>
+    </div>
   );
 
   // Narrow screens: a vertical list keeps labels readable.
