@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { getTimeMachineDay, getTimeMachineReport, type TimeMachineDay, type TmReport } from "@/lib/api";
+import { STATIC_DEMO, getTimeMachineDay, getTimeMachineReport, type TimeMachineDay, type TmReport } from "@/lib/api";
 import { money, shortDate } from "@/lib/format";
 
 const addDays = (iso: string, n: number) => {
@@ -140,7 +140,15 @@ export default function TimeMachine() {
     setRepErr(null);
     if (!sel || !tm) return;
     let live = true;
-    getTimeMachineReport(tm.day, sel)
+    // The static demo stores investigations for the day an incident is first detected and
+    // the day it ends; it shows the latest of those up to the selected day.
+    const inc = tm.incidents.find((i) => i.incident_id === sel);
+    const repDay = STATIC_DEMO ? inc?.static_report_day : tm.day;
+    if (!repDay) {
+      setRepErr(STATIC_DEMO ? "Not investigated in the static demo (data-quality incident)." : "Unknown incident.");
+      return;
+    }
+    getTimeMachineReport(repDay, sel)
       .then((r) => live && setRep(r))
       .catch((e) => live && setRepErr(String(e.message ?? e)));
     return () => {
@@ -244,8 +252,11 @@ export default function TimeMachine() {
 
         <section className="card" aria-labelledby="rep" aria-live="polite">
           <h2 id="rep" className="section-title">
-            Investigation as of {shortDate(tm.day)}
+            Investigation as of {shortDate(rep?.day ?? tm.day)}
           </h2>
+          {STATIC_DEMO && rep && rep.day !== tm.day ? (
+            <p className="muted mb-2 text-xs">Static demo: investigations are stored for the detection day and the end day. The live app runs one for any day.</p>
+          ) : null}
           {!sel ? (
             <p className="muted text-sm">Select an incident. It is investigated with data up to the end of this day only.</p>
           ) : repErr ? (

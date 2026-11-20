@@ -2,6 +2,15 @@ import { connection } from "next/server";
 
 export const API_URL = process.env.NEXUSPULSE_API_URL ?? "http://localhost:8000";
 
+// Static demo build (GitHub Pages): pages are rendered once at build time and the Time
+// Machine reads precomputed JSON. No server, database or model at view time.
+export const STATIC_DEMO = process.env.NEXT_PUBLIC_STATIC_DEMO === "1";
+export const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
+async function dynamicData() {
+  if (!STATIC_DEMO) await connection();
+}
+
 export type PeriodSummary = {
   start: string;
   end: string;
@@ -119,14 +128,14 @@ export type Evaluation = {
 };
 
 export async function getEvaluation(): Promise<Evaluation> {
-  await connection();
+  await dynamicData();
   const res = await fetch(`${API_URL}/api/evaluation`);
   if (!res.ok) throw new Error(`API responded ${res.status}`);
   return res.json();
 }
 
 export async function getOverview(workspace = "demo"): Promise<Overview> {
-  await connection(); // always render at request time; data comes from the local API
+  await dynamicData(); // always render at request time; data comes from the local API
   const res = await fetch(`${API_URL}/api/overview?workspace=${encodeURIComponent(workspace)}`);
   if (!res.ok) throw new Error(`API responded ${res.status}`);
   return res.json();
@@ -175,7 +184,7 @@ export type Investigation = {
 };
 
 export async function getInvestigation(id: string, workspace = "demo"): Promise<Investigation> {
-  await connection();
+  await dynamicData();
   const res = await fetch(`${API_URL}/api/incidents/${encodeURIComponent(id)}/investigation?workspace=${encodeURIComponent(workspace)}`);
   if (!res.ok) throw new Error(`API responded ${res.status}`);
   return res.json();
@@ -190,7 +199,7 @@ export type Report = {
 };
 
 export async function getReport(id: string, ai = false, workspace = "demo"): Promise<Report> {
-  await connection();
+  await dynamicData();
   const res = await fetch(
     `${API_URL}/api/incidents/${encodeURIComponent(id)}/report?workspace=${encodeURIComponent(workspace)}&narration=${ai ? "ai" : "template"}`,
   );
@@ -211,19 +220,25 @@ export type TimeMachineDay = {
   next_incident_day: string | null;
   series: TmPoint[];
   forecast_ahead: { date: string; expected: number; lo: number; hi: number }[];
-  incidents: Incident[];
+  incidents: (Incident & { static_report_day?: string | null })[];
   events: { occurred_at: string; event_type: string; description: string }[];
 };
 export type TmReport = { day: string; incident: Incident; evidence: { level: string; reasons: string[] }; report: Report };
 
 export async function getTimeMachineDay(day?: string): Promise<TimeMachineDay> {
-  const res = await fetch(`${PUBLIC_API_URL}/api/timemachine${day ? `?day=${day}` : ""}`);
+  const res = await fetch(
+    STATIC_DEMO ? `${BASE_PATH}/demo/tm/${day ?? "start"}.json` : `${PUBLIC_API_URL}/api/timemachine${day ? `?day=${day}` : ""}`,
+  );
   if (!res.ok) throw new Error(`API responded ${res.status}`);
   return res.json();
 }
 
 export async function getTimeMachineReport(day: string, id: string): Promise<TmReport> {
-  const res = await fetch(`${PUBLIC_API_URL}/api/timemachine/report?day=${day}&incident_id=${encodeURIComponent(id)}`);
+  const res = await fetch(
+    STATIC_DEMO
+      ? `${BASE_PATH}/demo/tm/report/${day}_${id}.json`
+      : `${PUBLIC_API_URL}/api/timemachine/report?day=${day}&incident_id=${encodeURIComponent(id)}`,
+  );
   if (!res.ok) throw new Error((await res.json().catch(() => ({})))?.detail ?? `API responded ${res.status}`);
   return res.json();
 }

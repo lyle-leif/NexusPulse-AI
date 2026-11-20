@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getInvestigation, getReport, type Investigation, type Report } from "@/lib/api";
+import { STATIC_DEMO, getInvestigation, getOverview, getReport, type Investigation, type Report } from "@/lib/api";
 import { money, shortDate } from "@/lib/format";
 import Nav from "../../components/Nav";
 
@@ -62,7 +62,9 @@ function Summary({ rep, id, ai: wantAi }: { rep: Report; id: string; ai: boolean
         </span>
       </h2>
       <p className="mb-3 text-xs">
-        {wantAi ? (
+        {STATIC_DEMO ? (
+          <span className="muted">The optional AI summary runs on a local model and is available in the local app, not in this static demo.</span>
+        ) : wantAi ? (
           <Link href={`/incidents/${id}`} className="underline underline-offset-2">Show the template summary</Link>
         ) : (
           <Link href={`/incidents/${id}?ai=1`} prefetch={false} className="underline underline-offset-2">
@@ -104,9 +106,15 @@ function Summary({ rep, id, ai: wantAi }: { rep: Report; id: string; ai: boolean
   );
 }
 
+export async function generateStaticParams() {
+  // Pre-renders the incident pages for the static demo build.
+  const ov = await getOverview();
+  return ov.incidents.filter((i) => i.status !== "suppressed_data_quality").map((i) => ({ id: i.incident_id }));
+}
+
 export default async function IncidentPage({ params, searchParams }: PageProps<"/incidents/[id]">) {
   const { id } = await params;
-  const wantAi = (await searchParams).ai === "1";
+  const wantAi = STATIC_DEMO ? false : (await searchParams).ai === "1";
   const [inv, rep] = await Promise.all([getInvestigation(id), getReport(id, wantAi)]);
   const cur = inv.workspace.currency;
   const ev = inv.explanation_evidence;
