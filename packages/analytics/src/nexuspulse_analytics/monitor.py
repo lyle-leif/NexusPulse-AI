@@ -117,7 +117,9 @@ def run_monitor(
     forecasts: list[Forecast] = []
     rows: list[dict] = []
     anomalies: list[Anomaly] = []
-    tracks = {m: _Track() for m in HIERARCHY}
+    # Only the metrics the dataset supports are monitored (capability rules).
+    monitored = [m for m in HIERARCHY if m in metrics.columns and metrics[m].notna().any()]
+    tracks = {m: _Track() for m in monitored}
 
     # Forecasting starts `calibration_days` before the warm-up ends so the empirical
     # z calibration is ready when detection begins at `warmup_days`.
@@ -127,7 +129,7 @@ def run_monitor(
         horizon = min(config.refit_every, len(dates) - k)
         reopt = (n_refit * config.refit_every) % config.reoptimize_every == 0
         fcs = {}
-        for m in HIERARCHY:
+        for m in monitored:
             t = tracks[m]
             exclude = known_days.union(t.mask) if config.masking else known_days
             fixed = None if (reopt or config.model != "ets") else t.ets_params
@@ -140,7 +142,7 @@ def run_monitor(
 
         for day in dates[k : k + horizon]:
             exp_sales = fcs["net_sales"].frame.at[day, "mean"]
-            for m in HIERARCHY:
+            for m in monitored:
                 row = fcs[m].frame.loc[day]
                 rows.append(_evaluate(m, day, metrics.at[day, m], row, exp_sales, as_of, tracks[m], metrics, known_days, anomalies, config))
 

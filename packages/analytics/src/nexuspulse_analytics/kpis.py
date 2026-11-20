@@ -34,7 +34,7 @@ def daily_kpis(tables: dict[str, pd.DataFrame], tz: str) -> pd.DataFrame:
     sess_date = s.set_index("session_id")["session_date"]
 
     attr, unattr = _attributed(o, sessions)
-    attr = attr.assign(session_date=attr["session_id"].map(sess_date))
+    attr = attr.assign(session_date=sess_date.reindex(attr["session_id"]).to_numpy())
 
     out = pd.DataFrame(index=pd.DatetimeIndex(sorted(set(s["session_date"]) | set(o["order_date"])), name="date"))
     out["sessions"] = s.groupby("session_date").size()

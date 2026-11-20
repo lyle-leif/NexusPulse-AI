@@ -25,6 +25,8 @@ def metric_frame(daily: pd.DataFrame) -> pd.DataFrame:
     net_sales = gross sales minus discounts by order date, before refunds. Refunds
     arrive days later and restate history, so detection uses the unrestated figure.
     """
+    full = pd.date_range(daily.index.min(), daily.index.max(), freq="D", name="date")
+    daily = daily.reindex(full, fill_value=0)  # days with no activity (store closed) are zeros
     out = pd.DataFrame(index=daily.index)
     out["net_sales"] = (
         daily["attributed_gross_session_date"] + daily["timing_difference"] + daily["unattributed_gross"] - daily["discounts"]
@@ -32,6 +34,10 @@ def metric_frame(daily: pd.DataFrame) -> pd.DataFrame:
     out["sessions"] = daily["sessions"].astype(float)
     out["orders"] = daily["orders"].astype(float)
     out["session_conversion_rate"] = daily["converting_sessions"] / daily["sessions"].where(daily["sessions"] > 0)
+    if not (daily["sessions"] > 0).any():
+        # Order-only dataset: session metrics are unavailable, never approximated.
+        out["sessions"] = np.nan
+        out["session_conversion_rate"] = np.nan
     return out
 
 

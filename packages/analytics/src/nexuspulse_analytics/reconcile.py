@@ -71,6 +71,10 @@ def unattributed_share_flags(
     A trailing window with a minimum order count avoids alerting on noise at low volume.
     """
     d = daily_kpis(tables, tz)
+    if tables["sessions"].empty:
+        # Order-only dataset: no session tracking exists, so the share is undefined.
+        return pd.DataFrame({"orders": d["orders"], "unattributed": d["unattributed_orders"],
+                             "share": float("nan"), "flag": False}, index=d.index)
     roll_orders = d["orders"].rolling(window_days, min_periods=1).sum()
     roll_unattr = d["unattributed_orders"].rolling(window_days, min_periods=1).sum()
     out = pd.DataFrame({"orders": roll_orders, "unattributed": roll_unattr})
