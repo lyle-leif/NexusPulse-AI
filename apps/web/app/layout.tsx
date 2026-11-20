@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Chakra_Petch, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -12,6 +12,13 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+// Display face for the logo, page titles and hero numbers only; body text stays Geist.
+const display = Chakra_Petch({
+  variable: "--font-display",
+  weight: ["500", "600"],
+  subsets: ["latin"],
+});
+
 export const metadata: Metadata = {
   title: "NexusPulse AI",
   description: "What changed in your store, where, and how sure we are",
@@ -21,7 +28,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${display.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <head>
@@ -32,7 +39,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           }}
         />
       </head>
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="has-bottom-nav min-h-full flex flex-col">{children}</body>
     </html>
   );
 }

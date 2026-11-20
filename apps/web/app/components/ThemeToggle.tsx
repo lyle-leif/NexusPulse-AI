@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Icon from "./Icons";
 
 /** Dark by default; light on request. The choice is remembered on this device only. */
 export default function ThemeToggle() {
@@ -15,9 +16,10 @@ export default function ThemeToggle() {
       localStorage.setItem("np-theme", next ? "light" : "dark");
     } catch {}
   };
+  const label = light ? "Switch to dark theme" : "Switch to light theme";
   return (
-    <button className="nav-link" onClick={flip} aria-pressed={light} title="Switch light or dark theme">
-      {light ? "Dark" : "Light"}
+    <button className="icon-btn" onClick={flip} aria-label={label} title={label}>
+      <Icon name={light ? "moon" : "sun"} size={18} />
     </button>
   );
 }
