@@ -20,6 +20,7 @@ from fastapi.middleware.cors import CORSMiddleware  # noqa: E402
 
 from nexuspulse_analytics import daily_kpis, run_reconciliation, unattributed_share_flags  # noqa: E402
 from nexuspulse_analytics.db import read_tables  # noqa: E402
+from nexuspulse_analytics.kpis import channel_sales  # noqa: E402
 from nexuspulse_analytics.investigate import investigate  # noqa: E402
 from nexuspulse_analytics.narrate import OllamaProvider, narrate  # noqa: E402
 from nexuspulse_analytics.report import build_report  # noqa: E402
@@ -115,6 +116,25 @@ def _funnel(tables: dict, tz: str, daily: pd.DataFrame, start: pd.Timestamp, end
     }
 
 
+CHANNEL_LABEL = {"organic": "Organic search", "paid_search": "Paid search", "paid_social": "Paid social", "email": "Email", "direct": "Direct"}
+
+
+def _channels(tables: dict, tz: str, daily: pd.DataFrame, cur: pd.DataFrame, prev: pd.DataFrame) -> list[dict]:
+    """Gross sales by channel (session date, as in the bridge) plus orders not linked to a visit (order date)."""
+    a = channel_sales(tables, tz, cur.index[0], cur.index[-1])
+    b = channel_sales(tables, tz, prev.index[0], prev.index[-1])
+    rows = []
+    for ch, r in a.iterrows():
+        before = float(b["attributed_gross"].get(ch, 0))
+        rows.append({"key": ch, "label": CHANNEL_LABEL.get(ch, str(ch).replace("_", " ").title()), "visits": int(r["sessions"]),
+                     "orders": int(r["attributed_orders"]), "value": _dollars(r["attributed_gross"]),
+                     "change": round(float(r["attributed_gross"]) / before - 1, 4) if before else None})
+    u_now, u_before = float(cur["unattributed_gross"].sum()), float(prev["unattributed_gross"].sum())
+    rows.append({"key": "unlinked", "label": "Orders not linked to a visit", "visits": None, "orders": int(cur["unattributed_orders"].sum()),
+                 "value": _dollars(u_now), "change": round(u_now / u_before - 1, 4) if u_before else None})
+    return rows
+
+
 def _forecast_view(monitor, day: pd.Timestamp, window: int) -> dict:
     """As-of forecast band for the last `window` days and the forecast issued for the days after `day`."""
     ns = monitor.daily.xs("net_sales", level="metric")
@@ -179,6 +199,7 @@ def _compute(workspace: str) -> dict:
         "funnel": {"current": _funnel(tables, tz, daily, cur.index[0], cur.index[-1]),
                    "previous": _funnel(tables, tz, daily, prev.index[0], prev.index[-1])},
         "forecast": _overview_forecast(st),
+        "channels": _channels(tables, tz, daily, cur, prev),
         "monitor_config": monitor.config.as_dict(),
         "notes": [
             "Recent refunds are restated as they arrive, so the latest days may understate refunds.",

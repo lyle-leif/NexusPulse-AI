@@ -85,3 +85,16 @@ def segment_core(tables: dict[str, pd.DataFrame], tz: str, by: str) -> pd.DataFr
     out["attributed_orders"] = attr.groupby(["session_date", by]).size()
     out["attributed_gross"] = attr.groupby(["session_date", by])["gross_sales"].sum()
     return out.fillna(0).astype("int64")
+
+
+def channel_sales(tables: dict[str, pd.DataFrame], tz: str, start, end) -> pd.DataFrame:
+    """Visits, orders and gross sales per channel for sessions that started in [start, end] (cents).
+
+    Uses the same session-date attribution as the revenue bridge's attributed gross sales line,
+    so the channels add up to that line exactly; orders with no known visit are not included.
+    """
+    seg = segment_core(tables, tz, "channel")
+    days = seg.index.get_level_values("session_date")
+    seg = seg[(days >= pd.Timestamp(start)) & (days <= pd.Timestamp(end))]
+    out = seg.groupby(level="channel")[["sessions", "attributed_orders", "attributed_gross"]].sum()
+    return out.sort_values("attributed_gross", ascending=False)

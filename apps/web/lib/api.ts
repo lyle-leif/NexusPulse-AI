@@ -48,6 +48,7 @@ export type Overview = {
   previous_period: PeriodSummary;
   revenue_bridge: { label: string; amount: number; total?: boolean }[];
   funnel: { current: FunnelCounts; previous: FunnelCounts };
+  channels: { key: string; label: string; visits: number | null; orders: number; value: number; change: number | null }[];
   forecast: {
     series: { date: string; actual: number; expected: number; lo: number; hi: number; state: string }[];
     forecast_ahead: { date: string; expected: number; lo: number; hi: number }[];
