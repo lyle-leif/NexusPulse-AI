@@ -201,7 +201,7 @@ def investigation(incident_id: str, workspace: str = "demo") -> dict:
     return _investigation(workspace, incident_id)
 
 
-# Narration model: a local Ollama model if one is installed, otherwise template-only.
+# Optional AI narration model (local Ollama). Reports default to the template.
 LLM_MODEL = os.environ.get("NEXUSPULSE_LLM", "llama3.1:8b")  # chosen by the narration eval
 
 
@@ -222,7 +222,8 @@ def _report(workspace: str, incident_id: str, mode: str) -> dict:
 
 
 @app.get("/api/incidents/{incident_id}/report")
-def report(incident_id: str, workspace: str = "demo", narration: str = "auto") -> dict:
+def report(incident_id: str, workspace: str = "demo", narration: str = "template") -> dict:
+    """Template by default (the narration eval found it clearer and instant); narration=ai asks the local model."""
     if workspace not in WORKSPACES:
         raise HTTPException(404, f"unknown workspace {workspace!r}")
-    return _report(workspace, incident_id, "template" if narration == "template" else "auto")
+    return _report(workspace, incident_id, "ai" if narration == "ai" else "template")

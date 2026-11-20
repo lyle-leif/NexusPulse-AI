@@ -172,9 +172,11 @@ export type Report = {
   narration: { mode: string; model: string | null; fallback: boolean; attempts: number; note?: string | null; prompt_version?: string };
 };
 
-export async function getReport(id: string, workspace = "demo"): Promise<Report> {
+export async function getReport(id: string, ai = false, workspace = "demo"): Promise<Report> {
   await connection();
-  const res = await fetch(`${API_URL}/api/incidents/${encodeURIComponent(id)}/report?workspace=${encodeURIComponent(workspace)}`);
+  const res = await fetch(
+    `${API_URL}/api/incidents/${encodeURIComponent(id)}/report?workspace=${encodeURIComponent(workspace)}&narration=${ai ? "ai" : "template"}`,
+  );
   if (!res.ok) throw new Error(`API responded ${res.status}`);
   return res.json();
 }

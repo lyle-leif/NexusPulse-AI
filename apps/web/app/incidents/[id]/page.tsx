@@ -50,7 +50,7 @@ function Waterfall({ inv, currency }: { inv: Investigation; currency: string }) 
   );
 }
 
-function Summary({ rep }: { rep: Report }) {
+function Summary({ rep, id, ai: wantAi }: { rep: Report; id: string; ai: boolean }) {
   const ai = rep.summary.some((s) => s.source === "model");
   const n = rep.narration;
   return (
@@ -61,6 +61,15 @@ function Summary({ rep }: { rep: Report }) {
           {ai ? `AI-written (${n.model}), validated` : "Template, no AI"}
         </span>
       </h2>
+      <p className="mb-3 text-xs">
+        {wantAi ? (
+          <Link href={`/incidents/${id}`} className="underline underline-offset-2">Show the template summary</Link>
+        ) : (
+          <Link href={`/incidents/${id}?ai=1`} prefetch={false} className="underline underline-offset-2">
+            Try an AI-written summary (local model, about 30 seconds; falls back to the template if it fails validation)
+          </Link>
+        )}
+      </p>
       <ol className="space-y-2 text-sm">
         {rep.summary.map((s, i) => (
           <li key={i}>
@@ -95,9 +104,10 @@ function Summary({ rep }: { rep: Report }) {
   );
 }
 
-export default async function IncidentPage({ params }: PageProps<"/incidents/[id]">) {
+export default async function IncidentPage({ params, searchParams }: PageProps<"/incidents/[id]">) {
   const { id } = await params;
-  const [inv, rep] = await Promise.all([getInvestigation(id), getReport(id)]);
+  const wantAi = (await searchParams).ai === "1";
+  const [inv, rep] = await Promise.all([getInvestigation(id), getReport(id, wantAi)]);
   const cur = inv.workspace.currency;
   const ev = inv.explanation_evidence;
   const byStatus = ["observed", "attributed", "associated", "hypothesis"].map((s) => [s, inv.findings.filter((f) => f.status === s)] as const);
@@ -124,7 +134,7 @@ export default async function IncidentPage({ params }: PageProps<"/incidents/[id
         <span className="pill">Data: {inv.data_label}</span>
       </header>
 
-      <Summary rep={rep} />
+      <Summary rep={rep} id={id} ai={wantAi} />
 
       <section aria-labelledby="evidence" className="card">
         <h2 id="evidence" className="section-title">
