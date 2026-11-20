@@ -91,7 +91,7 @@ function Chart({ tm }: { tm: TimeMachineDay }) {
         <path d={area(ahead, past.length)} fill="var(--band)" stroke="var(--text-secondary)" strokeDasharray="3 3" strokeWidth={1} />
         <path d={line} fill="none" stroke="var(--series-1)" strokeWidth={2} />
         <line x1={x(today)} x2={x(today)} y1={P.top} y2={H - P.bottom} stroke="var(--foreground)" strokeWidth={1} />
-        <text x={x(today) + 4} y={P.top + 10} fontSize="11" fill="var(--foreground)">
+        <text x={x(today) - 4} y={P.top + 10} fontSize="11" textAnchor="end" fill="var(--foreground)">
           today
         </text>
         <text x={P.left} y={H - 6} fontSize="11" fill="var(--text-secondary)">
