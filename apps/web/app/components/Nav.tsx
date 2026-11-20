@@ -1,8 +1,9 @@
 import Link from "next/link";
 
-export default function Nav({ active }: { active: "overview" | "evaluation" }) {
+export default function Nav({ active }: { active: "overview" | "evaluation" | "time-machine" }) {
   const items = [
     { href: "/", key: "overview", label: "Overview" },
+    { href: "/time-machine", key: "time-machine", label: "Time Machine" },
     { href: "/evaluation", key: "evaluation", label: "Evaluation" },
   ] as const;
   return (

@@ -197,3 +197,33 @@ export async function getReport(id: string, ai = false, workspace = "demo"): Pro
   if (!res.ok) throw new Error(`API responded ${res.status}`);
   return res.json();
 }
+
+// ---------------------------------------------------------------- Time Machine (fetched from the browser)
+export const PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+
+export type TmPoint = { date: string; actual: number; expected: number; lo: number; hi: number; state: string };
+export type TimeMachineDay = {
+  workspace: { id: string; name: string; currency: string; timezone: string };
+  data_label: string;
+  day: string;
+  first_day: string;
+  last_day: string;
+  next_incident_day: string | null;
+  series: TmPoint[];
+  forecast_ahead: { date: string; expected: number; lo: number; hi: number }[];
+  incidents: Incident[];
+  events: { occurred_at: string; event_type: string; description: string }[];
+};
+export type TmReport = { day: string; incident: Incident; evidence: { level: string; reasons: string[] }; report: Report };
+
+export async function getTimeMachineDay(day?: string): Promise<TimeMachineDay> {
+  const res = await fetch(`${PUBLIC_API_URL}/api/timemachine${day ? `?day=${day}` : ""}`);
+  if (!res.ok) throw new Error(`API responded ${res.status}`);
+  return res.json();
+}
+
+export async function getTimeMachineReport(day: string, id: string): Promise<TmReport> {
+  const res = await fetch(`${PUBLIC_API_URL}/api/timemachine/report?day=${day}&incident_id=${encodeURIComponent(id)}`);
+  if (!res.ok) throw new Error((await res.json().catch(() => ({})))?.detail ?? `API responded ${res.status}`);
+  return res.json();
+}

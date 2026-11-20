@@ -37,7 +37,7 @@ WORKSPACES = {
 }
 
 app = FastAPI(title="NexusPulse API")
-app.add_middleware(CORSMiddleware, allow_origins=["http://localhost:3000"], allow_methods=["GET"])
+app.add_middleware(CORSMiddleware, allow_origins=["http://localhost:3000", "http://localhost:3001"], allow_methods=["GET"])
 
 
 def _dollars(cents) -> float:
@@ -93,7 +93,7 @@ def _state(workspace: str) -> dict:
     cfg = WORKSPACES[workspace]
     tables = read_tables(workspace, cfg["batch"])
     tz = cfg["timezone"]
-    daily, monitor = analyze(tables, tz)
+    daily, monitor = analyze(tables, tz, record_timeline=True)
     flags = unattributed_share_flags(tables, tz)
     return {"tables": tables, "tz": tz, "daily": daily, "monitor": monitor, "flags": flags,
             "dq_days": flags.index[flags["flag"]], "known_days": known_event_days(tables["change_events"], tz)}
@@ -232,3 +232,80 @@ def report(incident_id: str, workspace: str = "demo", narration: str = "template
     if workspace not in WORKSPACES:
         raise HTTPException(404, f"unknown workspace {workspace!r}")
     return _report(workspace, incident_id, "ai" if narration == "ai" else "template")
+
+
+# ---------------------------------------------------------------- Time Machine
+# The monitor processes one day at a time and records its incident list after each day,
+# so the view for day D is exactly what a run stopped on D reports (tested in
+# tests/test_timemachine.py). Investigations for day D run on data up to the end of D.
+
+
+def _truncate(tables: dict, tz: str, day: str) -> dict:
+    cutoff = (pd.Timestamp(day) + pd.Timedelta(days=1)).tz_localize(tz).tz_convert("UTC")
+    cols = {"sessions": "started_at", "orders": "placed_at", "refunds": "refunded_at", "change_events": "occurred_at"}
+    out = dict(tables)
+    for t, c in cols.items():
+        out[t] = tables[t][tables[t][c] < cutoff].reset_index(drop=True)
+    out["order_items"] = tables["order_items"][tables["order_items"]["order_id"].isin(out["orders"]["order_id"])]
+    out["marketing_spend"] = tables["marketing_spend"][pd.to_datetime(tables["marketing_spend"]["spend_date"]) <= pd.Timestamp(day)]
+    return out
+
+
+@app.get("/api/timemachine")
+def timemachine(day: str | None = None, workspace: str = "demo", window: int = 120) -> dict:
+    if workspace not in WORKSPACES:
+        raise HTTPException(404, f"unknown workspace {workspace!r}")
+    st = _state(workspace)
+    mon = st["monitor"]
+    days = sorted(mon.timeline)
+    if not days:
+        raise HTTPException(404, "no timeline recorded")
+    day = day if day in mon.timeline else days[0]
+    d = pd.Timestamp(day)
+    ns = mon.daily.xs("net_sales", level="metric")
+    past = ns.loc[d - pd.Timedelta(days=window - 1): d]
+    series = [{"date": i.date().isoformat(), "actual": round(float(r["actual"]), 2), "expected": round(float(r["mean"]), 2),
+               "lo": round(float(r["lo"]), 2), "hi": round(float(r["hi"]), 2), "state": r["state"]} for i, r in past.iterrows()]
+    issued = [f for f in mon.forecasts if f.metric == "net_sales" and f.as_of <= d and f.frame.index[-1] > d]
+    ahead = []
+    if issued:
+        fc = issued[-1]
+        ahead = [{"date": i.date().isoformat(), "expected": round(float(r["mean"]), 2), "lo": round(float(r["lo"]), 2),
+                  "hi": round(float(r["hi"]), 2)} for i, r in fc.frame[fc.frame.index > d].iterrows()]
+    ev = st["tables"]["change_events"]
+    cutoff = (d + pd.Timedelta(days=1)).tz_localize(st["tz"]).tz_convert("UTC")
+    recent = ev[(ev["occurred_at"] < cutoff) & (ev["occurred_at"] >= cutoff - pd.Timedelta(days=30))]
+    incidents = sorted(mon.timeline[day], key=lambda i: i["start"], reverse=True)
+    next_new = next((x for x in days if x > day and len(mon.timeline[x]) > len(mon.timeline[day])), None)
+    return _clean({
+        "workspace": {"id": workspace, **{k: v for k, v in WORKSPACES[workspace].items() if k != "batch"}},
+        "data_label": "Synthetic", "day": day, "first_day": days[0], "last_day": days[-1], "next_incident_day": next_new,
+        "series": series, "forecast_ahead": ahead,
+        "incidents": incidents,
+        "events": [{"occurred_at": r["occurred_at"].isoformat(), "event_type": r["event_type"], "description": r["description"]}
+                   for _, r in recent.iterrows()],
+    })
+
+
+@lru_cache(maxsize=128)
+def _tm_report(workspace: str, day: str, incident_id: str) -> dict:
+    st = _state(workspace)
+    inc = next((i for i in st["monitor"].timeline.get(day, []) if i["incident_id"] == incident_id), None)
+    if inc is None:
+        raise HTTPException(404, f"incident {incident_id!r} is not known on {day}")
+    if inc["status"] == "suppressed_data_quality":
+        raise HTTPException(409, "incident is suppressed because of a data-quality issue")
+    tables = _truncate(st["tables"], st["tz"], day)
+    inc_as_of = dict(inc, end=inc["end"] or day)  # an open incident is investigated up to the selected day
+    dq = st["dq_days"][st["dq_days"] <= pd.Timestamp(day)]
+    known = st["known_days"][st["known_days"] <= pd.Timestamp(day)]
+    inv = investigate(tables, st["tz"], inc_as_of, dq, known)
+    rep = build_report(inv, WORKSPACES[workspace]["currency"], narration=narrate(inv, None))
+    return _clean({"day": day, "incident": inc, "evidence": inv["explanation_evidence"], "report": rep})
+
+
+@app.get("/api/timemachine/report")
+def timemachine_report(day: str, incident_id: str, workspace: str = "demo") -> dict:
+    if workspace not in WORKSPACES:
+        raise HTTPException(404, f"unknown workspace {workspace!r}")
+    return _tm_report(workspace, day, incident_id)

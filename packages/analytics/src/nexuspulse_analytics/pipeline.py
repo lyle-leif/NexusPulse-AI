@@ -37,11 +37,12 @@ def holiday_closures(orders: pd.Series, calendar: pd.DatetimeIndex, days: int = 
     return pd.DatetimeIndex(near)
 
 
-def analyze(tables: dict[str, pd.DataFrame], tz: str, config: MonitorConfig = MonitorConfig()) -> tuple[pd.DataFrame, MonitorResult]:
+def analyze(tables: dict[str, pd.DataFrame], tz: str, config: MonitorConfig = MonitorConfig(),
+            record_timeline: bool = False) -> tuple[pd.DataFrame, MonitorResult]:
     daily = daily_kpis(tables, tz)
     metrics = metric_frame(daily)
     calendar = known_event_days(tables["change_events"], tz)
     known = calendar.union(regular_closed_days(metrics["orders"])).union(holiday_closures(metrics["orders"], calendar))
     flags = unattributed_share_flags(tables, tz)
     dq_days = flags.index[flags["flag"]]
-    return daily, run_monitor(metrics, known, dq_days, config)
+    return daily, run_monitor(metrics, known, dq_days, config, record_timeline)

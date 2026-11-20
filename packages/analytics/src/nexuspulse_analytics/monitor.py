@@ -19,6 +19,8 @@ Rules (published; see ARCHITECTURE.md section 7):
 """
 from __future__ import annotations
 
+import copy
+
 from dataclasses import dataclass, field
 
 import numpy as np
@@ -85,6 +87,8 @@ class MonitorResult:
     forecasts: list[Forecast]
     anomalies: list[Anomaly]
     incidents: list[dict]
+    # day -> incidents exactly as a run ending that day reports them (Time Machine)
+    timeline: dict = field(default_factory=dict)
 
 
 @dataclass
@@ -112,6 +116,7 @@ def run_monitor(
     known_days: pd.DatetimeIndex,
     dq_days: pd.DatetimeIndex,
     config: MonitorConfig = MonitorConfig(),
+    record_timeline: bool = False,
 ) -> MonitorResult:
     dates = metrics.index
     forecasts: list[Forecast] = []
@@ -120,6 +125,7 @@ def run_monitor(
     # Only the metrics the dataset supports are monitored (capability rules).
     monitored = [m for m in HIERARCHY if m in metrics.columns and metrics[m].notna().any()]
     tracks = {m: _Track() for m in monitored}
+    timeline: dict = {"_on": True} if record_timeline else {}
 
     # Forecasting starts `calibration_days` before the warm-up ends so the empirical
     # z calibration is ready when detection begins at `warmup_days`.
@@ -145,10 +151,14 @@ def run_monitor(
             for m in monitored:
                 row = fcs[m].frame.loc[day]
                 rows.append(_evaluate(m, day, metrics.at[day, m], row, exp_sales, as_of, tracks[m], metrics, known_days, anomalies, config))
+            if timeline and k >= config.warmup_days:
+                snap = [copy.copy(a) for a in anomalies]
+                timeline[day.date().isoformat()] = _group(snap, dq_days[dq_days <= day], day, config)
 
     daily = pd.DataFrame(rows).set_index(["date", "metric"]) if rows else pd.DataFrame()
     incidents = _group(anomalies, dq_days, metrics.index[-1], config)
-    return MonitorResult(config, daily, forecasts, anomalies, incidents)
+    timeline.pop("_on", None)
+    return MonitorResult(config, daily, forecasts, anomalies, incidents, timeline)
 
 
 def _impact(m: str, actual: float, row: pd.Series, exp_sales: float) -> float:
