@@ -86,7 +86,7 @@ export default function LineChart({ title, data, format, threshold, bands = [], 
   return (
     <figure className="viz" aria-label={title}>
       <figcaption className="viz-title">{title}</figcaption>
-      <div ref={wrap} className="relative w-full">
+      <div ref={wrap} className="relative w-full min-w-0 overflow-hidden">
         <svg width={width} height={height} role="img" aria-label={`${title} line chart`}>
           {geo.bandRects.map((b, i) => (
             <g key={i}>

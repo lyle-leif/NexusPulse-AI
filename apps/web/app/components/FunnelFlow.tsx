@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { int, money } from "@/lib/format";
 
 export type FunnelPeriod = {
@@ -28,6 +28,7 @@ export default function FunnelFlow({ cur, prev, currency }: { cur: FunnelPeriod;
   const wrap = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(720);
   const [hover, setHover] = useState<number | null>(null);
+  const uid = useId().replace(/:/g, "");
   useEffect(() => {
     const el = wrap.current;
     if (!el) return;
@@ -66,7 +67,7 @@ export default function FunnelFlow({ cur, prev, currency }: { cur: FunnelPeriod;
   // Narrow screens: a vertical list keeps labels readable.
   if (width < 560) {
     return (
-      <div ref={wrap}>
+      <div ref={wrap} className="w-full min-w-0 overflow-hidden">
         {table}
         <ol className="space-y-3" aria-hidden>
           {STAGES.map((s, i) => (
@@ -114,20 +115,30 @@ export default function FunnelFlow({ cur, prev, currency }: { cur: FunnelPeriod;
   const endBand = `M${lastX},${mid - h[3] / 2} C${(lastX + cx) / 2},${mid - h[3] / 2} ${(lastX + cx) / 2},${mid - 10} ${cx - node / 2},${mid - 10} L${cx - node / 2},${mid + 10} C${(lastX + cx) / 2},${mid + 10} ${(lastX + cx) / 2},${mid + h[3] / 2} ${lastX},${mid + h[3] / 2} Z`;
 
   return (
-    <div ref={wrap} className="relative">
+    <div ref={wrap} className="relative w-full min-w-0 overflow-hidden">
       {table}
-      <svg width={width} height={H} aria-hidden onMouseLeave={() => setHover(null)}>
+      <svg width={width} height={H} aria-hidden onMouseLeave={() => setHover(null)} style={{ overflow: "visible" }}>
+        <defs>
+          <linearGradient id={`band-${uid}`} x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0%" stopColor="var(--accent)" stopOpacity={0.3} />
+            <stop offset="100%" stopColor="var(--accent)" stopOpacity={0.1} />
+          </linearGradient>
+          <radialGradient id={`node-${uid}`}>
+            <stop offset="0%" stopColor="var(--accent)" stopOpacity={0.18} />
+            <stop offset="100%" stopColor="var(--accent)" stopOpacity={0} />
+          </radialGradient>
+        </defs>
         {STAGES.slice(0, -1).map((s, i) => {
           const hot = i === worst && worstFell;
           return (
-            <path key={s.key} d={band(i)} fill={hot ? "var(--warn-soft)" : "var(--accent-soft)"} stroke={hot ? "var(--warn)" : "none"} strokeWidth={hot ? 1 : 0}
+            <path key={s.key} d={band(i)} fill={hot ? "var(--warn-soft)" : `url(#band-${uid})`} stroke={hot ? "var(--warn)" : "var(--accent)"} strokeOpacity={hot ? 1 : 0.45} strokeWidth={1}
               onMouseEnter={() => setHover(i)} />
           );
         })}
-        <path d={endBand} fill="var(--accent-soft)" />
+        <path d={endBand} fill={`url(#band-${uid})`} stroke="var(--accent)" strokeOpacity={0.45} strokeWidth={1} />
         {STAGES.map((s, i) => (
           <g key={s.key} onMouseEnter={() => setHover(i ? i - 1 : 0)}>
-            <rect x={xs[i]} y={mid - h[i] / 2} width={colW} height={h[i]} rx={2} fill="var(--accent)" />
+            <rect x={xs[i]} y={mid - h[i] / 2} width={colW} height={h[i]} rx={2} fill="var(--accent)" className="viz-glow" />
             <text x={xs[i]} y={22} className="viz-axis" style={{ textTransform: "uppercase", letterSpacing: "0.06em" }}>
               {s.label}
             </text>
@@ -142,7 +153,9 @@ export default function FunnelFlow({ cur, prev, currency }: { cur: FunnelPeriod;
             ) : null}
           </g>
         ))}
-        <circle cx={cx} cy={mid} r={node / 2} fill="var(--surface)" stroke="var(--accent)" strokeWidth={1.5} />
+        <circle cx={cx} cy={mid} r={node / 2 + 14} fill={`url(#node-${uid})`} />
+        <circle cx={cx} cy={mid} r={node / 2 + 6} fill="none" stroke="var(--accent)" strokeOpacity={0.35} strokeWidth={1} strokeDasharray="2 4" />
+        <circle cx={cx} cy={mid} r={node / 2} fill="var(--surface)" stroke="var(--accent)" strokeWidth={1.5} className="viz-glow" />
         <text x={cx} y={mid - 14} textAnchor="middle" className="viz-axis" style={{ textTransform: "uppercase", letterSpacing: "0.06em" }}>
           Net revenue
         </text>
