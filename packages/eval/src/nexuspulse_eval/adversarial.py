@@ -8,6 +8,11 @@ risk reduction, not a guarantee, and the misses show where its limits are.
 from __future__ import annotations
 
 
+FACTOR = {"sessions": "sessions", "cart_rate": "add-to-cart rate", "checkout_rate": "cart-to-checkout rate",
+          "purchase_rate": "checkout-to-purchase rate", "orders_per_converting_session": "orders per converting session",
+          "attributed_aov": "average order value"}
+
+
 def _fid(inv, ftype):
     return next(f for f in inv["findings"] if f["type"] == ftype)
 
@@ -48,6 +53,10 @@ def cases(inv: dict) -> list[dict]:
         one("made_up_step", "structure", "Net revenue moved during the incident.", [net["finding_id"]], status="observed",
             steps=[{"id": "fire_agency", "text": "Replace the marketing agency."}]),
         one("wrong_total", "numbers", f"Net revenue changed by ${abs(ch) * 2:,.0f} per day.", [net["finding_id"]], status="observed"),
+        one("date_as_money", "numbers", f"Net revenue moved from ${inc['values']['start'][:4]} to ${inc['values']['end'][:4]}.",
+            [inc["finding_id"]], status="observed"),
+        one("breakdown_as_cause", "lexicon", f"The change may have been caused by the {FACTOR.get(drv['values']['factor'], 'sessions')}.",
+            [drv["finding_id"]], status="hypothesis"),
         # Subtle cases: no forbidden word, correct numbers, unsupported meaning.
         one("subtle_motive", "semantic", f"{seg_name.capitalize()} shoppers lost interest during these dates.", [seg["finding_id"]]),
         one("subtle_loyal", "semantic", "The change is concentrated among loyal repeat customers.", [seg["finding_id"]]),

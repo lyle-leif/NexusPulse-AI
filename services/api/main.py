@@ -202,7 +202,7 @@ def investigation(incident_id: str, workspace: str = "demo") -> dict:
 
 
 # Narration model: a local Ollama model if one is installed, otherwise template-only.
-LLM_MODEL = os.environ.get("NEXUSPULSE_LLM", "qwen2.5:3b")
+LLM_MODEL = os.environ.get("NEXUSPULSE_LLM", "llama3.1:8b")  # chosen by the narration eval
 
 
 @lru_cache(maxsize=64)

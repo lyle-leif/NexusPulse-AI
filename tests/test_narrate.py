@@ -34,7 +34,7 @@ def test_template_summary_passes_the_validator(invs):
 
 def test_named_adversarial_cases_are_caught(invs):
     must_catch = {"causal_motive", "proves_effective", "status_inflation", "direction_flip", "invented_number",
-                  "recommendation", "unhedged_cause", "overclaim_hedged", "unknown_finding", "made_up_step", "wrong_total"}
+                  "recommendation", "unhedged_cause", "overclaim_hedged", "unknown_finding", "made_up_step", "wrong_total", "date_as_money", "breakdown_as_cause"}
     for inv in invs:
         for c in cases(inv):
             if c["id"] in must_catch:
@@ -43,7 +43,7 @@ def test_named_adversarial_cases_are_caught(invs):
 
 def test_adversarial_report_counts(invs):
     r = run_adversarial(invs)
-    assert r["n"] == 16 * len(invs)
+    assert r["n"] == 18 * len(invs)
     assert r["catch_rate"] >= 0.6
 
 

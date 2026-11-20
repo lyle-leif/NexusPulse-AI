@@ -21,7 +21,7 @@ import urllib.request
 
 from .report import NEXT_STEPS, STATUS_RANK, next_step_ids, template_summary
 
-PROMPT_VERSION = "narrate-0.1"
+PROMPT_VERSION = "narrate-0.2"
 OLLAMA_URL = "http://localhost:11434"
 
 SCHEMA = {
@@ -47,6 +47,7 @@ HEDGE = re.compile(r"\b(may|might|could|possibly|perhaps|appears? to|fits)\b", r
 RECOMMEND = re.compile(r"\b(should|must|need to|recommend)\b", re.I)
 UP = re.compile(r"\b(rose|rise|rising|increase[sd]?|grew|growth|higher|above|up|gain(ed)?|jump(ed)?|spike[sd]?)\b", re.I)
 DOWN = re.compile(r"\b(fell|fall|falling|decrease[sd]?|declin(e|ed|ing)|drop(ped|s)?|lower|below|down|loss|lost|shrank)\b", re.I)
+CAUSE_TYPES = {"event", "hypothesis", "alternative"}
 NUMBER = re.compile(r"(?<![\w.])-?\$?\d[\d,]*(?:\.\d+)?%?")
 
 
@@ -84,7 +85,10 @@ def build_prompt(inv: dict, feedback: list[str] | None = None) -> str:
         "Write a summary of 1 to 3 short sentences for a store owner, using ONLY the findings below.",
         "Every sentence must list the finding_ids it uses and a status equal to the weakest status among them "
         "(order from strongest to weakest: observed, attributed, associated, hypothesis).",
-        "Copy numbers exactly as they appear in the cited findings. Do not compute new numbers.",
+        "Copy numbers exactly as they appear in the cited findings. Do not compute new numbers. Write money as dollars with "
+        "thousands separators, for example $1,234 (you may round to whole dollars).",
+        "Do not put finding ids or statuses in the sentence text; they belong only in the finding_ids and status fields.",
+        "Write plain sentences a store owner understands; do not just copy the finding text.",
         "Never say a change caused, led to or resulted in something. A possible cause may only appear in a hypothesis sentence using 'may' or 'might'.",
         "Do not use the words proves, clearly, certainly, definitely, confirms. Do not give advice in the summary.",
         "Do not mention segments, products or reasons that are not in the cited findings.",
@@ -153,10 +157,12 @@ def validate_narration(parsed: dict, inv: dict) -> list[str]:
         # numbers
         vals = [v for f in cited for v in f["values"].values()]
         allowed = {_norm(a) for a in _allowed_numbers(vals)}
+        money_ok = {_norm(a) for a in _allowed_numbers([v for v in vals if isinstance(v, (int, float)) and not isinstance(v, bool)])}
         for tok in NUMBER.findall(text):
             n = _norm(tok)
             n_alt = n.rstrip("0").rstrip(".") if "." in n else n
-            if n not in allowed and n_alt not in allowed:
+            pool = money_ok if tok.lstrip("-").startswith("$") else allowed  # dates are never money
+            if n not in pool and n_alt not in pool:
                 errors.append(f"{tag}: number {tok} is not in the cited findings")
         # direction
         changes = [f["values"][k] for f in cited for k in ("change", "contribution") if isinstance(f["values"].get(k), (int, float))]
@@ -167,11 +173,15 @@ def validate_narration(parsed: dict, inv: dict) -> list[str]:
                 errors.append(f"{tag}: describes an increase but the cited change is negative")
             if pos and DOWN.search(text) and not UP.search(text):
                 errors.append(f"{tag}: describes a decrease but the cited change is positive")
+        if re.search(r"f\d+", text) or re.search(r"\((observed|attributed|associated|hypothesis)\)", text, re.I):
+            errors.append(f"{tag}: finding ids or statuses written into the sentence text")
         # lexicon
         if OVERCLAIM.search(text):
             errors.append(f"{tag}: overclaiming word '{OVERCLAIM.search(text).group(0)}'")
         if CAUSAL.search(text) and not (status == "hypothesis" and HEDGE.search(text)):
             errors.append(f"{tag}: causal wording '{CAUSAL.search(text).group(0)}' outside a hedged hypothesis")
+        elif CAUSAL.search(text) and any(f["type"] not in CAUSE_TYPES for f in cited):
+            errors.append(f"{tag}: causal wording cites a measured finding; a breakdown or segment is not a cause")
         if RECOMMEND.search(text):
             errors.append(f"{tag}: recommendation wording '{RECOMMEND.search(text).group(0)}' in the summary")
         cited_text = " ".join(str(v) for v in vals).lower() + " " + " ".join(f["text"].lower() for f in cited)

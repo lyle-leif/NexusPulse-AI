@@ -1,11 +1,11 @@
 {
- "generated_at": "2026-11-19T12:50:14.217402+00:00",
+ "generated_at": "2026-11-20T10:59:37.495824+00:00",
  "suite": "heldout/main",
  "n_investigations": 25,
  "adversarial": {
-  "catch_rate": 0.755,
-  "caught": 302,
-  "n": 400,
+  "catch_rate": 0.782,
+  "caught": 352,
+  "n": 450,
   "by_case": {
    "causal_motive": {
     "targets": "lexicon",
@@ -67,6 +67,16 @@
     "caught": 25,
     "n": 25
    },
+   "date_as_money": {
+    "targets": "numbers",
+    "caught": 25,
+    "n": 25
+   },
+   "breakdown_as_cause": {
+    "targets": "lexicon",
+    "caught": 25,
+    "n": 25
+   },
    "subtle_motive": {
     "targets": "semantic",
     "caught": 2,
@@ -100,12 +110,35 @@
    "first_attempt_errors": {}
   },
   "ollama:qwen2.5:3b": {
-   "available": false,
-   "note": "model not installed; run: ollama pull qwen2.5:3b"
+   "available": true,
+   "digest": "357c53fb659c5076de1d65ccb0b397446227b71a42be9d1603d46168015c9e4b",
+   "n": 25,
+   "first_pass": 0,
+   "passed_after_retry": 0,
+   "fallback": 25,
+   "unsupported_number_rate_shown": 0.0,
+   "first_attempt_errors": {
+    "status": 24,
+    "number": 28,
+    "causal": 13,
+    "segment": 1,
+    "overclaim": 1
+   },
+   "seconds_per_report": 20.2
   },
   "ollama:llama3.1:8b": {
-   "available": false,
-   "note": "model not installed; run: ollama pull llama3.1:8b"
+   "available": true,
+   "digest": "46e0c10c039e019119339687c3c1757cc81b9da49709a3b3924863ba87ca666e",
+   "n": 25,
+   "first_pass": 17,
+   "passed_after_retry": 5,
+   "fallback": 3,
+   "unsupported_number_rate_shown": 0.0,
+   "first_attempt_errors": {
+    "causal": 7,
+    "number": 9
+   },
+   "seconds_per_report": 30.6
   }
  }
 }
