@@ -1,17 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { setRootData, useRootData } from "@/lib/rootData";
 import Icon from "./Icons";
 
 /** Dark by default; light on request. The choice is remembered on this device only. */
 export default function ThemeToggle() {
-  const [light, setLight] = useState(false);
-  useEffect(() => setLight(document.documentElement.dataset.theme === "light"), []);
+  const light = useRootData(() => document.documentElement.dataset.theme === "light", false);
   const flip = () => {
     const next = !light;
-    setLight(next);
-    if (next) document.documentElement.dataset.theme = "light";
-    else delete document.documentElement.dataset.theme;
+    setRootData("theme", next ? "light" : undefined);
     try {
       localStorage.setItem("np-theme", next ? "light" : "dark");
     } catch {}

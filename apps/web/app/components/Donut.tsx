@@ -20,7 +20,8 @@ export default function Donut({ rows, currency, centerLabel }: { rows: DonutRow[
   const S = 168, R = 70, W = 18;
   const C = 2 * Math.PI * R;
   const gap = 2;
-  let acc = 0;
+  // Where each segment starts along the circle (running sum of the ones before it).
+  const starts = sorted.map((_, i) => sorted.slice(0, i).reduce((a, r) => a + (C * Math.max(0, r.value)) / total, 0));
 
   return (
     <div className="grid items-center gap-5 sm:grid-cols-[auto_1fr]">
@@ -38,7 +39,7 @@ export default function Donut({ rows, currency, centerLabel }: { rows: DonutRow[
                 fill="none"
                 strokeWidth={hot === r.key ? W + 4 : W}
                 strokeDasharray={`${Math.max(0, len - gap)} ${C}`}
-                strokeDashoffset={-acc}
+                strokeDashoffset={-starts[i]}
                 transform={`rotate(-90 ${S / 2} ${S / 2})`}
                 className={`donut-seg seg-${i}`}
                 style={{ transition: "stroke-width .15s", cursor: "pointer" }}
@@ -46,7 +47,6 @@ export default function Donut({ rows, currency, centerLabel }: { rows: DonutRow[
                 onMouseLeave={() => setHot(null)}
               />
             );
-            acc += len;
             return seg;
           })}
         </svg>

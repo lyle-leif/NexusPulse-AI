@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { setRootData, useRootData } from "@/lib/rootData";
 import Icon from "./Icons";
 
 const KEY = "np-intro-seen";
@@ -12,16 +12,10 @@ const KEY = "np-intro-seen";
  * inline script in the layout sets data-intro="seen" before first paint and CSS hides it.
  */
 export default function IntroBanner() {
-  const [show, setShow] = useState(true);
-  useEffect(() => {
-    try {
-      if (localStorage.getItem(KEY) === "1") setShow(false);
-    } catch {}
-  }, []);
+  const show = useRootData(() => document.documentElement.dataset.intro !== "seen", true);
   if (!show) return null;
   const dismiss = () => {
-    setShow(false);
-    document.documentElement.dataset.intro = "seen";
+    setRootData("intro", "seen");
     try {
       localStorage.setItem(KEY, "1");
     } catch {}

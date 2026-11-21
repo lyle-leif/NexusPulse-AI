@@ -44,10 +44,10 @@ export default function TimeMachine() {
   const [day, setDay] = useState<string | undefined>(dayFromUrl);
   const [tm, setTm] = useState<TimeMachineDay | null>(null);
   const [err, setErr] = useState<string | null>(null);
-  const [sel, setSel] = useState<string | null>(null);
-  const [rep, setRep] = useState<TmReport | null>(null);
-  const [repErr, setRepErr] = useState<string | null>(null);
-  const [playing, setPlaying] = useState(false);
+  const [picked, setSel] = useState<string | null>(null);
+  // A fetched investigation, tagged with the day and issue it belongs to.
+  const [fetched, setFetched] = useState<{ key: string; rep?: TmReport; err?: string } | null>(null);
+  const [wantPlay, setPlaying] = useState(false);
   const loaded = useRef(false);
 
   useEffect(() => {
@@ -70,30 +70,32 @@ export default function TimeMachine() {
     };
   }, [day]);
 
+  // Everything about the selected investigation is derived from the day shown; only the fetch is an effect.
+  const inc = picked && tm ? tm.incidents.find((i) => i.incident_id === picked) : undefined;
+  const sel = inc ? picked : null;
+  // The static demo stores investigations for the day an issue is first detected and
+  // the day it ends; it shows the latest of those up to the selected day.
+  const repDay = inc && tm ? (STATIC_DEMO ? inc.static_report_day : tm.day) : undefined;
+  const repKey = sel && repDay ? `${repDay}|${sel}` : null;
+  const current = fetched && fetched.key === repKey ? fetched : null;
+  const rep = current?.rep ?? null;
+  const repErr =
+    sel && !repDay
+      ? STATIC_DEMO
+        ? "Not investigated in the static demo (tracking problem)."
+        : "Unknown issue."
+      : (current?.err ?? null);
+
   useEffect(() => {
-    setRep(null);
-    setRepErr(null);
-    if (!sel || !tm) return;
+    if (!repKey || !repDay || !sel) return;
     let live = true;
-    // The static demo stores investigations for the day an issue is first detected and
-    // the day it ends; it shows the latest of those up to the selected day.
-    const inc = tm.incidents.find((i) => i.incident_id === sel);
-    if (!inc) {
-      setSel(null);
-      return;
-    }
-    const repDay = STATIC_DEMO ? inc.static_report_day : tm.day;
-    if (!repDay) {
-      setRepErr(STATIC_DEMO ? "Not investigated in the static demo (tracking problem)." : "Unknown issue.");
-      return;
-    }
     getTimeMachineReport(repDay, sel)
-      .then((r) => live && setRep(r))
-      .catch((e) => live && setRepErr(String(e.message ?? e)));
+      .then((r) => live && setFetched({ key: repKey, rep: r }))
+      .catch((e) => live && setFetched({ key: repKey, err: String(e.message ?? e) }));
     return () => {
       live = false;
     };
-  }, [sel, tm]);
+  }, [repKey, repDay, sel]);
 
   // Keep the address bar on the day shown, so it can be shared.
   useEffect(() => {
@@ -108,12 +110,11 @@ export default function TimeMachine() {
     [tm],
   );
 
+  // Playback stops by itself on the last day.
+  const playing = wantPlay && !!tm && tm.day < tm.last_day;
+
   useEffect(() => {
     if (!playing || !tm) return;
-    if (tm.day >= tm.last_day) {
-      setPlaying(false);
-      return;
-    }
     const t = setTimeout(() => go(addDays(tm.day, 1)), 600);
     return () => clearTimeout(t);
   }, [playing, tm, go]);
@@ -151,7 +152,7 @@ export default function TimeMachine() {
             <button className="pill" onClick={() => go(addDays(tm.day, -1))} disabled={tm.day <= tm.first_day}>
               Back a day
             </button>
-            <button className="pill" onClick={() => setPlaying((p) => !p)} aria-pressed={playing}>
+            <button className="pill" onClick={() => setPlaying(!playing)} aria-pressed={playing}>
               {playing ? "Pause" : "Play"}
             </button>
             <button className="pill" onClick={() => go(addDays(tm.day, 1))} disabled={tm.day >= tm.last_day}>

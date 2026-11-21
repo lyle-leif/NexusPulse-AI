@@ -260,7 +260,8 @@ export default async function Page() {
 /** Horizontal waterfall: each line is a bar from the running total; the last bar is net revenue. */
 function Bridge({ lines, currency }: { lines: { label: string; amount: number; total?: boolean }[]; currency: string }) {
   const max = Math.max(...lines.map((l) => Math.abs(l.amount)), 1);
-  let run = 0;
+  // Running total before each line (totals restart from zero).
+  const before = lines.map((_, i) => lines.slice(0, i).reduce((a, l) => (l.total ? a : a + l.amount), 0));
   const LABEL: Record<string, string> = {
     "Attributed gross sales": "Sales from tracked visits",
     "Timing difference": "Visits that ordered the next day",
@@ -271,10 +272,10 @@ function Bridge({ lines, currency }: { lines: { label: string; amount: number; t
   };
   return (
     <ul className="space-y-3">
-      {lines.map((l) => {
+      {lines.map((l, i) => {
+        const run = before[i];
         const start = l.total ? 0 : Math.min(run, run + l.amount);
         const w = Math.abs(l.amount);
-        if (!l.total) run += l.amount;
         const neg = l.amount < 0;
         return (
           <li key={l.label} className="grid grid-cols-[minmax(0,10rem)_1fr_6rem] items-center gap-3 text-sm">

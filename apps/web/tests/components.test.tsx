@@ -10,6 +10,7 @@ import { summaryText } from "@/lib/summary";
 beforeEach(() => {
   localStorage.clear();
   delete document.documentElement.dataset.theme;
+  delete document.documentElement.dataset.intro;
 });
 afterEach(() => {
   cleanup();
