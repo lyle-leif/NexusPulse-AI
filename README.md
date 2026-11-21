@@ -8,6 +8,8 @@ An autonomous business intelligence system for small online stores. NexusPulse A
 
 The demo is a static build: pages and the Time Machine are precomputed, so it needs no server, database or language model. The full system runs locally.
 
+![Overview: net revenue, system status, revenue against the expected range, issues, the visits-to-revenue flow and sales by channel](docs/media/overview.png)
+
 ## What it does
 
 If revenue falls well below expectation, NexusPulse AI:
@@ -92,6 +94,8 @@ The UK bank-holiday calendar matters. Without it the real data produces 19 alert
 
 Each screen opens with one plain sentence, generated from the data, that says what is happening. Technical detail (tables, rules, methods) sits in expandable sections below it. The UI uses issue for incident and "how well we can explain it" for evidence level.
 
+![Time Machine replaying the demo store's holiday revenue drop: within range on Dec 21, an open issue by Dec 29, explained by Jan 8](docs/media/time-machine.gif)
+
 - **Overview:** net revenue and its change with a 28-day trend; a system status panel (data date, consistency checks, open issues, orders not linked to a visit); tiles for orders, visits, conversion and average order value; revenue against the expected range with a 7-day forecast; open issues; a visits-to-revenue flow drawn to scale that highlights a step only when it weakened by more than 5%; sales by channel (donut and table, reconciled to the revenue bridge); and the revenue bridge.
 - **Investigation:** a summary with citations next to an evidence meter, and a button that copies a plain-text summary for chat or email; segment bars showing where the change happened; a Shapley waterfall showing what moved; recorded changes around the start; the alternatives that were checked; and findings by status. Full tables are in expandable sections.
 - **Time Machine:** replay the store one day at a time and see exactly what the monitor knew on each day. Each day's issue list is identical to that of a run stopped on that day, which a test checks. Investigations use no later data.
@@ -99,6 +103,12 @@ Each screen opens with one plain sentence, generated from the data, that says wh
 - **How it works:** the four steps from store data to an explanation, each linked to the screen that shows it, plus where AI is and is not used and the known limits.
 
 The interface uses a dark glass theme with lime accents and a light theme, switched with the sun/moon button. Glow is limited to chart lines, key numbers and active states; tables and long text sit on near-solid panels for readability. Phones get a bottom navigation bar.
+
+| Evaluation | How it works | Phone |
+|---|---|---|
+| ![Evaluation page with headline scores and real-store results](docs/media/evaluation.png) | ![How it works page with the four steps and known limits](docs/media/how-it-works.png) | ![Overview on a phone with the bottom navigation bar](docs/media/overview-phone.png) |
+
+Screenshots are captured from the live demo with `python scripts/capture_media.py` (local Chrome and Pillow, nothing downloaded).
 
 ## Technology
 
