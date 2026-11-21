@@ -265,3 +265,6 @@ input[type="range"] { -webkit-appearance: none; appearance: none; height: 6px; b
 input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 999px; background: var(--accent); border: 3px solid var(--surface); box-shadow: 0 0 10px var(--accent); }
 input[type="range"]::-moz-range-thumb { width: 14px; height: 14px; border-radius: 999px; background: var(--accent); border: 3px solid var(--surface); box-shadow: 0 0 10px var(--accent); }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* returning visitors: hidden before first paint (set by the inline script in layout.tsx) */
+:root[data-intro="seen"] .intro-banner { display: none; }

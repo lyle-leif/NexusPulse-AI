@@ -35,7 +35,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         {/* Applies a saved light theme before paint; dark is the default. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `try{if(localStorage.getItem("np-theme")==="light")document.documentElement.dataset.theme="light"}catch(e){}`,
+            __html: `try{var d=document.documentElement;if(localStorage.getItem("np-theme")==="light")d.dataset.theme="light";if(localStorage.getItem("np-intro-seen")==="1")d.dataset.intro="seen"}catch(e){}`,
           }}
         />
       </head>
