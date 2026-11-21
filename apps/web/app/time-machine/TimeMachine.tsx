@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { STATIC_DEMO, getTimeMachineDay, getTimeMachineReport, type TimeMachineDay, type TmReport } from "@/lib/api";
 import { money, shortDate } from "@/lib/format";
 import ForecastChart from "../components/ForecastChart";
@@ -32,20 +32,39 @@ function knewSentence(tm: TimeMachineDay) {
   }${newToday.length ? " A new signal appeared today." : ""}`;
 }
 
+/** ?day=YYYY-MM-DD opens the Time Machine on that day (shareable links); anything else is ignored. */
+function dayFromUrl(): string | undefined {
+  if (typeof window === "undefined") return undefined;
+  const d = new URLSearchParams(window.location.search).get("day");
+  return d && /^\d{4}-\d{2}-\d{2}$/.test(d) ? d : undefined;
+}
+
 export default function TimeMachine() {
-  const [day, setDay] = useState<string | undefined>(undefined);
+  // Read once on the client; nothing that depends on it renders before the first load finishes.
+  const [day, setDay] = useState<string | undefined>(dayFromUrl);
   const [tm, setTm] = useState<TimeMachineDay | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [sel, setSel] = useState<string | null>(null);
   const [rep, setRep] = useState<TmReport | null>(null);
   const [repErr, setRepErr] = useState<string | null>(null);
   const [playing, setPlaying] = useState(false);
+  const loaded = useRef(false);
 
   useEffect(() => {
     let live = true;
     getTimeMachineDay(day)
-      .then((d) => live && (setTm(d), setErr(null)))
-      .catch((e) => live && setErr(String(e.message ?? e)));
+      .then((d) => {
+        if (!live) return;
+        loaded.current = true;
+        setTm(d);
+        setErr(null);
+      })
+      .catch((e) => {
+        if (!live) return;
+        // A day outside the replay range (e.g. from an old link): fall back to the default day.
+        if (day && !loaded.current) setDay(undefined);
+        else setErr(String(e.message ?? e));
+      });
     return () => {
       live = false;
     };
@@ -75,6 +94,11 @@ export default function TimeMachine() {
       live = false;
     };
   }, [sel, tm]);
+
+  // Keep the address bar on the day shown, so it can be shared.
+  useEffect(() => {
+    if (tm) window.history.replaceState(null, "", `?day=${tm.day}`);
+  }, [tm]);
 
   const go = useCallback(
     (d: string) => {
