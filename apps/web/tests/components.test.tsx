@@ -3,6 +3,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import CopySummary from "@/app/components/CopySummary";
 import IntroBanner from "@/app/components/IntroBanner";
 import ThemeToggle from "@/app/components/ThemeToggle";
+import { issueSegments, issueTitle } from "@/app/components/IssueCard";
+import type { Incident } from "@/lib/api";
 import { summaryText } from "@/lib/summary";
 
 beforeEach(() => {
@@ -104,5 +106,29 @@ describe("summaryText", () => {
   it("leaves out the next-steps block when there are none", () => {
     const text = summaryText({ title: "T", dates: "D", summary: ["S"], evidence: "Weak", nextSteps: [] });
     expect(text).not.toContain("Next steps");
+  });
+});
+
+describe("issue titles", () => {
+  const base: Incident = { incident_id: "i", start: "2026-05-14", end: "2026-05-20", status: "resolved", anchor_metric: "net_sales", direction: "down", strength: "Moderate", impact: null, members: [] };
+
+  it("names the segment for a segment-only issue", () => {
+    expect(issueTitle({ ...base, scope: "segment", segment: { dimension: "channel", value: "paid_social" } })).toBe("Revenue from paid social lower than expected");
+    expect(issueTitle({ ...base, scope: "segment", anchor_metric: "sessions", direction: "up", segment: { dimension: "category", value: "Dresses" } })).toBe(
+      "Visits from Dresses higher than expected",
+    );
+  });
+
+  it("keeps store-wide titles and lists where else it was seen", () => {
+    const seg = (dimension: string, value: string) => ({ dimension, value, start: "2026-05-14", end: null, anchor_metric: "net_sales" });
+    const i = { ...base, scope: "store" as const, segments: [seg("channel", "paid_social"), seg("device", "mobile"), seg("device", "mobile")] };
+    expect(issueTitle(i)).toBe("Revenue lower than expected");
+    expect(issueSegments(i)).toBe("paid social, mobile");
+    expect(issueSegments(base)).toBe("");
+  });
+
+  it("does not repeat the issue's own segment", () => {
+    const i = { ...base, scope: "segment" as const, segment: { dimension: "category", value: "Shoes" }, segments: [{ dimension: "category", value: "Shoes", start: "", end: null, anchor_metric: "net_sales" }] };
+    expect(issueSegments(i)).toBe("");
   });
 });

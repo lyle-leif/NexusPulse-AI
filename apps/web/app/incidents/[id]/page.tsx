@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { API_URL, STATIC_DEMO, getInvestigation, getReport, type Investigation, type Overview, type Report } from "@/lib/api";
 import { money, shortDate } from "@/lib/format";
-import { METRIC_PLAIN } from "../../components/IssueCard";
+import { issueSegments, issueTitle } from "../../components/IssueCard";
 import CopySummary from "../../components/CopySummary";
 import { summaryText } from "@/lib/summary";
 import Icon from "../../components/Icons";
@@ -128,7 +128,8 @@ export default async function IncidentPage({ params, searchParams }: PageProps<"
 
   const segRows = primary ? inv.drilldown.dimensions[primary.dimension].rows : [];
   const segMax = Math.max(1, ...segRows.map((r) => Math.abs(r.change)));
-  const title = `${METRIC_PLAIN[inv.incident.anchor_metric] ?? inv.incident.anchor_metric} ${inv.incident.direction === "up" ? "higher" : "lower"} than expected`;
+  const title = issueTitle(inv.incident);
+  const seenIn = issueSegments(inv.incident);
 
   return (
     <main className="mx-auto w-full max-w-6xl space-y-5 px-4 py-5 sm:px-6">
@@ -142,6 +143,11 @@ export default async function IncidentPage({ params, searchParams }: PageProps<"
           <p className="muted mt-1">
             {shortDate(inv.window.start)} to {shortDate(inv.window.end)} ({inv.window.days} days), compared with the same weekdays in the 4 weeks before
           </p>
+          {seenIn ? (
+            <p className="faint mt-1 text-sm">
+              {inv.incident.scope === "segment" ? "Also flagged in" : "Also flagged in these segments"}: {seenIn}
+            </p>
+          ) : null}
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <CopySummary

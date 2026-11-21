@@ -71,6 +71,11 @@ export type Incident = {
   strength: "Strong" | "Moderate" | "Weak";
   impact: number | null;
   members: { metric: string; direction: string; start: string; end: string | null; status: string; strength: string; max_abs_z: number; max_window_z: number; trigger: string }[];
+  /** "segment" when only one channel, device, region or category moved; absent on older results. */
+  scope?: "store" | "segment";
+  segment?: { dimension: string; value: string };
+  /** Segments whose own monitor flagged the same change. */
+  segments?: { dimension: string; value: string; start: string; end: string | null; anchor_metric: string }[];
 };
 
 export type ScenarioScore = {
