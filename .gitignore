@@ -13,3 +13,8 @@ data/external/
 apps/web/public/demo/
 apps/web/out/
 apps/web/.next-static/
+
+# planning docs and local tool settings, kept out of the public repo
+PRD.md
+ARCHITECTURE.md
+.claude/

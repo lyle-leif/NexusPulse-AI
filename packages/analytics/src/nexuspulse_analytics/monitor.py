@@ -4,7 +4,7 @@ The monitor walks forward in time. Every `refit_every` days it fits a forecast o
 up to that day (as-of) and judges the following days against it, so actuals are always
 compared with a forecast issued before them.
 
-Rules (published; see ARCHITECTURE.md section 7):
+Rules (published, listed below):
 - z = deviation of the actual from the forecast, in transformed-sd units.
 - Three tests: single day |z| >= z_flag; 3-day window |sum z|/sqrt(3) >= z_window3;
   7-day window |sum z|/sqrt(7) >= z_window7. Windows catch sustained moderate changes

@@ -3,7 +3,7 @@
 Source: https://archive.ics.uci.edu/dataset/502/online+retail+ii - a UK online gift
 retailer, Dec 2009 to Dec 2011, invoice lines only.
 
-Capability (see PRD section 5): orders, revenue, products and countries exist. There are
+Capability: orders, revenue, products and countries exist. There are
 no sessions, funnel, channels, devices, marketing spend or change log, so session-based
 metrics are unavailable and are never approximated. No sessions are fabricated.
 
