@@ -50,4 +50,6 @@ jobs:
         with:
           node-version: 22
       - run: npm install --no-audit --no-fund
+      - name: Generate route types (PageProps, LayoutProps)
+        run: npx next typegen
       - run: npx tsc --noEmit
