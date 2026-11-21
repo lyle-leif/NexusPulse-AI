@@ -56,9 +56,12 @@ def main() -> int:
             continue
         report_days[iid] = sorted({s["first"], s.get("final", s["last_seen"])})
 
+    # Empty the folder rather than delete it: on Windows a folder that is open elsewhere
+    # (Explorer, OneDrive sync, a shell) cannot be removed, but its contents can.
     if OUT.exists():
-        shutil.rmtree(OUT)
-    (OUT / "report").mkdir(parents=True)
+        for child in OUT.iterdir():
+            shutil.rmtree(child) if child.is_dir() else child.unlink()
+    (OUT / "report").mkdir(parents=True, exist_ok=True)
     n = 0
     for iid, rds in report_days.items():
         for day in rds:
