@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-20T12:51:46.286574+00:00",
+ "generated_at": "2026-11-21T02:53:49.364760+00:00",
  "results": {
   "dev/main": {
    "oracle": {
@@ -548,19 +548,19 @@
    },
    "end_to_end": {
     "driver": {
-     "correct": 16,
-     "n": 17,
-     "rate": 0.941
+     "correct": 19,
+     "n": 21,
+     "rate": 0.905
     },
     "segment": {
-     "correct": 11,
-     "n": 17,
-     "rate": 0.647
+     "correct": 12,
+     "n": 21,
+     "rate": 0.571
     },
     "cause_or_none": {
-     "correct": 9,
-     "n": 17,
-     "rate": 0.529
+     "correct": 12,
+     "n": 21,
+     "rate": 0.571
     },
     "red_herring_rejected": {
      "correct": 0,
@@ -568,34 +568,34 @@
      "rate": null
     },
     "validation_passed": {
-     "correct": 17,
-     "n": 17,
+     "correct": 21,
+     "n": 21,
      "rate": 1.0
     },
     "cause_correct_by_evidence": {
      "Strong": {
-      "n": 0,
-      "cause_correct": 0
+      "n": 1,
+      "cause_correct": 1
      },
      "Moderate": {
       "n": 4,
       "cause_correct": 2
      },
      "Weak": {
-      "n": 9,
-      "cause_correct": 5
+      "n": 10,
+      "cause_correct": 6
      },
      "None": {
-      "n": 4,
-      "cause_correct": 2
+      "n": 6,
+      "cause_correct": 3
      }
     },
     "by_kind": {
      "traffic_loss": {
-      "n": 3,
-      "driver": 2,
-      "segment": 0,
-      "cause": 0
+      "n": 5,
+      "driver": 4,
+      "segment": 1,
+      "cause": 1
      },
      "conversion_drop": {
       "n": 4,
@@ -609,17 +609,17 @@
       "segment": 5,
       "cause": 5
      },
+     "stockout": {
+      "n": 5,
+      "driver": 4,
+      "segment": 1,
+      "cause": 5
+     },
      "price_increase": {
       "n": 2,
       "driver": 2,
       "segment": 2,
       "cause": 0
-     },
-     "stockout": {
-      "n": 3,
-      "driver": 3,
-      "segment": 1,
-      "cause": 3
      }
     },
     "rows": [
@@ -675,6 +675,23 @@
       "seed": 101
      },
      {
+      "kind": "stockout",
+      "start": "2025-12-26",
+      "evidence": "Weak",
+      "found_driver": "conversion",
+      "found_segment": {
+       "dimension": "device",
+       "segment": "mobile"
+      },
+      "found_cause": null,
+      "validation_passed": true,
+      "driver_correct": true,
+      "segment_correct": false,
+      "cause_correct": true,
+      "expected_cause": null,
+      "seed": 101
+     },
+     {
       "kind": "price_increase",
       "start": "2026-02-16",
       "evidence": "Weak",
@@ -690,6 +707,20 @@
       "cause_correct": false,
       "expected_cause": "Price list updated",
       "seed": 101
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-06-23",
+      "evidence": "None",
+      "found_driver": "attributed_aov",
+      "found_segment": null,
+      "found_cause": null,
+      "validation_passed": true,
+      "driver_correct": false,
+      "segment_correct": false,
+      "cause_correct": true,
+      "expected_cause": null,
+      "seed": 102
      },
      {
       "kind": "conversion_drop",
@@ -788,6 +819,20 @@
       "seed": 103
      },
      {
+      "kind": "traffic_loss",
+      "start": "2026-02-16",
+      "evidence": "None",
+      "found_driver": "sessions",
+      "found_segment": null,
+      "found_cause": null,
+      "validation_passed": true,
+      "driver_correct": true,
+      "segment_correct": false,
+      "cause_correct": false,
+      "expected_cause": "Campaign paused",
+      "seed": 103
+     },
+     {
       "kind": "conversion_drop",
       "start": "2025-05-04",
       "evidence": "Weak",
@@ -848,6 +893,23 @@
       "cause_correct": false,
       "expected_cause": "Campaign paused",
       "seed": 104
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-06-18",
+      "evidence": "Strong",
+      "found_driver": "sessions",
+      "found_segment": {
+       "dimension": "channel",
+       "segment": "paid_social"
+      },
+      "found_cause": "Campaign settings changed",
+      "validation_passed": true,
+      "driver_correct": true,
+      "segment_correct": true,
+      "cause_correct": true,
+      "expected_cause": "Campaign settings changed",
+      "seed": 105
      },
      {
       "kind": "conversion_drop",
@@ -2318,19 +2380,19 @@
    },
    "end_to_end": {
     "driver": {
-     "correct": 11,
-     "n": 12,
-     "rate": 0.917
+     "correct": 15,
+     "n": 19,
+     "rate": 0.789
     },
     "segment": {
-     "correct": 6,
-     "n": 12,
-     "rate": 0.5
+     "correct": 9,
+     "n": 19,
+     "rate": 0.474
     },
     "cause_or_none": {
-     "correct": 8,
-     "n": 12,
-     "rate": 0.667
+     "correct": 13,
+     "n": 19,
+     "rate": 0.684
     },
     "red_herring_rejected": {
      "correct": 0,
@@ -2338,26 +2400,26 @@
      "rate": null
     },
     "validation_passed": {
-     "correct": 12,
-     "n": 12,
+     "correct": 19,
+     "n": 19,
      "rate": 1.0
     },
     "cause_correct_by_evidence": {
      "Strong": {
-      "n": 0,
-      "cause_correct": 0
+      "n": 2,
+      "cause_correct": 2
      },
      "Moderate": {
-      "n": 0,
-      "cause_correct": 0
+      "n": 2,
+      "cause_correct": 1
      },
      "Weak": {
-      "n": 12,
-      "cause_correct": 8
+      "n": 14,
+      "cause_correct": 9
      },
      "None": {
-      "n": 0,
-      "cause_correct": 0
+      "n": 1,
+      "cause_correct": 1
      }
     },
     "by_kind": {
@@ -2366,6 +2428,12 @@
       "driver": 3,
       "segment": 0,
       "cause": 0
+     },
+     "stockout": {
+      "n": 4,
+      "driver": 3,
+      "segment": 3,
+      "cause": 3
      },
      "traffic_spike": {
       "n": 4,
@@ -2380,10 +2448,10 @@
       "cause": 4
      },
      "traffic_loss": {
-      "n": 1,
-      "driver": 1,
+      "n": 4,
+      "driver": 2,
       "segment": 0,
-      "cause": 0
+      "cause": 2
      }
     },
     "rows": [
@@ -2402,6 +2470,23 @@
       "segment_correct": false,
       "cause_correct": false,
       "expected_cause": "Checkout page update deployed",
+      "seed": 901
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-08-11",
+      "evidence": "Moderate",
+      "found_driver": "conversion",
+      "found_segment": {
+       "dimension": "category",
+       "segment": "Shoes"
+      },
+      "found_cause": null,
+      "validation_passed": true,
+      "driver_correct": true,
+      "segment_correct": true,
+      "cause_correct": true,
+      "expected_cause": null,
       "seed": 901
      },
      {
@@ -2439,6 +2524,20 @@
       "seed": 901
      },
      {
+      "kind": "traffic_loss",
+      "start": "2025-05-18",
+      "evidence": "None",
+      "found_driver": "sessions",
+      "found_segment": null,
+      "found_cause": null,
+      "validation_passed": true,
+      "driver_correct": true,
+      "segment_correct": false,
+      "cause_correct": true,
+      "expected_cause": null,
+      "seed": 902
+     },
+     {
       "kind": "traffic_spike",
       "start": "2025-09-27",
       "evidence": "Weak",
@@ -2453,6 +2552,23 @@
       "segment_correct": true,
       "cause_correct": true,
       "expected_cause": null,
+      "seed": 902
+     },
+     {
+      "kind": "stockout",
+      "start": "2025-11-07",
+      "evidence": "Weak",
+      "found_driver": "sessions",
+      "found_segment": {
+       "dimension": "category",
+       "segment": "Dresses"
+      },
+      "found_cause": null,
+      "validation_passed": true,
+      "driver_correct": false,
+      "segment_correct": false,
+      "cause_correct": false,
+      "expected_cause": "Inventory sync completed",
       "seed": 902
      },
      {
@@ -2490,6 +2606,23 @@
       "seed": 903
      },
      {
+      "kind": "stockout",
+      "start": "2025-07-01",
+      "evidence": "Strong",
+      "found_driver": "conversion",
+      "found_segment": {
+       "dimension": "category",
+       "segment": "Shoes"
+      },
+      "found_cause": "Inventory sync completed",
+      "validation_passed": true,
+      "driver_correct": true,
+      "segment_correct": true,
+      "cause_correct": true,
+      "expected_cause": "Inventory sync completed",
+      "seed": 903
+     },
+     {
       "kind": "traffic_loss",
       "start": "2025-10-26",
       "evidence": "Weak",
@@ -2524,6 +2657,40 @@
       "seed": 904
      },
      {
+      "kind": "stockout",
+      "start": "2025-07-22",
+      "evidence": "Strong",
+      "found_driver": "conversion",
+      "found_segment": {
+       "dimension": "category",
+       "segment": "Bottoms"
+      },
+      "found_cause": "Inventory sync completed",
+      "validation_passed": true,
+      "driver_correct": true,
+      "segment_correct": true,
+      "cause_correct": true,
+      "expected_cause": "Inventory sync completed",
+      "seed": 904
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-10-27",
+      "evidence": "Moderate",
+      "found_driver": "conversion",
+      "found_segment": {
+       "dimension": "channel",
+       "segment": "organic"
+      },
+      "found_cause": null,
+      "validation_passed": true,
+      "driver_correct": false,
+      "segment_correct": false,
+      "cause_correct": false,
+      "expected_cause": "Campaign budget updated",
+      "seed": 904
+     },
+     {
       "kind": "gradual_conversion_drift",
       "start": "2026-02-16",
       "evidence": "Weak",
@@ -2553,6 +2720,23 @@
       "validation_passed": true,
       "driver_correct": true,
       "segment_correct": true,
+      "cause_correct": true,
+      "expected_cause": null,
+      "seed": 905
+     },
+     {
+      "kind": "traffic_loss",
+      "start": "2025-06-01",
+      "evidence": "Weak",
+      "found_driver": "conversion",
+      "found_segment": {
+       "dimension": "category",
+       "segment": "Shoes"
+      },
+      "found_cause": null,
+      "validation_passed": true,
+      "driver_correct": false,
+      "segment_correct": false,
       "cause_correct": true,
       "expected_cause": null,
       "seed": 905

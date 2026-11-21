@@ -49,12 +49,12 @@ Scenarios that are not business changes were handled correctly in 10 of 10 cases
 
 | | Given the true incident window | From the monitor's own detections |
 |---|---|---|
-| Correct primary driver | 88% | 92% |
-| Correct segment | 64% | 50% |
-| Correct cause, or correctly "none" | 84% | 67% |
+| Correct primary driver | 88% | 79% |
+| Correct segment | 64% | 47% |
+| Correct cause, or correctly "none" | 84% | 68% |
 | Unrelated recorded change rejected | 4 of 5 | not applicable |
 
-When explanation evidence was **Strong**, the named cause was right in 5 of 5 cases. On the low-volume store the segment is found only 16% of the time, because segment differences there are mostly noise.
+The right column covers the 19 scenarios the monitor caught, up from 12 before segment monitoring. The 7 added ones are mostly changes confined to one segment, which are harder to explain: the primary driver was right in 4 of them, so that rate fell from 92% to 79%. When explanation evidence was **Strong**, the named cause was right in 5 of 5 cases. On the low-volume store the segment is found only 16% of the time, because segment differences there are mostly noise.
 
 ### Reports (Synthetic, 25 held-out investigations)
 
