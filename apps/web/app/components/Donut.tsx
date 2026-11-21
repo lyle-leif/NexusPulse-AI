@@ -64,19 +64,19 @@ export default function Donut({ rows, currency, centerLabel }: { rows: DonutRow[
             <tr>
               <th scope="col">Channel</th>
               <th scope="col" className="num">Sales</th>
-              <th scope="col" className="num">Share</th>
+              <th scope="col" className="num col-wide">Share</th>
               <th scope="col" className="num">Change</th>
             </tr>
           </thead>
           <tbody>
             {sorted.map((r, i) => (
               <tr key={r.key} className={hot === r.key ? "hot" : undefined} onMouseEnter={() => setHot(r.key)} onMouseLeave={() => setHot(null)}>
-                <th scope="row" className="font-normal">
+                <th scope="row" className="font-normal" style={{ whiteSpace: "normal" }}>
                   <span aria-hidden className={`mr-2 inline-block h-2.5 w-2.5 rounded-sm align-middle donut-swatch seg-${i}`} />
                   {r.label}
                 </th>
                 <td className="num">{money(r.value, currency)}</td>
-                <td className="num">{pct(r.value / total, 1)}</td>
+                <td className="num col-wide">{pct(r.value / total, 1)}</td>
                 <td className={`num ${r.change === null ? "faint" : r.change < 0 ? "delta down" : "delta up"}`}>
                   {r.change === null ? "n/a" : `${r.change >= 0 ? "+" : ""}${(r.change * 100).toFixed(1)}%`}
                 </td>

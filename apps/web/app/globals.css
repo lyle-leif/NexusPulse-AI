@@ -179,6 +179,8 @@ button.pill[aria-pressed="true"] { background: var(--accent); color: var(--accen
 .data-table thead th { color: var(--text-muted); font-weight: 500; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; }
 .data-table .num { text-align: right; }
 .data-table tr.hot td, .data-table tr.hot th { background: var(--accent-soft); }
+/* columns that can be derived from a chart beside the table are dropped on phones */
+@media (max-width: 639px) { .data-table .col-wide { display: none; } }
 
 /* status */
 .status-line { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; }
