@@ -10,6 +10,14 @@ rm -rf apps/web/.next-static/cache/fetch-cache apps/web/.next/cache/fetch-cache
 ( cd apps/web && MSYS_NO_PATHCONV=1 NEXT_PUBLIC_STATIC_DEMO=1 NEXT_PUBLIC_BASE_PATH="/$REPO_NAME" npx next build )
 OUT="apps/web/.next-static-out"
 rm -rf "$OUT" && cp -r apps/web/.next-static "$OUT" && touch "$OUT/.nojekyll"
+# The export writes segment prefetch files nested (about/__next.about/__PAGE__.txt) but the
+# client requests them dot-joined (about/__next.about.__PAGE__.txt). Add flat copies so link
+# prefetches don't 404 on a static host.
+find "$OUT" -type f -path "*/__next.*/*" ! -path "*/_next/*" ! -path "*/server/*" ! -path "*/cache/*" ! -path "*/static/*" | while read -r f; do
+  rel="${f#"$OUT"/}"; dir="${rel%%/__next.*}"; seg="${rel#"$dir"/}"
+  [ "$dir" = "$rel" ] && { dir=""; seg="$rel"; }
+  cp "$f" "$OUT/${dir:+$dir/}${seg//\//.}"
+done
 TMP="$(mktemp -d)"
 git worktree add -f --detach "$TMP" >/dev/null
 ( cd "$TMP" && git checkout --orphan gh-pages-tmp >/dev/null 2>&1 && git rm -rfq . >/dev/null 2>&1 || true
