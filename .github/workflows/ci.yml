@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  python:
+    name: Python tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: nexuspulse
+          POSTGRES_PASSWORD: nexuspulse_dev
+          POSTGRES_DB: nexuspulse
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd "pg_isready -U nexuspulse"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Load schema and roles
+        env:
+          PGPASSWORD: nexuspulse_dev
+        run: |
+          psql -h localhost -p 5433 -U nexuspulse -d nexuspulse -v ON_ERROR_STOP=1 -f db/schema.sql
+          psql -h localhost -p 5433 -U nexuspulse -d nexuspulse -v ON_ERROR_STOP=1 -f db/roles.sql
+      - name: Run tests
+        run: uv run pytest -q
+
+  web:
+    name: Web type check
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-audit --no-fund
+      - run: npx tsc --noEmit

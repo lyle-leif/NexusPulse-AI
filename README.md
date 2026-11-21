@@ -1,5 +1,7 @@
 # NexusPulse AI
 
+[![CI](https://github.com/lyle-leif/NexusPulse-AI/actions/workflows/ci.yml/badge.svg)](https://github.com/lyle-leif/NexusPulse-AI/actions/workflows/ci.yml)
+
 An autonomous business intelligence system for small online stores. NexusPulse AI forecasts expected performance, detects unexpected changes, investigates where they occurred and what coincided with them, and writes traceable, evidence-backed reports. Every result shown here is measured on held-out data, and the limits are stated next to the results.
 
 **Live demo (read-only):** https://lyle-leif.github.io/NexusPulse-AI/
