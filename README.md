@@ -16,6 +16,18 @@ Business monitoring for small online stores. NexusPulse AI forecasts what each d
 4. **Checks what coincided**: releases, price changes and campaigns recorded nearby, holidays, and data-quality problems.
 5. **Reports** with typed findings (observed, measured, associated, hypothesis) and an evidence level set by published rules. It never claims a recorded change caused a drop.
 
+## What I built
+
+I designed and built NexusPulse AI end to end: the data model and store generator, forecasting and detection, the investigation engine, the report checks, the web app, and the evaluation that measures all of it.
+
+The problems that took the most work:
+
+- **An expected range that is honest.** The forecast's range first held on only 91-94% of days, short of the 95% it promised. It is now drawn from the monitor's own past forecast errors, and it holds on 95% of days on generated stores and 94% on a real retailer.
+- **Changes hidden in one segment.** Store-wide revenue swings 20-35% a day, so a channel losing most of its traffic can barely move the total. Watching each channel, device, region and category separately raised the share of planted changes caught from 48% to 76%, at a cost of 0.03 more false alerts per 30 days. That cost is reported, not hidden.
+- **Explaining what the monitor caught.** Investigations now start from the segment the monitor flagged. On caught changes, the right segment went from 47% to 68%.
+- **AI that cannot invent numbers.** The language model only rewords findings that Python computed. Every sentence is checked against those findings, and the plain template is used whenever a check fails.
+- **Results that can't be gamed.** Settings were tuned on one set of stores and scored once on a separate held-out set. The evaluation can't read the planted answers, and every result is labeled Synthetic, Semi-synthetic or Real.
+
 ## Results
 
 Measured on **held-out** generated stores whose answers the pipeline cannot see, and on a real retailer. Each result is labeled Synthetic, Semi-synthetic or Real.
@@ -45,11 +57,11 @@ Segment monitoring raised main-store recall from 0.48 to 0.76 and precision from
 | | Given the true incident window | From the monitor's own detections |
 |---|---|---|
 | Correct primary driver | 88% | 79% |
-| Correct segment | 64% | 47% |
+| Correct segment | 64% | 68% |
 | Correct cause, or correctly "none" | 84% | 68% |
 | Unrelated recorded change rejected | 4 of 5 | not applicable |
 
-The right column covers the 19 scenarios the monitor caught. The 7 added by segment monitoring are harder to explain, which lowered the driver rate there from 92% to 79%.
+The right column covers the 19 scenarios the monitor caught. The 7 added by segment monitoring are harder to explain, which lowered the driver rate there from 92% to 79%. Investigations start from the segment the monitor flagged when it is the largest mover in the issue's direction, which raised the right segment on caught changes from 47% to 68%.
 
 ### Reports (Synthetic, 25 held-out investigations)
 
