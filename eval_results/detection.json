@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-20T12:27:08.351817+00:00",
+ "generated_at": "2026-11-21T00:20:10.940025+00:00",
  "results": {
   "robust": {
    "config": {
@@ -52,7 +52,7 @@
       "n": 5
      }
     },
-    "forecast_coverage": 0.931,
+    "forecast_coverage": 0.95,
     "forecast_mape": 0.311,
     "n_stores": 5,
     "scenarios": [
@@ -490,7 +490,7 @@
       "n": 12
      }
     },
-    "forecast_coverage": 0.92,
+    "forecast_coverage": 0.957,
     "forecast_mape": Infinity,
     "n_stores": 5,
     "scenarios": [
@@ -922,7 +922,7 @@
       "n": 6
      }
     },
-    "forecast_coverage": 0.94,
+    "forecast_coverage": 0.953,
     "forecast_mape": 0.207,
     "n_stores": 5,
     "scenarios": [
@@ -1345,7 +1345,7 @@
       "n": 9
      }
     },
-    "forecast_coverage": 0.924,
+    "forecast_coverage": 0.958,
     "forecast_mape": Infinity,
     "n_stores": 5,
     "scenarios": [
@@ -1783,7 +1783,7 @@
       "n": 5
      }
     },
-    "forecast_coverage": 0.921,
+    "forecast_coverage": 0.949,
     "forecast_mape": 0.309,
     "n_stores": 5,
     "scenarios": [
@@ -2221,7 +2221,7 @@
       "n": 12
      }
     },
-    "forecast_coverage": 0.907,
+    "forecast_coverage": 0.953,
     "forecast_mape": Infinity,
     "n_stores": 5,
     "scenarios": [
@@ -2650,7 +2650,7 @@
       "n": 6
      }
     },
-    "forecast_coverage": 0.93,
+    "forecast_coverage": 0.95,
     "forecast_mape": 0.21,
     "n_stores": 5,
     "scenarios": [
@@ -3073,7 +3073,7 @@
       "n": 9
      }
     },
-    "forecast_coverage": 0.912,
+    "forecast_coverage": 0.952,
     "forecast_mape": Infinity,
     "n_stores": 5,
     "scenarios": [
@@ -3514,7 +3514,7 @@
       "n": 5
      }
     },
-    "forecast_coverage": 0.93,
+    "forecast_coverage": 0.952,
     "forecast_mape": 0.312,
     "n_stores": 5,
     "scenarios": [
@@ -3952,7 +3952,7 @@
       "n": 12
      }
     },
-    "forecast_coverage": 0.918,
+    "forecast_coverage": 0.95,
     "forecast_mape": Infinity,
     "n_stores": 5,
     "scenarios": [
@@ -4384,7 +4384,7 @@
       "n": 6
      }
     },
-    "forecast_coverage": 0.94,
+    "forecast_coverage": 0.953,
     "forecast_mape": 0.206,
     "n_stores": 5,
     "scenarios": [
@@ -4810,7 +4810,7 @@
       "n": 9
      }
     },
-    "forecast_coverage": 0.923,
+    "forecast_coverage": 0.958,
     "forecast_mape": Infinity,
     "n_stores": 5,
     "scenarios": [

@@ -32,13 +32,13 @@
         "net_sales": {
           "mape": 0.305,
           "mape_seasonal_naive": 0.396,
-          "coverage": 0.911,
+          "coverage": 0.942,
           "days": 503
         },
         "orders": {
           "mape": 0.202,
           "mape_seasonal_naive": 0.246,
-          "coverage": 0.934,
+          "coverage": 0.952,
           "days": 499
         }
       }
@@ -186,13 +186,13 @@
         "net_sales": {
           "mape": 0.786,
           "mape_seasonal_naive": 0.395,
-          "coverage": 0.816,
+          "coverage": 0.949,
           "days": 506
         },
         "orders": {
           "mape": 0.301,
           "mape_seasonal_naive": 0.246,
-          "coverage": 0.866,
+          "coverage": 0.946,
           "days": 499
         }
       }

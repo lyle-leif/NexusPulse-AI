@@ -337,7 +337,7 @@ export default async function EvaluationPage() {
               delta={<span className="faint text-xs">median, from the change starting</span>}
             />
             <StatTile icon="check" label="Tracking problems and decoys" value={main.non_business_handled} delta={<span className="faint text-xs">correctly not called business changes</span>} />
-            <StatTile icon="chart" label="Expected range held" value={pct(main.forecast_coverage, 0)} delta={<span className="faint text-xs">target 95%: the range is too narrow</span>}>
+            <StatTile icon="chart" label="Expected range held" value={pct(main.forecast_coverage, 0)} delta={<span className="faint text-xs">target 95%</span>}>
               <div className="flex justify-end">
                 <Ring value={main.forecast_coverage} label={`Expected range held on ${pct(main.forecast_coverage, 0)} of days, target 95%`} />
               </div>
@@ -467,7 +467,7 @@ export default async function EvaluationPage() {
       </section>
 
       <footer className="faint border-t pt-4 text-xs" style={{ borderColor: "var(--border)" }}>
-        Known limits: the expected range is too narrow (it holds on fewer than 95% of days), and store-wide detection misses many 10-30% changes. Detection,
+        Known limits: store-wide detection misses many 10-30% changes. Detection,
         investigation and narration scores come from generated stores; the real-store section is labelled Real or Semi-synthetic.
       </footer>
     </main>

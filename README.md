@@ -36,10 +36,10 @@ All numbers below use the default configuration on **held-out** scenarios, writt
 
 | Store | Recall | Precision | False alerts per 30 days | Median delay | Forecast band coverage |
 |---|---|---|---|---|---|
-| Main (about 1,500 sessions/day) | 0.48 | 0.41 | 0.24 | 1 day | 94% |
-| Low volume (about 150 sessions/day) | 0.40 | 0.23 | 0.44 | 1 day | 92% |
+| Main (about 1,500 sessions/day) | 0.48 | 0.41 | 0.24 | 1 day | 95% |
+| Low volume (about 150 sessions/day) | 0.40 | 0.23 | 0.44 | 1 day | 96% |
 
-Scenarios that are not business changes were handled correctly in 10 of 10 cases on the main store and 7 of 10 on the low-volume store. These are broken tracking, which should be suppressed as a data-quality issue, and unrelated recorded changes, which should raise no alert. Robust fitting is the default. Masking past incidents out of the training data was tested and did not help, so it is off.
+Scenarios that are not business changes were handled correctly in 10 of 10 cases on the main store and 7 of 10 on the low-volume store. These are broken tracking, which should be suppressed as a data-quality issue, and unrelated recorded changes, which should raise no alert. Robust fitting is the default. Masking past incidents out of the training data was tested and did not help, so it is off. The forecast band is drawn from the monitor's own earlier out-of-sample errors (2.5% to 97.5%), never narrower than the model band; before this it held on 91-94% of days.
 
 ### Investigation (Synthetic, main store)
 
@@ -70,7 +70,7 @@ A real UK online gift retailer with 39,516 orders from December 2009 to December
 |---|---|
 | **Real:** net sales forecast error (MAPE) | 30%, versus 40% for seasonal naive |
 | **Real:** orders forecast error (MAPE) | 20%, versus 25% for seasonal naive |
-| **Real:** forecast band coverage (net sales / orders) | 91% / 93% |
+| **Real:** forecast band coverage (net sales / orders) | 94% / 95% |
 | **Real:** alerts in 503 monitored days | 3 (0.15 per 30 days), an upper bound on false alerts because the data has no labels |
 | **Semi-synthetic:** injected order drops detected | 10 of 30 (7 of 16 for drops of 40-60%; 1 of 7 for 15-25%) |
 

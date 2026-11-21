@@ -107,8 +107,7 @@ export default function AboutPage() {
             <Icon name="issue" /> Known limits
           </h2>
           <p className="muted">
-            The expected range is too narrow (it holds on fewer than 95% of days), and store-wide detection misses many 10-30% changes. The data is daily,
-            not live.
+            Store-wide detection misses many 10-30% changes, and segments are hard to tell apart on small stores. The data is daily, not live.
           </p>
         </section>
       </div>
