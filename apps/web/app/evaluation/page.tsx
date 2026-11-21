@@ -512,7 +512,7 @@ export default async function EvaluationPage() {
       </section>
 
       <footer className="faint border-t pt-4 text-xs" style={{ borderColor: "var(--border)" }}>
-        Known limits: store-wide detection misses many 10-30% changes. Detection,
+        Known limits: store-wide changes under about 25% are often missed unless one segment carries them. Detection,
         investigation and narration scores come from generated stores; the real-store section is labelled Real or Semi-synthetic.
       </footer>
     </main>

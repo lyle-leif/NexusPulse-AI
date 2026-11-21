@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-21T00:20:10.940025+00:00",
+ "generated_at": "2026-11-21T01:49:14.817855+00:00",
  "results": {
   "robust": {
    "config": {
@@ -19,19 +19,22 @@
     "resolve_days": 3,
     "max_open_days": 14,
     "group_gap_days": 2,
+    "segments": true,
+    "seg_z_window": 6.0,
+    "window_clip": 0.0,
     "model_version": "0.1.0"
    },
    "dev/main": {
-    "recall": 0.68,
-    "precision": 0.405,
+    "recall": 0.84,
+    "precision": 0.457,
     "false_alerts_per_30d": 0.357,
     "median_delay_days": 0.0,
     "non_business_handled": "10/10",
     "recall_by_kind": {
      "conversion_drop": "4/5",
      "price_increase": "2/5",
-     "stockout": "3/5",
-     "traffic_loss": "3/5",
+     "stockout": "5/5",
+     "traffic_loss": "5/5",
      "traffic_spike": "5/5"
     },
     "recall_by_effect": {
@@ -40,11 +43,11 @@
       "n": 7
      },
      "10-20%": {
-      "detected": 2,
+      "detected": 5,
       "n": 7
      },
      "20-35%": {
-      "detected": 5,
+      "detected": 6,
       "n": 6
      },
      "35-+%": {
@@ -120,7 +123,10 @@
       "start": "2025-12-26",
       "end": "2026-01-03",
       "effect_pct": -21.5,
-      "outcome": "missed",
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-12-26_net_sales_category-Dresses",
+      "strength": "Strong",
       "suite": "dev",
       "profile": "main",
       "seed": 101
@@ -153,7 +159,10 @@
       "start": "2025-06-23",
       "end": "2025-06-29",
       "effect_pct": -10.5,
-      "outcome": "missed",
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-06-21_net_sales_category-Tops",
+      "strength": "Strong",
       "suite": "dev",
       "profile": "main",
       "seed": 102
@@ -281,7 +290,10 @@
       "start": "2026-02-16",
       "end": "2026-02-22",
       "effect_pct": -10.7,
-      "outcome": "missed",
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2026-02-16_sessions_channel-paid_social",
+      "strength": "Strong",
       "suite": "dev",
       "profile": "main",
       "seed": 103
@@ -393,7 +405,10 @@
       "start": "2025-06-18",
       "end": "2025-06-25",
       "effect_pct": -14.1,
-      "outcome": "missed",
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-06-18_sessions_channel-paid_social",
+      "strength": "Strong",
       "suite": "dev",
       "profile": "main",
       "seed": 105
@@ -892,29 +907,29 @@
     ]
    },
    "heldout/main": {
-    "recall": 0.48,
-    "precision": 0.414,
-    "false_alerts_per_30d": 0.243,
-    "median_delay_days": 1.0,
+    "recall": 0.76,
+    "precision": 0.5,
+    "false_alerts_per_30d": 0.271,
+    "median_delay_days": 0.0,
     "non_business_handled": "10/10",
     "recall_by_kind": {
      "conversion_drop": "3/5",
      "gradual_conversion_drift": "4/5",
-     "stockout": "0/5",
-     "traffic_loss": "1/5",
+     "stockout": "4/5",
+     "traffic_loss": "4/5",
      "traffic_spike": "4/5"
     },
     "recall_by_effect": {
      "0-10%": {
-      "detected": 2,
+      "detected": 4,
       "n": 5
      },
      "10-20%": {
-      "detected": 5,
+      "detected": 9,
       "n": 11
      },
      "20-35%": {
-      "detected": 1,
+      "detected": 2,
       "n": 3
      },
      "35-+%": {
@@ -954,7 +969,10 @@
       "start": "2025-08-11",
       "end": "2025-08-17",
       "effect_pct": -15.5,
-      "outcome": "missed",
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-08-10_net_sales_category-Shoes",
+      "strength": "Strong",
       "suite": "heldout",
       "profile": "main",
       "seed": 901
@@ -1010,7 +1028,10 @@
       "start": "2025-05-18",
       "end": "2025-05-26",
       "effect_pct": -8.4,
-      "outcome": "missed",
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-05-17_sessions_channel-email",
+      "strength": "Strong",
       "suite": "heldout",
       "profile": "main",
       "seed": 902
@@ -1053,7 +1074,10 @@
       "start": "2025-11-07",
       "end": "2025-11-14",
       "effect_pct": -18.5,
-      "outcome": "missed",
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-11-06_net_sales_category-Bottoms",
+      "strength": "Strong",
       "suite": "heldout",
       "profile": "main",
       "seed": 902
@@ -1099,7 +1123,10 @@
       "start": "2025-07-01",
       "end": "2025-07-06",
       "effect_pct": -10.0,
-      "outcome": "missed",
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-07-01_net_sales_category-Shoes",
+      "strength": "Strong",
       "suite": "heldout",
       "profile": "main",
       "seed": 903
@@ -1185,7 +1212,10 @@
       "start": "2025-07-22",
       "end": "2025-07-30",
       "effect_pct": -29.2,
-      "outcome": "missed",
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-07-22_net_sales_category-Bottoms",
+      "strength": "Strong",
       "suite": "heldout",
       "profile": "main",
       "seed": 904
@@ -1205,7 +1235,10 @@
       "start": "2025-10-27",
       "end": "2025-11-07",
       "effect_pct": -3.2,
-      "outcome": "missed",
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-10-27_sessions_channel-email",
+      "strength": "Strong",
       "suite": "heldout",
       "profile": "main",
       "seed": 904
@@ -1251,7 +1284,10 @@
       "start": "2025-06-01",
       "end": "2025-06-06",
       "effect_pct": -14.4,
-      "outcome": "missed",
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-06-01_sessions_channel-email",
+      "strength": "Strong",
       "suite": "heldout",
       "profile": "main",
       "seed": 905
@@ -1750,19 +1786,22 @@
     "resolve_days": 3,
     "max_open_days": 14,
     "group_gap_days": 2,
+    "segments": true,
+    "seg_z_window": 6.0,
+    "window_clip": 0.0,
     "model_version": "0.1.0"
    },
    "dev/main": {
-    "recall": 0.68,
-    "precision": 0.386,
+    "recall": 0.84,
+    "precision": 0.438,
     "false_alerts_per_30d": 0.371,
     "median_delay_days": 0.0,
     "non_business_handled": "9/10",
     "recall_by_kind": {
      "conversion_drop": "4/5",
      "price_increase": "3/5",
-     "stockout": "2/5",
-     "traffic_loss": "4/5",
+     "stockout": "5/5",
+     "traffic_loss": "5/5",
      "traffic_spike": "4/5"
     },
     "recall_by_effect": {
@@ -1771,11 +1810,11 @@
       "n": 7
      },
      "10-20%": {
-      "detected": 3,
+      "detected": 5,
       "n": 7
      },
      "20-35%": {
-      "detected": 4,
+      "detected": 6,
       "n": 6
      },
      "35-+%": {
@@ -1887,7 +1926,10 @@
       "start": "2025-06-23",
       "end": "2025-06-29",
       "effect_pct": -10.5,
-      "outcome": "missed",
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-06-21_net_sales_category-Tops",
+      "strength": "Strong",
       "suite": "dev",
       "profile": "main",
       "seed": 102
@@ -1999,7 +2041,10 @@
       "start": "2025-12-26",
       "end": "2026-01-01",
       "effect_pct": -27.7,
-      "outcome": "missed",
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-12-26_net_sales_category-Dresses",
+      "strength": "Strong",
       "suite": "dev",
       "profile": "main",
       "seed": 103
@@ -2058,7 +2103,10 @@
       "start": "2025-07-31",
       "end": "2025-08-06",
       "effect_pct": -28.7,
-      "outcome": "missed",
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-07-31_net_sales_category-Dresses",
+      "strength": "Strong",
       "suite": "dev",
       "profile": "main",
       "seed": 104
@@ -2121,7 +2169,10 @@
       "start": "2025-06-18",
       "end": "2025-06-25",
       "effect_pct": -14.1,
-      "outcome": "missed",
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-06-18_sessions_channel-paid_social",
+      "strength": "Strong",
       "suite": "dev",
       "profile": "main",
       "seed": 105
@@ -2620,29 +2671,29 @@
     ]
    },
    "heldout/main": {
-    "recall": 0.48,
-    "precision": 0.414,
-    "false_alerts_per_30d": 0.228,
-    "median_delay_days": 1.0,
+    "recall": 0.76,
+    "precision": 0.514,
+    "false_alerts_per_30d": 0.243,
+    "median_delay_days": 0.0,
     "non_business_handled": "9/10",
     "recall_by_kind": {
      "conversion_drop": "3/5",
      "gradual_conversion_drift": "3/5",
-     "stockout": "0/5",
-     "traffic_loss": "2/5",
+     "stockout": "4/5",
+     "traffic_loss": "5/5",
      "traffic_spike": "4/5"
     },
     "recall_by_effect": {
      "0-10%": {
-      "detected": 3,
+      "detected": 5,
       "n": 5
      },
      "10-20%": {
-      "detected": 5,
+      "detected": 9,
       "n": 11
      },
      "20-35%": {
-      "detected": 0,
+      "detected": 1,
       "n": 3
      },
      "35-+%": {
@@ -2682,7 +2733,10 @@
       "start": "2025-08-11",
       "end": "2025-08-17",
       "effect_pct": -15.5,
-      "outcome": "missed",
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-08-10_net_sales_category-Shoes",
+      "strength": "Strong",
       "suite": "heldout",
       "profile": "main",
       "seed": 901
@@ -2738,7 +2792,10 @@
       "start": "2025-05-18",
       "end": "2025-05-26",
       "effect_pct": -8.4,
-      "outcome": "missed",
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-05-17_sessions_channel-email",
+      "strength": "Strong",
       "suite": "heldout",
       "profile": "main",
       "seed": 902
@@ -2781,7 +2838,10 @@
       "start": "2025-11-07",
       "end": "2025-11-14",
       "effect_pct": -18.5,
-      "outcome": "missed",
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-11-06_net_sales_category-Bottoms",
+      "strength": "Strong",
       "suite": "heldout",
       "profile": "main",
       "seed": 902
@@ -2827,7 +2887,10 @@
       "start": "2025-07-01",
       "end": "2025-07-06",
       "effect_pct": -10.0,
-      "outcome": "missed",
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-07-01_net_sales_category-Shoes",
+      "strength": "Strong",
       "suite": "heldout",
       "profile": "main",
       "seed": 903
@@ -2913,7 +2976,10 @@
       "start": "2025-07-22",
       "end": "2025-07-30",
       "effect_pct": -29.2,
-      "outcome": "missed",
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-07-22_net_sales_category-Bottoms",
+      "strength": "Strong",
       "suite": "heldout",
       "profile": "main",
       "seed": 904
@@ -2936,7 +3002,10 @@
       "start": "2025-10-27",
       "end": "2025-11-07",
       "effect_pct": -3.2,
-      "outcome": "missed",
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-10-27_sessions_channel-email",
+      "strength": "Strong",
       "suite": "heldout",
       "profile": "main",
       "seed": 904
@@ -2982,7 +3051,10 @@
       "start": "2025-06-01",
       "end": "2025-06-06",
       "effect_pct": -14.4,
-      "outcome": "missed",
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-06-01_sessions_channel-email",
+      "strength": "Strong",
       "suite": "heldout",
       "profile": "main",
       "seed": 905
@@ -3481,19 +3553,22 @@
     "resolve_days": 3,
     "max_open_days": 14,
     "group_gap_days": 2,
+    "segments": true,
+    "seg_z_window": 6.0,
+    "window_clip": 0.0,
     "model_version": "0.1.0"
    },
    "dev/main": {
-    "recall": 0.68,
-    "precision": 0.415,
+    "recall": 0.84,
+    "precision": 0.467,
     "false_alerts_per_30d": 0.343,
     "median_delay_days": 0.0,
     "non_business_handled": "10/10",
     "recall_by_kind": {
      "conversion_drop": "4/5",
      "price_increase": "2/5",
-     "stockout": "3/5",
-     "traffic_loss": "3/5",
+     "stockout": "5/5",
+     "traffic_loss": "5/5",
      "traffic_spike": "5/5"
     },
     "recall_by_effect": {
@@ -3502,11 +3577,11 @@
       "n": 7
      },
      "10-20%": {
-      "detected": 2,
+      "detected": 5,
       "n": 7
      },
      "20-35%": {
-      "detected": 5,
+      "detected": 6,
       "n": 6
      },
      "35-+%": {
@@ -3582,7 +3657,10 @@
       "start": "2025-12-26",
       "end": "2026-01-03",
       "effect_pct": -21.5,
-      "outcome": "missed",
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-12-26_net_sales_category-Dresses",
+      "strength": "Strong",
       "suite": "dev",
       "profile": "main",
       "seed": 101
@@ -3615,7 +3693,10 @@
       "start": "2025-06-23",
       "end": "2025-06-29",
       "effect_pct": -10.5,
-      "outcome": "missed",
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-06-21_net_sales_category-Tops",
+      "strength": "Strong",
       "suite": "dev",
       "profile": "main",
       "seed": 102
@@ -3743,7 +3824,10 @@
       "start": "2026-02-16",
       "end": "2026-02-22",
       "effect_pct": -10.7,
-      "outcome": "missed",
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2026-02-16_sessions_channel-paid_social",
+      "strength": "Strong",
       "suite": "dev",
       "profile": "main",
       "seed": 103
@@ -3855,7 +3939,10 @@
       "start": "2025-06-18",
       "end": "2025-06-25",
       "effect_pct": -14.1,
-      "outcome": "missed",
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-06-18_sessions_channel-paid_social",
+      "strength": "Strong",
       "suite": "dev",
       "profile": "main",
       "seed": 105
@@ -4354,29 +4441,29 @@
     ]
    },
    "heldout/main": {
-    "recall": 0.52,
-    "precision": 0.419,
-    "false_alerts_per_30d": 0.257,
-    "median_delay_days": 1.0,
+    "recall": 0.84,
+    "precision": 0.525,
+    "false_alerts_per_30d": 0.271,
+    "median_delay_days": 0.0,
     "non_business_handled": "10/10",
     "recall_by_kind": {
      "conversion_drop": "4/5",
      "gradual_conversion_drift": "4/5",
-     "stockout": "0/5",
-     "traffic_loss": "1/5",
+     "stockout": "4/5",
+     "traffic_loss": "5/5",
      "traffic_spike": "4/5"
     },
     "recall_by_effect": {
      "0-10%": {
-      "detected": 2,
+      "detected": 5,
       "n": 5
      },
      "10-20%": {
-      "detected": 6,
+      "detected": 10,
       "n": 11
      },
      "20-35%": {
-      "detected": 1,
+      "detected": 2,
       "n": 3
      },
      "35-+%": {
@@ -4416,7 +4503,10 @@
       "start": "2025-08-11",
       "end": "2025-08-17",
       "effect_pct": -15.5,
-      "outcome": "missed",
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-08-10_net_sales_category-Shoes",
+      "strength": "Strong",
       "suite": "heldout",
       "profile": "main",
       "seed": 901
@@ -4449,7 +4539,10 @@
       "start": "2025-12-26",
       "end": "2026-01-02",
       "effect_pct": -3.8,
-      "outcome": "missed",
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-12-25_sessions_channel-paid_search",
+      "strength": "Strong",
       "suite": "heldout",
       "profile": "main",
       "seed": 901
@@ -4472,7 +4565,10 @@
       "start": "2025-05-18",
       "end": "2025-05-26",
       "effect_pct": -8.4,
-      "outcome": "missed",
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-05-17_sessions_channel-email",
+      "strength": "Strong",
       "suite": "heldout",
       "profile": "main",
       "seed": 902
@@ -4515,7 +4611,10 @@
       "start": "2025-11-07",
       "end": "2025-11-14",
       "effect_pct": -18.5,
-      "outcome": "missed",
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-11-06_net_sales_category-Bottoms",
+      "strength": "Strong",
       "suite": "heldout",
       "profile": "main",
       "seed": 902
@@ -4561,7 +4660,10 @@
       "start": "2025-07-01",
       "end": "2025-07-06",
       "effect_pct": -10.0,
-      "outcome": "missed",
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-07-01_net_sales_category-Shoes",
+      "strength": "Strong",
       "suite": "heldout",
       "profile": "main",
       "seed": 903
@@ -4647,7 +4749,10 @@
       "start": "2025-07-22",
       "end": "2025-07-30",
       "effect_pct": -29.2,
-      "outcome": "missed",
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-07-22_net_sales_category-Bottoms",
+      "strength": "Strong",
       "suite": "heldout",
       "profile": "main",
       "seed": 904
@@ -4670,7 +4775,10 @@
       "start": "2025-10-27",
       "end": "2025-11-07",
       "effect_pct": -3.2,
-      "outcome": "missed",
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-10-27_sessions_channel-email",
+      "strength": "Strong",
       "suite": "heldout",
       "profile": "main",
       "seed": 904
@@ -4716,7 +4824,10 @@
       "start": "2025-06-01",
       "end": "2025-06-06",
       "effect_pct": -14.4,
-      "outcome": "missed",
+      "outcome": "detected",
+      "delay_days": 0,
+      "incident": "inc_2025-06-01_sessions_channel-email",
+      "strength": "Strong",
       "suite": "heldout",
       "profile": "main",
       "seed": 905

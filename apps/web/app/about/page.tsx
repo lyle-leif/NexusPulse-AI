@@ -107,7 +107,7 @@ export default function AboutPage() {
             <Icon name="issue" /> Known limits
           </h2>
           <p className="muted">
-            Store-wide detection misses many 10-30% changes, and segments are hard to tell apart on small stores. The data is daily, not live.
+            Store-wide changes under about 25% are often missed unless they are concentrated in one channel, device, region or category. Small stores are watched store-wide only, and their segments are hard to tell apart. The data is daily, not live.
           </p>
         </section>
       </div>
