@@ -32,6 +32,8 @@ The report never states that a recorded change caused a drop. A breakdown is not
 
 All numbers below use the default configuration on **held-out** scenarios, written before tuning and generated from separate seeds. Each result is labeled Synthetic, Semi-synthetic or Real.
 
+**On a real store** (UCI Online Retail II, a UK gift retailer, 39,516 orders; details [below](#external-dataset-uci-online-retail-ii)): daily sales forecasts are off by 31% on average versus 40% for "same day last week", the expected range holds on 94% of days, and the monitor raises 0.15 alerts per 30 days (Real). With planted order drops it catches 10 of 30 (Semi-synthetic).
+
 ### Detection (Synthetic, 5 stores per profile, 18 months each)
 
 | Store | Recall | Precision | False alerts per 30 days | Median delay | Forecast band coverage |

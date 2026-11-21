@@ -202,6 +202,49 @@ function NarrationDetail({ n }: { n: NarrationEval }) {
   );
 }
 
+/** The real-store results up front: the generated stores are where answers are known, this is where the data is real. */
+function RealStrip({ x }: { x: ExternalEval }) {
+  const r = x.real.with_calendar;
+  const ns = r.forecast.net_sales;
+  const p = (v: number) => `${Math.round(100 * v)}%`;
+  return (
+    <section aria-labelledby="real-head" className="card bracket">
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <h2 id="real-head" className="section-title" style={{ marginBottom: 0 }}>
+          <Icon name="orders" /> On a real store
+        </h2>
+        <a href="#ext" className="link text-sm">
+          Details
+        </a>
+      </div>
+      <p className="muted mt-1 text-sm">
+        {x.dataset}: a UK online gift retailer, {x.real.notes.orders.toLocaleString()} orders over two years. Orders only, so causes cannot be checked.
+      </p>
+      <ul className="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <StatTile
+          icon="chart"
+          label="Daily sales forecast error"
+          value={p(ns.mape)}
+          delta={<span className="faint text-xs">vs {p(ns.mape_seasonal_naive)} for same day last week · Real</span>}
+        />
+        <StatTile icon="check" label="Expected range held" value={p(ns.coverage)} delta={<span className="faint text-xs">of days, target 95% · Real</span>} />
+        <StatTile
+          icon="issue"
+          label="Alerts"
+          value={r.alerts_per_30d.toFixed(2)}
+          delta={<span className="faint text-xs">per 30 days, an upper bound on false alerts · Real</span>}
+        />
+        <StatTile
+          icon="search"
+          label="Planted order drops caught"
+          value={p(x.semi_synthetic.recall)}
+          delta={<span className="faint text-xs">{x.semi_synthetic.n} drops of 15-60% · Semi-synthetic</span>}
+        />
+      </ul>
+    </section>
+  );
+}
+
 function ExternalDetail({ x }: { x: ExternalEval }) {
   const r = x.real.with_calendar;
   const p = (v: number) => `${Math.round(100 * v)}%`;
@@ -347,6 +390,8 @@ export default async function EvaluationPage() {
       ) : (
         <p className="muted">No held-out results.</p>
       )}
+
+      {ev.external ? <RealStrip x={ev.external} /> : null}
 
       {main ? (
         <div className="grid gap-5 lg:grid-cols-2">
