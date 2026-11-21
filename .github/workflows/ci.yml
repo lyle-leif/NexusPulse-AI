@@ -53,4 +53,5 @@ jobs:
       - name: Generate route types (PageProps, LayoutProps)
         run: npx next typegen
       - run: npx tsc --noEmit
+      - run: npx eslint app lib tests
       - run: npm test
