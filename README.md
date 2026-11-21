@@ -139,4 +139,4 @@ The development database uses host port 5433, and its credentials are for local 
 
 ## License
 
-No license has been selected yet.
+[MIT](LICENSE). The UCI Online Retail II dataset used in the evaluation is CC BY 4.0 and is not included in this repository.
