@@ -45,4 +45,13 @@ def analyze(tables: dict[str, pd.DataFrame], tz: str, config: MonitorConfig = Mo
     known = calendar.union(regular_closed_days(metrics["orders"])).union(holiday_closures(metrics["orders"], calendar))
     flags = unattributed_share_flags(tables, tz)
     dq_days = flags.index[flags["flag"]]
-    return daily, run_monitor(metrics, known, dq_days, config, record_timeline)
+    result = run_monitor(metrics, known, dq_days, config, record_timeline)
+    if config.segments:
+        from .segments import merge_incidents, monitor_segments
+
+        seg, seg_timeline = monitor_segments(tables, tz, metrics.index, known, dq_days, config, record_timeline)
+        last = metrics.index[-1].date().isoformat()
+        result.incidents = merge_incidents(result.incidents, seg, last)
+        for day, incs in result.timeline.items():
+            result.timeline[day] = merge_incidents(incs, seg_timeline.get(day, []), day)
+    return daily, result

@@ -20,7 +20,7 @@ from __future__ import annotations
 
 import pandas as pd
 
-from .decompose import decompose
+from .decompose import baseline_days, decompose
 from .drilldown import drill_down
 
 FACTOR_LABEL = {
@@ -79,6 +79,23 @@ def evidence_level(share: float | None, events: list[dict], ruled_out_ok: bool) 
     return "None", reasons
 
 
+def flagged_segment(tables, tz, dimension, value, metric, start, end, exclude) -> dict | None:
+    """The flagged segment's own numbers: mean per day in the window vs the same baseline days as the bridge."""
+    from .segments import segment_series
+
+    days = pd.date_range(pd.Timestamp(start) - pd.Timedelta(weeks=5), end)
+    frame = segment_series(tables, tz, days).get((dimension, value))
+    col = metric if frame is not None and metric in frame.columns else "net_sales"
+    if frame is None:
+        return None
+    base = baseline_days(pd.Timestamp(start), pd.Timestamp(end), days, exclude=exclude)
+    cur, b = frame.loc[start:end, col].mean(), frame.loc[base, col].mean()
+    if not len(base) or not b:
+        return None
+    return {"dimension": dimension, "segment": value, "metric": col, "current": round(float(cur), 2), "baseline": round(float(b), 2),
+            "change": round(float(cur - b), 2), "relative_change": round(float(cur / b - 1), 4)}
+
+
 def investigate(tables: dict[str, pd.DataFrame], tz: str, incident: dict, dq_days: pd.DatetimeIndex,
                 known_days: pd.DatetimeIndex, daily: pd.DataFrame | None = None) -> dict:
     start = incident["start"]
@@ -101,6 +118,14 @@ def investigate(tables: dict[str, pd.DataFrame], tz: str, incident: dict, dq_day
     add("incident", "observed",
         f"{incident['anchor_metric'].replace('_', ' ')} moved {incident['direction']} from {start} to {end}.",
         metric=incident["anchor_metric"], direction=incident["direction"], start=start, end=end)
+    seg_scope = incident.get("segment") if incident.get("scope") == "segment" else None
+    if seg_scope:
+        fs = flagged_segment(tables, tz, seg_scope["dimension"], seg_scope["value"], incident["anchor_metric"], start, end, exclude)
+        if fs:
+            what = "Visits" if fs["metric"] == "sessions" else "Sales"
+            add("flagged_segment", "observed",
+                f"{what} from {fs['segment']} ({fs['dimension']}) averaged {fs['current']:.2f} per day versus {fs['baseline']:.2f} "
+                f"in the baseline ({fs['relative_change']:+.1%}).", **fs)
     add("bridge_change", "observed",
         f"Net revenue averaged {net['current']:.2f} per day versus {net['baseline']:.2f} in the baseline ({net['change']:+.2f}).",
         baseline=net["baseline"], current=net["current"], change=net["change"])

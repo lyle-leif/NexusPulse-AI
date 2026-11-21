@@ -72,6 +72,15 @@ def template_summary(inv: dict, currency: str = "USD") -> list[dict]:
     s1 = (f"Net revenue averaged {_money(net['values']['current'], currency)} per day from {v['start']} to {v['end']}, "
           f"{_money(abs(net['values']['change']), currency)} {'below' if net['values']['change'] < 0 else 'above'} the baseline.")
     out = [{"text": s1, "finding_ids": [inc["finding_id"], net["finding_id"]], "status": "observed"}]
+    flagged = _f(fs, "flagged_segment")
+    if flagged:  # segment-only issue: lead with what moved in the flagged segment
+        f = flagged[0]["values"]
+        amount = _money(f["current"], currency) if f["metric"] == "net_sales" else f"{f['current']:,.0f} visits"
+        base = _money(f["baseline"], currency) if f["metric"] == "net_sales" else f"{f['baseline']:,.0f}"
+        what = "Sales" if f["metric"] == "net_sales" else "Visits"
+        out.insert(0, {"text": f"{what} from {f['segment'].replace('_', ' ')} ({f['dimension']}) averaged {amount} per day from {v['start']} to {v['end']}, "
+                               f"versus {base} in the baseline ({f['relative_change']:+.0%}); store-wide it was too small to stand out.",
+                       "finding_ids": [inc["finding_id"], flagged[0]["finding_id"]], "status": "observed"})
     d = drv["values"]
     s2 = f"The largest measured part of the change came from the {FACTOR_LABEL[d['factor']]} ({_money(d['contribution'], currency)} per day)"
     if seg["values"].get("segment"):

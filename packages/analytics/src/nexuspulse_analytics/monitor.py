@@ -50,6 +50,13 @@ class MonitorConfig:
     resolve_days: int = 3
     max_open_days: int = 14
     group_gap_days: int = 2
+    # Segment monitoring (segments.py): the same rules per channel/device/region/category,
+    # window tests only, with a stricter threshold because many more series are watched.
+    segments: bool = True
+    seg_z_window: float = 6.0
+    # Cap on each day's z inside the window sums (0 = off). Used for segments so that one
+    # extreme day cannot fire a window test on its own.
+    window_clip: float = 0.0
 
     def as_dict(self) -> dict:
         return {k: getattr(self, k) for k in self.__dataclass_fields__} | {"model_version": MODEL_VERSION}
@@ -220,10 +227,14 @@ def _evaluate(m, day, actual, row, exp_sales, as_of, t: _Track, metrics, known_d
         z = raw
     t.recent = (t.recent + [(day, z, _impact(m, actual, row, exp_sales))])[-7:]
     zs = np.array([r[1] for r in t.recent])
+    if cfg.window_clip:
+        zs = np.clip(zs, -cfg.window_clip, cfg.window_clip)
     # Forecast errors within one horizon are correlated, so sum/sqrt(n) overstates
     # window evidence. Scale window sums by their empirical spread over recent
     # calm history instead (fallback sqrt(n) until enough history exists).
     hist = np.array(t.chist[-120:])
+    if cfg.window_clip:
+        hist = np.clip(hist, -cfg.window_clip, cfg.window_clip)
     z3 = zs[-3:].sum() / _window_scale(hist, 3) if len(zs) >= 3 else np.nan
     z7 = zs.sum() / _window_scale(hist, 7) if len(zs) >= 7 else np.nan
     calibrated = len(calm) >= cfg.calibration_days
