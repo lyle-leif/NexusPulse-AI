@@ -169,6 +169,16 @@ def fit_forecast(
     return Forecast(metric, model, as_of, frame, params)
 
 
+def calibrate_band(fc: Forecast, z_lo: float, z_hi: float) -> None:
+    """Redraw the band at the given z bounds (from past out-of-sample errors). Never narrower than the model band."""
+    kind = TRANSFORMS[fc.metric]
+    z_lo, z_hi = min(z_lo, -Z95), max(z_hi, Z95)
+    f = fc.frame
+    f["lo"] = _inv(f["mean_t"] + z_lo * f["sigma"], kind)
+    f["hi"] = _inv(f["mean_t"] + z_hi * f["sigma"], kind)
+    fc.params["band_z"] = [round(float(z_lo), 3), round(float(z_hi), 3)]
+
+
 def z_score(actual: float, fc_row: pd.Series, metric: str) -> float:
     """Deviation of an actual value from the forecast, in transformed-sd units."""
     a = float(_fwd(pd.Series([actual]), TRANSFORMS[metric]).iloc[0])

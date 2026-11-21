@@ -26,7 +26,7 @@ from dataclasses import dataclass, field
 import numpy as np
 import pandas as pd
 
-from .forecast import MODEL_VERSION, Forecast, fit_forecast, z_score
+from .forecast import MODEL_VERSION, Forecast, calibrate_band, fit_forecast, z_score
 
 HIERARCHY = ["net_sales", "orders", "sessions", "session_conversion_rate"]
 MIN_VOLUME = {"session_conversion_rate": ("sessions", 200), "orders": ("orders", 20)}
@@ -89,6 +89,8 @@ class MonitorResult:
     incidents: list[dict]
     # day -> incidents exactly as a run ending that day reports them (Time Machine)
     timeline: dict = field(default_factory=dict)
+    # metric -> (z_lo, z_hi) band bounds from the latest calibration, for forecasts made after the run
+    band_z: dict = field(default_factory=dict)
 
 
 @dataclass
@@ -143,6 +145,11 @@ def run_monitor(
                               exclude_days=exclude, fixed_params=fixed)
             if config.model == "ets" and fixed is None:
                 t.ets_params = fc.params["ets"]
+            # The model band uses in-sample errors and is too narrow out of sample. Once enough
+            # earlier out-of-sample errors exist, draw it from their 2.5-97.5% range instead.
+            q = band_quantiles(t.zhist, config)
+            if q:
+                calibrate_band(fc, *q)
             forecasts.append(fc)
             fcs[m] = fc
 
@@ -158,7 +165,17 @@ def run_monitor(
     daily = pd.DataFrame(rows).set_index(["date", "metric"]) if rows else pd.DataFrame()
     incidents = _group(anomalies, dq_days, metrics.index[-1], config)
     timeline.pop("_on", None)
-    return MonitorResult(config, daily, forecasts, anomalies, incidents, timeline)
+    band_z = {m: q for m in monitored if (q := band_quantiles(tracks[m].zhist, config))}
+    return MonitorResult(config, daily, forecasts, anomalies, incidents, timeline, band_z)
+
+
+def band_quantiles(zhist: list, config: MonitorConfig) -> tuple[float, float] | None:
+    """2.5% and 97.5% of the last 120 out-of-sample errors (z units); None until calibration is ready."""
+    calm = np.array(zhist[-120:])
+    if len(calm) < config.calibration_days:
+        return None
+    lo, hi = np.quantile(calm, [0.025, 0.975])
+    return float(lo), float(hi)
 
 
 def _impact(m: str, actual: float, row: pd.Series, exp_sales: float) -> float:

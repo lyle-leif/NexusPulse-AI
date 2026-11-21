@@ -152,13 +152,15 @@ def _forecast_view(monitor, day: pd.Timestamp, window: int) -> dict:
 
 def _overview_forecast(st: dict) -> dict:
     """As-of band for the last 56 days plus a 7-day forecast issued from all data up to today."""
-    from nexuspulse_analytics.forecast import fit_forecast, metric_frame
+    from nexuspulse_analytics.forecast import calibrate_band, fit_forecast, metric_frame
 
     mon = st["monitor"]
     view = _forecast_view(mon, mon.daily.index.get_level_values("date").max(), 56)
     if not view["forecast_ahead"]:
         hist = metric_frame(st["daily"])["net_sales"]
         fc = fit_forecast(hist, "net_sales", 7, model=mon.config.model, robust=mon.config.robust, exclude_days=st["known_days"])
+        if "net_sales" in mon.band_z:
+            calibrate_band(fc, *mon.band_z["net_sales"])
         view["forecast_ahead"] = [{"date": i.date().isoformat(), "expected": round(float(r["mean"]), 2), "lo": round(float(r["lo"]), 2),
                                    "hi": round(float(r["hi"]), 2)} for i, r in fc.frame.iterrows()]
     return view
