@@ -10,7 +10,6 @@ Run: uv run python scripts/export_demo.py
 from __future__ import annotations
 
 import json
-import shutil
 import sys
 import urllib.parse
 import urllib.request
@@ -56,11 +55,12 @@ def main() -> int:
             continue
         report_days[iid] = sorted({s["first"], s.get("final", s["last_seen"])})
 
-    # Empty the folder rather than delete it: on Windows a folder that is open elsewhere
-    # (Explorer, OneDrive sync, a shell) cannot be removed, but its contents can.
+    # Delete the old files but keep the folders: on Windows a folder that is open elsewhere
+    # (Explorer, OneDrive sync, a shell) cannot be removed, but the files in it can.
     if OUT.exists():
-        for child in OUT.iterdir():
-            shutil.rmtree(child) if child.is_dir() else child.unlink()
+        for f in OUT.rglob("*"):
+            if f.is_file():
+                f.unlink()
     (OUT / "report").mkdir(parents=True, exist_ok=True)
     n = 0
     for iid, rds in report_days.items():
