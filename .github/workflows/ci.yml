@@ -39,7 +39,7 @@ jobs:
         run: uv run pytest -q
 
   web:
-    name: Web type check
+    name: Web type check and tests
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -53,3 +53,4 @@ jobs:
       - name: Generate route types (PageProps, LayoutProps)
         run: npx next typegen
       - run: npx tsc --noEmit
+      - run: npm test
