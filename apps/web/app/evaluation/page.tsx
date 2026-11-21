@@ -1,6 +1,6 @@
 import { getEvaluation, type EvalSummary, type ExternalEval, type InvestigationSummary, type NarrationEval, type Rate } from "@/lib/api";
 import { pct, shortDate } from "@/lib/format";
-import { Meter, StatTile } from "../components/Mini";
+import { Ring, StatTile } from "../components/Mini";
 import Icon from "../components/Icons";
 import Nav from "../components/Nav";
 
@@ -25,7 +25,7 @@ const rate = (r: Rate) => (r.n ? `${Math.round(100 * (r.rate ?? 0))}% (${r.corre
 const fmt = (v: number | null, digits = 2) => (v === null ? "n/a" : v.toFixed(digits));
 const Data = ({ kind }: { kind: "Synthetic" | "Semi-synthetic" | "Real" }) => <span className="chip">Data: {kind}</span>;
 
-/** A labelled bar list: one row per bucket, the bar is the share that was right, coloured by how well it did. */
+/** A labelled bar list: one row per bucket, the bar is the share that was right. */
 function Bars({ rows, label }: { rows: { name: string; ok: number; n: number; note: string }[]; label: string }) {
   return (
     <ul className="space-y-3" aria-label={label}>
@@ -35,8 +35,8 @@ function Bars({ rows, label }: { rows: { name: string; ok: number; n: number; no
             <span>{r.name}</span>
             <span className="muted num">{r.note}</span>
           </div>
-          <div className="mt-1">
-            <Meter value={r.n ? r.ok / r.n : 0} label={`${r.name}: ${r.note}`} />
+          <div className="meter mt-1" role="img" aria-label={`${r.name}: ${r.note}`}>
+            <span style={{ width: `${r.n ? (100 * r.ok) / r.n : 0}%` }} />
           </div>
         </li>
       ))}
@@ -44,54 +44,14 @@ function Bars({ rows, label }: { rows: { name: string; ok: number; n: number; no
   );
 }
 
-type ScoreRow = { label: string; value: string; share: number | null; note: string };
-
-/** Every headline score in one table: measure, result, a bar for shares, and what it means. */
-function Scorecard({ rows }: { rows: ScoreRow[] }) {
+function RingTile({ label, r, note }: { label: string; r: { rate: number | null; text: string }; note: string }) {
   return (
-    <div className="overflow-x-auto">
-      <table className="scorecard">
-        <thead>
-          <tr>
-            <th scope="col">Measure</th>
-            <th scope="col">Result</th>
-            <th scope="col" className="bar-cell">
-              <span className="sr-only">Share</span>
-            </th>
-            <th scope="col">What it means</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((r) => (
-            <tr key={r.label}>
-              <th scope="row">{r.label}</th>
-              <td className="value">{r.value}</td>
-              <td className="bar-cell">{r.share === null ? null : <Meter value={r.share} label={`${r.label}: ${r.value}`} />}</td>
-              <td className="note">{r.note}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <StatTile label={label} value={r.rate === null ? "n/a" : pct(r.rate, 0)} delta={<span className="faint text-xs">{note}</span>}>
+      <div className="flex justify-end">
+        <Ring value={r.rate ?? 0} label={`${label}: ${r.text}`} />
+      </div>
+    </StatTile>
   );
-}
-
-const shareOf = (s: string): number | null => {
-  const [a, b] = s.split("/").map(Number);
-  return b ? a / b : null;
-};
-
-/** Finds a weaker evidence level that was right clearly more often than a stronger one, so the page can say so. */
-function evidenceSurprise(by: Record<string, { n: number; cause_correct: number }>) {
-  const levels = Object.entries(by).filter(([k, v]) => k !== "None" && v.n >= 3);
-  for (let i = 0; i < levels.length; i++) {
-    for (let j = i + 1; j < levels.length; j++) {
-      const [hi, a] = levels[i];
-      const [lo, b] = levels[j];
-      if (b.cause_correct / b.n > a.cause_correct / a.n + 0.15) return { hi, a, lo, b };
-    }
-  }
-  return null;
 }
 
 function plainSentence(s: EvalSummary, inv?: InvestigationSummary) {
@@ -108,7 +68,6 @@ function plainSentence(s: EvalSummary, inv?: InvestigationSummary) {
 function InvestigationDetail({ results }: { results: Record<string, { oracle: InvestigationSummary; end_to_end: InvestigationSummary }> }) {
   const slices = SLICES.filter((k) => results[k]);
   const main = results["heldout/main"]?.oracle;
-  const surprise = main ? evidenceSurprise(main.cause_correct_by_evidence) : null;
   return (
     <section aria-labelledby="inv" className="card solid">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
@@ -118,12 +77,6 @@ function InvestigationDetail({ results }: { results: Record<string, { oracle: In
       {main ? (
         <>
           <p className="muted mb-3 text-sm">Held-out main store. How often the cause was right, grouped by how well the system said it could explain the change.</p>
-          {surprise ? (
-            <p className="callout mb-4">
-              Not yet: {surprise.lo} explanations were right {surprise.b.cause_correct} of {surprise.b.n} times, more often than {surprise.hi.toLowerCase()} ones (
-              {surprise.a.cause_correct} of {surprise.a.n}). Treat the strength label as a hint, not a guarantee.
-            </p>
-          ) : null}
           <Bars
             label="Cause correct by explanation strength"
             rows={Object.entries(main.cause_correct_by_evidence).map(([lvl, v]) => ({
@@ -255,7 +208,7 @@ function RealStrip({ x }: { x: ExternalEval }) {
   const ns = r.forecast.net_sales;
   const p = (v: number) => `${Math.round(100 * v)}%`;
   return (
-    <section aria-labelledby="real-head" className="card">
+    <section aria-labelledby="real-head" className="card bracket">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h2 id="real-head" className="section-title" style={{ marginBottom: 0 }}>
           <Icon name="orders" /> On a real store
@@ -384,54 +337,55 @@ export default async function EvaluationPage() {
   return (
     <main className="mx-auto w-full max-w-6xl space-y-5 px-4 py-5 sm:px-6">
       <Nav active="evaluation" />
-      <header className="max-w-3xl">
-        <p className="faint text-sm">
-          Test run {shortDate(ev.generated_at.slice(0, 10))} · {main?.n_stores ?? 0} generated stores per slice
-        </p>
-        <h1 className="page-title mt-1">How accurate is it?</h1>
+      <header className="grid gap-6 lg:grid-cols-[1fr_1.1fr] lg:items-end">
+        <div>
+          <p className="eyebrow">
+            Test run {shortDate(ev.generated_at.slice(0, 10))} · {main?.n_stores ?? 0} generated stores per slice
+          </p>
+          <h1 className="page-title mt-2">How accurate is it?</h1>
+          <p className="muted mt-1">Scored on stores where we planted the changes and know the answers.</p>
+        </div>
         {main ? (
-          <p className="lead mt-3">{plainSentence(main, inv)}</p>
-        ) : (
-          <p className="muted mt-2">Scored on stores where we planted the changes and know the answers.</p>
-        )}
+          <div className="card bracket">
+            <div className="flex items-baseline justify-between gap-2">
+              <p className="label">In plain words</p>
+              <Data kind="Synthetic" />
+            </div>
+            <p className="status-sentence mt-2">{plainSentence(main, inv)}</p>
+          </div>
+        ) : null}
       </header>
 
       {main ? (
-        <section aria-labelledby="head" className="card">
-          <div className="card-head">
-            <h2 id="head" className="section-title">
-              Scorecard
-            </h2>
-            <Data kind="Synthetic" />
-          </div>
-          <p className="muted -mt-1 mb-3 text-sm">Held-out stores the system was never tuned on, default settings. Green is 80% or better, amber is under 60%.</p>
-          <Scorecard
-            rows={[
-              { label: "Changes caught", value: main.recall === null ? "n/a" : pct(main.recall, 0), share: main.recall, note: "Share of planted business changes it flagged (recall)" },
-              {
-                label: "Alerts that were real",
-                value: main.precision === null ? "n/a" : pct(main.precision, 0),
-                share: main.precision,
-                note: "The rest were false alarms (precision)",
-              },
-              ...(inv
-                ? [
-                    { label: "Right metric moved", value: r(inv.driver).rate === null ? "n/a" : pct(r(inv.driver).rate!, 0), share: r(inv.driver).rate, note: r(inv.driver).text },
-                    { label: "Right segment", value: r(inv.segment).rate === null ? "n/a" : pct(r(inv.segment).rate!, 0), share: r(inv.segment).rate, note: r(inv.segment).text },
-                    {
-                      label: "Right cause, or none",
-                      value: r(inv.cause_or_none).rate === null ? "n/a" : pct(r(inv.cause_or_none).rate!, 0),
-                      share: r(inv.cause_or_none).rate,
-                      note: r(inv.cause_or_none).text,
-                    },
-                  ]
-                : []),
-              { label: "Expected range held", value: pct(main.forecast_coverage, 0), share: main.forecast_coverage, note: "Days the real value fell inside the forecast range, target 95%" },
-              { label: "Tracking problems and decoys", value: main.non_business_handled, share: shareOf(main.non_business_handled), note: "Correctly not called business changes" },
-              { label: "False alerts", value: fmt(main.false_alerts_per_30d), share: null, note: "Per 30 days" },
-              { label: "Time to detect", value: days(main.median_delay_days), share: null, note: "Median, from the day the change started" },
-            ]}
-          />
+        <section aria-labelledby="head">
+          <h2 id="head" className="sr-only">Headline scores</h2>
+          <p className="faint mb-2 text-xs">Held-out stores, default settings. Rings fill to 100%.</p>
+          <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
+            <RingTile label="Changes caught" r={{ rate: main.recall, text: main.recall === null ? "n/a" : pct(main.recall, 0) }} note="Recall" />
+            <RingTile label="Alerts that were real" r={{ rate: main.precision, text: main.precision === null ? "n/a" : pct(main.precision, 0) }} note="Precision" />
+            {inv ? (
+              <>
+                <RingTile label="Right metric moved" r={r(inv.driver)} note={r(inv.driver).text} />
+                <RingTile label="Right segment" r={r(inv.segment)} note={r(inv.segment).text} />
+                <RingTile label="Right cause, or none" r={r(inv.cause_or_none)} note={r(inv.cause_or_none).text} />
+              </>
+            ) : null}
+          </ul>
+          <ul className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            <StatTile icon="issue" label="False alerts" value={fmt(main.false_alerts_per_30d)} delta={<span className="faint text-xs">per 30 days</span>} />
+            <StatTile
+              icon="clock"
+              label="Time to detect"
+              value={days(main.median_delay_days)}
+              delta={<span className="faint text-xs">median, from the change starting</span>}
+            />
+            <StatTile icon="check" label="Tracking problems and decoys" value={main.non_business_handled} delta={<span className="faint text-xs">correctly not called business changes</span>} />
+            <StatTile icon="chart" label="Expected range held" value={pct(main.forecast_coverage, 0)} delta={<span className="faint text-xs">target 95%</span>}>
+              <div className="flex justify-end">
+                <Ring value={main.forecast_coverage} label={`Expected range held on ${pct(main.forecast_coverage, 0)} of days, target 95%`} />
+              </div>
+            </StatTile>
+          </ul>
         </section>
       ) : (
         <p className="muted">No held-out results.</p>

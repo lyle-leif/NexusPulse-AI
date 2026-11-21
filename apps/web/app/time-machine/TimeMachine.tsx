@@ -134,7 +134,7 @@ export default function TimeMachine() {
 
   return (
     <div className="space-y-5">
-      <section className="card" aria-labelledby="ctl">
+      <section className="card bracket" aria-labelledby="ctl">
         <h2 id="ctl" className="sr-only">
           Controls
         </h2>

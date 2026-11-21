@@ -21,7 +21,7 @@ export default function IntroBanner() {
     } catch {}
   };
   return (
-    <aside className="intro-banner card flex flex-wrap items-center justify-between gap-4" aria-label="About this demo">
+    <aside className="intro-banner card bracket flex flex-wrap items-center justify-between gap-4" aria-label="About this demo">
       <div className="flex min-w-0 items-start gap-3">
         <span className="mt-0.5" style={{ color: "var(--accent)" }}>
           <Icon name="info" size={20} />

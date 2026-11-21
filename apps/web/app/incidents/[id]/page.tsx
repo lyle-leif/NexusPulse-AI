@@ -165,7 +165,7 @@ export default async function IncidentPage({ params, searchParams }: PageProps<"
 
       <div className="grid gap-5 lg:grid-cols-12">
         <div className="lg:col-span-8"><Summary rep={rep} id={id} ai={wantAi} /></div>
-        <section aria-labelledby="evidence" className="card lg:col-span-4">
+        <section aria-labelledby="evidence" className="card bracket lg:col-span-4">
           <h2 id="evidence" className="section-title"><Icon name="target" /> How well we can explain it</h2>
           <EvidenceMeter level={ev.level} />
           <ul className="muted mt-3 list-disc space-y-1 pl-5 text-sm">

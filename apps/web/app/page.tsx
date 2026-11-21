@@ -51,7 +51,7 @@ export default async function Page() {
       <IntroBanner />
 
       <div className="grid gap-5 lg:grid-cols-12">
-        <section aria-labelledby="hero" className="card hero flex flex-col justify-between gap-4 lg:col-span-8">
+        <section aria-labelledby="hero" className="card bracket flex flex-col justify-between gap-4 lg:col-span-8">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <p className="eyebrow">

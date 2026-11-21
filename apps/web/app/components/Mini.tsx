@@ -37,31 +37,17 @@ export function Sparkline({ values, label, height = 34 }: { values: (number | nu
   );
 }
 
-/** How a share reads: good (accent), middling (neutral) or weak (amber). Used to colour bars by meaning. */
-export type Tone = "good" | "mid" | "weak";
-export const tone = (share: number): Tone => (share >= 0.8 ? "good" : share >= 0.6 ? "mid" : "weak");
-const TONE_COLOR: Record<Tone, string> = { good: "var(--accent-fill)", mid: "var(--neutral-fill)", weak: "var(--warn)" };
-
-/** Horizontal share bar coloured by tone. */
-export function Meter({ value, label }: { value: number; label: string }) {
-  const f = Math.max(0, Math.min(1, value));
-  return (
-    <div className={`meter ${tone(f)}`} role="img" aria-label={label}>
-      <span style={{ width: `${100 * f}%` }} />
-    </div>
-  );
-}
-
-/** Progress ring on a plain track; `toned` colours it by result (only for scores where higher is better). */
-export function Ring({ value, label, size = 44, toned = false }: { value: number; label: string; size?: number; toned?: boolean }) {
-  const r = size / 2 - 4;
+/** Progress ring on a ticked track; the arc glows. */
+export function Ring({ value, label, size = 44 }: { value: number; label: string; size?: number }) {
+  const r = size / 2 - 5;
   const c = 2 * Math.PI * r;
   const f = Math.max(0, Math.min(1, value));
+  const tick = c / 40;
   return (
-    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} role="img" aria-label={label} className="shrink-0">
-      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--track)" strokeWidth={4} />
-      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={toned ? TONE_COLOR[tone(f)] : "var(--accent-fill)"} strokeWidth={4} strokeLinecap="round" strokeDasharray={`${f * c} ${c}`}
-        transform={`rotate(-90 ${size / 2} ${size / 2})`} />
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} role="img" aria-label={label} className="shrink-0" style={{ overflow: "visible" }}>
+      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--grid)" strokeWidth={5} strokeDasharray={`${tick * 0.55} ${tick * 0.45}`} />
+      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--accent)" strokeWidth={5} strokeLinecap="round" strokeDasharray={`${f * c} ${c}`}
+        transform={`rotate(-90 ${size / 2} ${size / 2})`} className="viz-glow" />
     </svg>
   );
 }
