@@ -103,7 +103,9 @@ def investigate(tables: dict[str, pd.DataFrame], tz: str, incident: dict, dq_day
     window = pd.date_range(start, end)
     exclude = dq_days.union(known_days)
     dec = decompose(tables, tz, start, end, exclude=exclude, daily=daily)
-    dd = drill_down(tables, tz, start, end, exclude=exclude)
+    # Segments the monitor flagged for this issue: its own scope, or those seen alongside a store issue.
+    flagged = ([incident["segment"]] if incident.get("scope") == "segment" and incident.get("segment") else [])         + [{"dimension": s["dimension"], "value": s["value"]} for s in incident.get("segments", [])]
+    dd = drill_down(tables, tz, start, end, exclude=exclude, flagged=flagged, direction=incident.get("direction"))
     primary = dd["primary"]
     events = match_events(tables["change_events"], tz, start, primary)
 
@@ -142,8 +144,11 @@ def investigate(tables: dict[str, pd.DataFrame], tz: str, incident: dict, dq_day
 
     if primary:
         add("segment", "attributed",
-            f"{primary['share']:.0%} of the {primary['dimension']} breakdown of the change is in {primary['segment']}.",
-            dimension=primary["dimension"], segment=primary["segment"], share=primary["share"], noise_score=primary["noise_score"])
+            (f"{primary['segment']} had the largest change of any {primary['dimension']} ({primary['change']:+.2f} per day), "
+             f"and the monitor flagged it on its own." if primary.get("flagged") else
+             f"{primary['share']:.0%} of the {primary['dimension']} breakdown of the change is in {primary['segment']}."),
+            dimension=primary["dimension"], segment=primary["segment"], share=primary["share"], noise_score=primary["noise_score"],
+            flagged=bool(primary.get("flagged")), change=primary.get("change"))
     else:
         add("segment", "attributed", "The change is spread across segments; no single segment stands out from noise.",
             dimension=None, segment=None, share=None)
@@ -181,7 +186,10 @@ def investigate(tables: dict[str, pd.DataFrame], tz: str, incident: dict, dq_day
         f"({'distinguishable' if abs(overall) >= MIN_OVERALL_SCORE else 'not distinguishable'} from noise).",
         noise_score=overall)
 
-    level, reasons = evidence_level(primary["share"] if primary else None, events, all(r["ruled_out"] for r in ruled_out))
+    # A flagged segment's share can pass 100% (or turn negative) when the rest of its dimension
+    # moved the other way; for the evidence level it counts as at most the whole change.
+    ev_share = (min(max(primary["share"], 0.0), 1.0) if primary.get("flagged") else primary["share"]) if primary else None
+    level, reasons = evidence_level(ev_share, events, all(r["ruled_out"] for r in ruled_out))
     overall_ok = abs(overall) >= MIN_OVERALL_SCORE
     if not overall_ok and not primary:
         level, reasons = "None", [f"neither the overall change ({overall:+.1f}) nor any segment stands out from normal variation"]
@@ -233,7 +241,12 @@ def validate(inv: dict) -> list[dict]:
         if f["type"] == "segment" and v.get("segment"):
             d = inv["drilldown"]["dimensions"][v["dimension"]]
             row = next(r for r in d["rows"] if r["segment"] == v["segment"])
-            check(f"{f['finding_id']}_segment_share", abs(row["change"] / d["total_change"] - v["share"]) < 1e-9)
+            if v.get("flagged"):  # stated as the largest mover with its change per day
+                check(f"{f['finding_id']}_segment_change", row["change"] == v["change"])
+                check(f"{f['finding_id']}_segment_is_largest_mover",
+                      all(abs(r["change"]) <= abs(row["change"]) for r in d["rows"] if r["volume_ok"] and r["change"] * row["change"] > 0))
+            else:
+                check(f"{f['finding_id']}_segment_share", abs(row["change"] / d["total_change"] - v["share"]) < 1e-9)
         if f["type"] == "event":
             check(f"{f['finding_id']}_event_in_window", -EVENT_WINDOW_AFTER.total_seconds() / 3600 < v["hours_before_change"] <= 24)
         check(f"{f['finding_id']}_status_allowed", f["status"] in STATUS_ORDER)

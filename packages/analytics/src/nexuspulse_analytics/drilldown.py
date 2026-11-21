@@ -10,6 +10,11 @@ reported per category, with the same exact-sum property.
 Guards: segments with fewer than MIN_BASE_SESSIONS sessions per baseline day are
 reported but never selected as the concentration. A noise score compares each
 segment's change with its own day-to-day variation in the baseline.
+
+Segments the monitor flagged (their own series left the forecast range) are checked first:
+one is selected when it is the largest mover of its dimension in the issue's direction.
+The monitor flag stands in for the share and noise tests, which a real segment change can
+fail when the other segments of its dimension swing the opposite way by chance.
 """
 from __future__ import annotations
 
@@ -87,8 +92,28 @@ def concentration(rows: list[dict], total: float) -> dict | None:
     return {"segment": top["segment"], "share": float(top["change"] / total), "noise_score": top["noise_score"]}
 
 
+def flagged_choice(dims: dict, flagged: list[dict] | None, direction: str | None = None) -> tuple[str, dict] | None:
+    """Among monitor-flagged segments, those that are the largest mover of their dimension in the
+    issue's direction; the one whose change stands out most from its own noise is chosen."""
+    sign = -1.0 if direction == "down" else 1.0 if direction == "up" else None
+    best = None
+    for f in flagged or []:
+        d = dims.get(f["dimension"])
+        row = next((r for r in d["rows"] if r["segment"] == str(f["value"])), None) if d else None
+        if not row or not row["volume_ok"] or row["change"] == 0:
+            continue
+        s = sign if sign is not None else float(np.sign(d["total_change"]))
+        if np.sign(row["change"]) != s or max((r["change"] * s for r in d["rows"] if r["volume_ok"]), default=0) > row["change"] * s:
+            continue
+        share = float(row["change"] / d["total_change"]) if d["total_change"] else 1.0
+        c = {"segment": row["segment"], "share": share, "change": row["change"], "noise_score": row["noise_score"], "flagged": True}
+        if best is None or abs(c["noise_score"]) > abs(best[1]["noise_score"]):
+            best = (f["dimension"], c)
+    return best
+
+
 def drill_down(tables: dict[str, pd.DataFrame], tz: str, start: str, end: str, exclude: pd.DatetimeIndex | None = None,
-               depth: int = 2) -> dict:
+               depth: int = 2, flagged: list[dict] | None = None, direction: str | None = None) -> dict:
     s, e = pd.Timestamp(start), pd.Timestamp(end)
     f_all = funnel_daily(tables, tz)
     base = baseline_days(s, e, f_all.index, exclude=exclude)
@@ -107,8 +132,8 @@ def drill_down(tables: dict[str, pd.DataFrame], tz: str, start: str, end: str, e
     # Among segments holding at least half of their dimension's change, pick the one whose
     # change stands out most from its own day-to-day noise. Shares far above 100% mean
     # other segments moved the opposite way (offsetting noise), so they are not eligible.
-    best = None
-    for dim, d in dims.items():
+    best = flagged_choice(dims, flagged, direction)
+    for dim, d in ([] if best else dims.items()):
         c = d["concentration"]
         if not c or not (MIN_SHARE <= c["share"] <= MAX_SHARE) or abs(c["noise_score"]) < MIN_NOISE_SCORE:
             continue
