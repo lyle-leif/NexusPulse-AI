@@ -415,7 +415,7 @@ export default async function EvaluationPage() {
             </div>
             <Bars
               label="Changes caught by size"
-              rows={Object.entries(main.recall_by_effect).map(([k, v]) => ({ name: k, ok: v.detected, n: v.n, note: v.n ? `${v.detected}/${v.n} caught` : "none planted" }))}
+              rows={Object.entries(main.recall_by_effect).map(([k, v]) => ({ name: k.replace("-+%", "% or more"), ok: v.detected, n: v.n, note: v.n ? `${v.detected}/${v.n} caught` : "none planted" }))}
             />
             <p className="faint mt-2 text-xs">Size is the approximate change in net sales; the estimate is rough (about ±12%).</p>
           </section>

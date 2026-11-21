@@ -128,7 +128,7 @@ def summarize(runs: list[dict]) -> dict:
     by_effect = {}
     for lo, hi in bins:
         sel = [r for r in biz if r["effect_pct"] is not None and lo <= abs(r["effect_pct"]) < hi]
-        by_effect[f"{lo}-{hi if hi < 1000 else '+'}%"] = {"detected": sum(r["outcome"] == "detected" for r in sel), "n": len(sel)}
+        by_effect[f"{lo}-{hi}%" if hi < 1000 else f"{lo}% or more"] = {"detected": sum(r["outcome"] == "detected" for r in sel), "n": len(sel)}
     return {
         "recall": round(len(det) / len(biz), 3) if biz else None,
         "precision": round(len(det) / n_alerts, 3) if n_alerts else None,

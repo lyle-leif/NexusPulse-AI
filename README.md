@@ -32,7 +32,7 @@ The report never states that a recorded change caused a drop. A breakdown is not
 
 All numbers below use the default configuration on **held-out** scenarios, written before tuning and generated from separate seeds. Each result is labeled Synthetic, Semi-synthetic or Real.
 
-**On a real store** (UCI Online Retail II, a UK gift retailer, 39,516 orders; details [below](#external-dataset-uci-online-retail-ii)): daily sales forecasts are off by 31% on average versus 40% for "same day last week", the expected range holds on 94% of days, and the monitor raises 0.15 alerts per 30 days (Real). With planted order drops it catches 10 of 30 (Semi-synthetic).
+**On a real store** (UCI Online Retail II, a UK gift retailer, 39,516 orders; details [below](#external-dataset-uci-online-retail-ii)): daily sales forecasts are off by 31% on average versus 40% for "same day last week", the expected range holds on 94% of days, and the monitor raises 0.14 alerts per 30 days (Real). With planted order drops it catches 10 of 30 (Semi-synthetic).
 
 ### Detection (Synthetic, 5 stores per profile, 18 months each)
 
@@ -75,7 +75,7 @@ A real UK online gift retailer with 39,516 orders from December 2009 to December
 | **Real:** net sales forecast error (MAPE) | 30%, versus 40% for seasonal naive |
 | **Real:** orders forecast error (MAPE) | 20%, versus 25% for seasonal naive |
 | **Real:** forecast band coverage (net sales / orders) | 94% / 95% |
-| **Real:** alerts in 503 monitored days | 3 (0.15 per 30 days), an upper bound on false alerts because the data has no labels |
+| **Real:** alerts in 503 monitored days | 3 (0.14 per 30 days), an upper bound on false alerts because the data has no labels |
 | **Semi-synthetic:** injected order drops detected | 10 of 30 (7 of 16 for drops of 40-60%; 1 of 7 for 15-25%) |
 
 The UK bank-holiday calendar matters. Without it the real data produces 19 alerts and net-sales error rises to 79%, mostly around the Christmas shutdown.
