@@ -1,12 +1,13 @@
-"""Capture the README screenshots and the Time Machine GIF from the live demo (or any base URL).
+"""Capture the README screenshots, the Overview scroll GIF and the Time Machine GIF from the live demo (or any base URL).
 
 Uses the locally installed Chrome in headless mode for screenshots and Pillow to build the GIF.
-Nothing is downloaded. Output: docs/media/*.png and docs/media/time-machine.gif.
+Nothing is downloaded. Output: docs/media/*.png, docs/media/overview.gif and docs/media/time-machine.gif.
 
 Run: python scripts/capture_media.py [base_url] [chrome_path]
 """
 from __future__ import annotations
 
+import json
 import subprocess
 import sys
 import tempfile
@@ -25,7 +26,7 @@ GIF_START, GIF_FRAMES, GIF_STEP = date(2025, 12, 21), 10, 2
 
 
 def shot(url: str, path: Path, width: int, height: int, wait_ms: int = 6000) -> None:
-    args = [CHROME, "--headless=new", "--hide-scrollbars", "--disable-gpu", f"--window-size={width},{height}",
+    args = [CHROME, "--headless=new", "--hide-scrollbars", f"--window-size={width},{height}",
             f"--virtual-time-budget={wait_ms}", f"--screenshot={path.resolve()}"]
     with tempfile.TemporaryDirectory() as profile:  # fresh profile: first-visit state, default (dark) theme
         subprocess.run(args + [f"--user-data-dir={profile}", url], check=True, capture_output=True, timeout=120)
@@ -43,9 +44,28 @@ def phone_shot(url: str, path: Path, width: int = 390, height: int = 844) -> Non
         Image.open(raw).crop((0, 0, width, height)).save(path)
 
 
+def scroll_gif(url: str, path: Path, out_w: int = 880) -> None:
+    """A screen-sized window scrolling down the whole page: a pause at each stop, eased steps between.
+    The frames come from scripts/capture_scroll.mjs, which really scrolls the page in headless Chrome."""
+    with tempfile.TemporaryDirectory() as tmp:
+        subprocess.run(["node", str(Path(__file__).with_name("capture_scroll.mjs")), url, tmp, CHROME, "1280", "800", "5", "6"],
+                       check=True, timeout=300)
+        plan = json.loads((Path(tmp) / "frames.json").read_text())
+        frames, durations = [], []
+        for i, f in enumerate(plan):
+            im = Image.open(Path(tmp) / f["file"]).convert("RGB")
+            frames.append(im.resize((out_w, round(im.height * out_w / im.width)), Image.LANCZOS))
+            durations.append((2800 if i == 0 else 2200) if f["hold"] else 60)
+    # One shared palette keeps colours steady between frames and the file smaller.
+    pal = frames[0].quantize(colors=128, method=Image.Quantize.MEDIANCUT)
+    q = [f.quantize(palette=pal, dither=Image.Dither.NONE) for f in frames]
+    # Whole frames (no frame differencing): the delta encoding mixed up content between scroll positions.
+    q[0].save(path, save_all=True, append_images=q[1:], duration=durations, loop=0, optimize=False, disposal=1)
+
+
 def main() -> int:
     OUT.mkdir(parents=True, exist_ok=True)
-    shot(f"{BASE}/", OUT / "overview.png", 1280, 2000)
+    scroll_gif(f"{BASE}/", OUT / "overview.gif")
     phone_shot(f"{BASE}/", OUT / "overview-phone.png")
     shot(f"{BASE}/evaluation/", OUT / "evaluation.png", 1280, 1500)
     shot(f"{BASE}/about/", OUT / "how-it-works.png", 1280, 1000)

@@ -8,7 +8,7 @@ An autonomous business intelligence system for small online stores. NexusPulse A
 
 The demo is a static build: pages and the Time Machine are precomputed, so it needs no server, database or language model. The full system runs locally.
 
-![Overview: net revenue, system status, revenue against the expected range, issues, the visits-to-revenue flow and sales by channel](docs/media/overview.png)
+![Scrolling through the Overview: net revenue, system status, revenue against the expected range, issues, the visits-to-revenue flow, sales by channel and daily trends](docs/media/overview.gif)
 
 ## What it does
 
@@ -108,7 +108,7 @@ The interface uses a dark glass theme with lime accents and a light theme, switc
 |---|---|---|
 | ![Evaluation page with headline scores and real-store results](docs/media/evaluation.png) | ![How it works page with the four steps and known limits](docs/media/how-it-works.png) | ![Overview on a phone with the bottom navigation bar](docs/media/overview-phone.png) |
 
-Screenshots are captured from the live demo with `python scripts/capture_media.py` (local Chrome and Pillow, nothing downloaded).
+Screenshots and animations are captured from the live demo with `python scripts/capture_media.py` (local Chrome, Node and Pillow, nothing downloaded).
 
 ## Technology
 
